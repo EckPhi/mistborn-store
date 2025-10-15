@@ -1,10 +1,48 @@
 {
   "services": [
     {
-      "name": "whoami",
-      "image": "traefik/whoami:v1.11.0",
-      "isMain": true,
-      "internalPort": "80"
+      "name": "invoice-collector",
+      "image": "ghcr.io/invoice-collector/invoice-collector:master",
+      "command": "npm run start",
+      "environment": {
+        "PORT": "8080",
+        "DISABLE_VERIFICATION_CODE": "true",
+        "REGISTRY_SERVER_ENDPOINT": "https://registry.invoice-collector.com",
+        "DATABASE_URI": "mongodb://mongodb:27017",
+        "DATABASE_MONGODB_NAME": "prod",
+        "SECRET_MANAGER_TYPE": "bitwarden",
+        "SECRET_MANAGER_BITWARDEN_API_URI": "https://vault.bitwarden.eu/api",
+        "SECRET_MANAGER_BITWARDEN_IDENTITY_URI": "https://vault.bitwarden.eu/identity",
+        "FRONTEND": "http://localhost:8080"
+      },
+      "internalPort": 8080,
+      "dependsOn": {
+        "mongodb": {
+          "condition": "service_started"
+        }
+      }
+    },
+    {
+      "name": "mongodb",
+      "image": "mongo:8.0.3",
+      "command": "--logpath /dev/null",
+      "internalPort": 27017,
+      "volumes": [
+        {
+          "hostPath": "./mongodb/data",
+          "containerPath": "/data/db",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "./mongodb/config",
+          "containerPath": "/etc/mongo/",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ]
     }
   ]
 }

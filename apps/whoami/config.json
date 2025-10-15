@@ -1,17 +1,19 @@
 {
-  "name": "Whoami",
-  "id": "whoami",
+  "name": "Invoice Collector",
+  "id": "invoice-collector",
   "available": true,
-  "short_desc": "Tiny Go server that prints os information and HTTP request to output.",
-  "author": "traefik",
-  "port": 8382,
+  "short_desc": "Collect your invoices in seconds",
+  "author": "invoice-collector",
+  "port": 8080,
   "categories": [
-    "utilities"
+    "finance",
+    "productivity"
   ],
-  "description": "Tiny Go webserver that prints OS information and HTTP request to output.",
+  "description": "Invoice Collector is a free Docker image designed to retrieve invoices and receipts from suppliers. It seamlessly connects to customer portals, APIs, and email inboxes to automatically gather invoices.",
   "tipi_version": 2,
-  "version": "v1.11.0",
-  "source": "https://github.com/traefik/whoami",
+  "version": "v0.2",
+  "source": "https://github.com/invoice-collector/invoice-collector",
+  "website": "https://invoice-collector.com/",
   "exposable": true,
   "supported_architectures": [
     "arm64",
