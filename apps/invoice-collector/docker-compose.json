@@ -2,20 +2,29 @@
   "services": [
     {
       "name": "invoice-collector",
-      "image": "ghcr.io/invoice-collector/invoice-collector:master",
+      "image": "ghcr.io/invoice-collector/invoice-collector:latest",
       "command": "npm run start",
       "environment": {
         "PORT": "8080",
-        "DISABLE_VERIFICATION_CODE": "true",
         "REGISTRY_SERVER_ENDPOINT": "https://registry.invoice-collector.com",
         "DATABASE_URI": "mongodb://mongodb:27017",
         "DATABASE_MONGODB_NAME": "prod",
         "SECRET_MANAGER_TYPE": "bitwarden",
         "SECRET_MANAGER_BITWARDEN_API_URI": "https://vault.bitwarden.eu/api",
         "SECRET_MANAGER_BITWARDEN_IDENTITY_URI": "https://vault.bitwarden.eu/identity",
-        "FRONTEND": "http://localhost:8080"
+        "SECRET_MANAGER_BITWARDEN_ACCESS_TOKEN": "",
+        "SECRET_MANAGER_BITWARDEN_ORGANIZATION_ID": "",
+        "SECRET_MANAGER_BITWARDEN_PROJECT_ID": "",
+        "PROXY_TYPE": "none",
+        "ENV": "prod"
       },
       "internalPort": 8080,
+      "addPorts": [
+        {
+          "containerPort": 8080,
+          "hostPort": 8080
+        }
+      ],
       "dependsOn": {
         "mongodb": {
           "condition": "service_started"
@@ -27,6 +36,12 @@
       "image": "mongo:8.0.3",
       "command": "--logpath /dev/null",
       "internalPort": 27017,
+      "addPorts": [
+        {
+          "containerPort": 27017,
+          "hostPort": 27017
+        }
+      ],
       "volumes": [
         {
           "hostPath": "./mongodb/data",
