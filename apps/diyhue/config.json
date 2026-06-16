@@ -10,7 +10,7 @@
   ],
   "description": "diyHue is an open-source emulator of the Philips Hue bridge. It lets you control a wide range of smart lights (Hue, Yeelight, Tasmota, ESPHome, WLED, MiLight and many more) from the official Hue app, Home Assistant, Alexa and Google Home without the original hardware bridge.",
   "tipi_version": 1,
-  "version": "latest",
+  "version": "1057",
   "source": "https://github.com/diyhue/diyHue",
   "website": "https://diyhue.org",
   "exposable": false,

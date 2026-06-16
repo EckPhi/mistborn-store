@@ -1,8 +1,10 @@
 {
+  "schemaVersion": 2,
+  "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json",
   "services": [
     {
       "name": "influxdb",
-      "image": "influxdb:2",
+      "image": "influxdb:2.9.1",
       "isMain": true,
       "internalPort": 8086,
       "environment": {
@@ -14,14 +16,14 @@
       },
       "volumes": [
         {
-          "hostPath": "./data",
+          "hostPath": "${APP_DATA_DIR}/data",
           "containerPath": "/var/lib/influxdb2",
           "readOnly": false,
           "shared": false,
           "private": false
         },
         {
-          "hostPath": "./config",
+          "hostPath": "${APP_DATA_DIR}/config",
           "containerPath": "/etc/influxdb2",
           "readOnly": false,
           "shared": false,

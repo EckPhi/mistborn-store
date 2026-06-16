@@ -1,8 +1,10 @@
 {
+  "schemaVersion": 2,
+  "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json",
   "services": [
     {
       "name": "invoice-collector",
-      "image": "ghcr.io/invoice-collector/invoice-collector:latest",
+      "image": "ghcr.io/invoice-collector/invoice-collector:0.1",
       "isMain": true,
       "command": "npm run start",
       "environment": {
@@ -32,14 +34,14 @@
       "command": "--logpath /dev/null",
       "volumes": [
         {
-          "hostPath": "./mongodb/data",
+          "hostPath": "${APP_DATA_DIR}/mongodb/data",
           "containerPath": "/data/db",
           "readOnly": false,
           "shared": false,
           "private": false
         },
         {
-          "hostPath": "./mongodb/config",
+          "hostPath": "${APP_DATA_DIR}/mongodb/config",
           "containerPath": "/etc/mongo/",
           "readOnly": false,
           "shared": false,

@@ -42,7 +42,7 @@
       "matchPackageNames": [
         "mariadb",
         "mysql",
-        "monogdb",
+        "mongo",
         "postgres",
         "redis"
       ],
