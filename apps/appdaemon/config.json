@@ -9,7 +9,7 @@
     "automation"
   ],
   "description": "AppDaemon is a loosely coupled, multi-threaded, sandboxed Python execution environment for writing automation apps for Home Assistant and other home automation software. It also ships HADashboard, a dashboard system for wall-mounted tablets.",
-  "tipi_version": 1,
+  "tipi_version": 2,
   "version": "4.5.13",
   "source": "https://github.com/AppDaemon/appdaemon",
   "website": "https://appdaemon.readthedocs.io",
@@ -19,7 +19,7 @@
     "amd64"
   ],
   "created_at": 1781308800000,
-  "updated_at": 1781308800000,
+  "updated_at": 1781651098006,
   "dynamic_config": true,
   "form_fields": [
     {

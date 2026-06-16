@@ -9,7 +9,7 @@
     "automation"
   ],
   "description": "Homey Self-Hosted Server runs the Homey Pro smart-home platform as a container on your own hardware. It supports thousands of devices and brands over Wi-Fi and LAN, and is managed through the Homey mobile and web apps. Note: Zigbee, Z-Wave, Bluetooth and Infrared require Homey Pro hardware and are not available in the self-hosted server.",
-  "tipi_version": 1,
+  "tipi_version": 2,
   "version": "12.10.0-rc.7",
   "source": "https://homey.app",
   "website": "https://homey.app",
@@ -20,7 +20,7 @@
     "amd64"
   ],
   "created_at": 1781308800000,
-  "updated_at": 1781308800000,
+  "updated_at": 1781651098006,
   "dynamic_config": true,
   "form_fields": []
 }
