@@ -10,12 +10,6 @@
         "TOKEN": "${HA_TOKEN}",
         "DASH_URL": "http://0.0.0.0:5050"
       },
-      "addPorts": [
-        {
-          "containerPort": 5050,
-          "hostPort": 5050
-        }
-      ],
       "volumes": [
         {
           "hostPath": "./conf",

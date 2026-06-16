@@ -13,7 +13,7 @@
   "version": "latest",
   "source": "https://github.com/diyhue/diyHue",
   "website": "https://diyhue.org",
-  "exposable": true,
+  "exposable": false,
   "supported_architectures": [
     "arm64",
     "amd64"

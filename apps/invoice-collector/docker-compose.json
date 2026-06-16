@@ -3,6 +3,7 @@
     {
       "name": "invoice-collector",
       "image": "ghcr.io/invoice-collector/invoice-collector:latest",
+      "isMain": true,
       "command": "npm run start",
       "environment": {
         "PORT": "8080",
@@ -19,12 +20,6 @@
         "ENV": "prod"
       },
       "internalPort": 8080,
-      "addPorts": [
-        {
-          "containerPort": 8080,
-          "hostPort": 8080
-        }
-      ],
       "dependsOn": {
         "mongodb": {
           "condition": "service_started"
@@ -35,13 +30,6 @@
       "name": "mongodb",
       "image": "mongo:8.0.3",
       "command": "--logpath /dev/null",
-      "internalPort": 27017,
-      "addPorts": [
-        {
-          "containerPort": 27017,
-          "hostPort": 27017
-        }
-      ],
       "volumes": [
         {
           "hostPath": "./mongodb/data",

@@ -14,7 +14,7 @@
   "version": "latest",
   "source": "https://github.com/openthread/ot-br-posix",
   "website": "https://openthread.io",
-  "exposable": true,
+  "exposable": false,
   "supported_architectures": [
     "arm64",
     "amd64"

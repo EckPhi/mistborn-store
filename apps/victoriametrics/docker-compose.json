@@ -10,12 +10,6 @@
         "-retentionPeriod=${VM_RETENTION_PERIOD}",
         "-httpListenAddr=:8428"
       ],
-      "addPorts": [
-        {
-          "containerPort": 8428,
-          "hostPort": 8428
-        }
-      ],
       "volumes": [
         {
           "hostPath": "./data",
