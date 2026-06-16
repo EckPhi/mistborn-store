@@ -1,0 +1,39 @@
+{
+  "services": [
+    {
+      "name": "influxdb",
+      "image": "influxdb:2",
+      "isMain": true,
+      "internalPort": 8086,
+      "environment": {
+        "DOCKER_INFLUXDB_INIT_MODE": "setup",
+        "DOCKER_INFLUXDB_INIT_USERNAME": "${INFLUXDB_INIT_USERNAME}",
+        "DOCKER_INFLUXDB_INIT_PASSWORD": "${INFLUXDB_INIT_PASSWORD}",
+        "DOCKER_INFLUXDB_INIT_ORG": "${INFLUXDB_INIT_ORG}",
+        "DOCKER_INFLUXDB_INIT_BUCKET": "${INFLUXDB_INIT_BUCKET}"
+      },
+      "addPorts": [
+        {
+          "containerPort": 8086,
+          "hostPort": 8086
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "./data",
+          "containerPath": "/var/lib/influxdb2",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "./config",
+          "containerPath": "/etc/influxdb2",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ]
+    }
+  ]
+}

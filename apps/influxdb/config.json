@@ -1,0 +1,55 @@
+{
+  "name": "InfluxDB",
+  "id": "influxdb",
+  "available": true,
+  "short_desc": "Time-series database for metrics and events",
+  "author": "InfluxData",
+  "port": 8086,
+  "categories": [
+    "data"
+  ],
+  "description": "InfluxDB is an open-source time-series database designed to handle high write and query loads. It is widely used for storing metrics, events, IoT sensor data and real-time analytics, and integrates with Telegraf, Grafana and many home automation platforms.",
+  "tipi_version": 1,
+  "version": "2",
+  "source": "https://github.com/influxdata/influxdb",
+  "website": "https://www.influxdata.com",
+  "exposable": true,
+  "supported_architectures": [
+    "arm64",
+    "amd64"
+  ],
+  "created_at": 1781308800000,
+  "updated_at": 1781308800000,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Admin username",
+      "env_variable": "INFLUXDB_INIT_USERNAME",
+      "required": true,
+      "default": "admin"
+    },
+    {
+      "type": "password",
+      "label": "Admin password",
+      "env_variable": "INFLUXDB_INIT_PASSWORD",
+      "required": true,
+      "min": 8,
+      "hint": "At least 8 characters."
+    },
+    {
+      "type": "text",
+      "label": "Initial organization",
+      "env_variable": "INFLUXDB_INIT_ORG",
+      "required": true,
+      "default": "home"
+    },
+    {
+      "type": "text",
+      "label": "Initial bucket",
+      "env_variable": "INFLUXDB_INIT_BUCKET",
+      "required": true,
+      "default": "default"
+    }
+  ]
+}

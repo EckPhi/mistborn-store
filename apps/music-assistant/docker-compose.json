@@ -1,0 +1,31 @@
+{
+  "services": [
+    {
+      "name": "music-assistant",
+      "image": "ghcr.io/music-assistant/server:latest",
+      "isMain": true,
+      "internalPort": 8095,
+      "networkMode": "host",
+      "privileged": false,
+      "capAdd": [
+        "SYS_ADMIN",
+        "DAC_READ_SEARCH"
+      ],
+      "securityOpt": [
+        "apparmor:unconfined"
+      ],
+      "environment": {
+        "LOG_LEVEL": "info"
+      },
+      "volumes": [
+        {
+          "hostPath": "./data",
+          "containerPath": "/data",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ]
+    }
+  ]
+}

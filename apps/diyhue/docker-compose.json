@@ -1,0 +1,24 @@
+{
+  "services": [
+    {
+      "name": "diyhue",
+      "image": "diyhue/core:latest",
+      "isMain": true,
+      "internalPort": 80,
+      "networkMode": "host",
+      "environment": {
+        "MAC": "${DIYHUE_MAC}",
+        "TZ": "${TZ}"
+      },
+      "volumes": [
+        {
+          "hostPath": "./config",
+          "containerPath": "/opt/hue-emulator/config",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ]
+    }
+  ]
+}

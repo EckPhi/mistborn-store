@@ -1,0 +1,41 @@
+{
+  "name": "AppDaemon",
+  "id": "appdaemon",
+  "available": true,
+  "short_desc": "Python apps and HADashboard for Home Assistant",
+  "author": "AppDaemon",
+  "port": 5050,
+  "categories": [
+    "automation"
+  ],
+  "description": "AppDaemon is a loosely coupled, multi-threaded, sandboxed Python execution environment for writing automation apps for Home Assistant and other home automation software. It also ships HADashboard, a dashboard system for wall-mounted tablets.",
+  "tipi_version": 1,
+  "version": "latest",
+  "source": "https://github.com/AppDaemon/appdaemon",
+  "website": "https://appdaemon.readthedocs.io",
+  "exposable": true,
+  "supported_architectures": [
+    "arm64",
+    "amd64"
+  ],
+  "created_at": 1781308800000,
+  "updated_at": 1781308800000,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "url",
+      "label": "Home Assistant URL",
+      "env_variable": "HA_URL",
+      "required": true,
+      "placeholder": "http://homeassistant.local:8123",
+      "hint": "Base URL of your Home Assistant instance."
+    },
+    {
+      "type": "text",
+      "label": "Long-Lived Access Token",
+      "env_variable": "HA_TOKEN",
+      "required": true,
+      "hint": "Create one in Home Assistant under Profile > Security."
+    }
+  ]
+}

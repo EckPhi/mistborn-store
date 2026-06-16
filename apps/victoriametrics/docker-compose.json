@@ -1,0 +1,30 @@
+{
+  "services": [
+    {
+      "name": "victoriametrics",
+      "image": "victoriametrics/victoria-metrics:latest",
+      "isMain": true,
+      "internalPort": 8428,
+      "command": [
+        "-storageDataPath=/victoria-metrics-data",
+        "-retentionPeriod=${VM_RETENTION_PERIOD}",
+        "-httpListenAddr=:8428"
+      ],
+      "addPorts": [
+        {
+          "containerPort": 8428,
+          "hostPort": 8428
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "./data",
+          "containerPath": "/victoria-metrics-data",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ]
+    }
+  ]
+}

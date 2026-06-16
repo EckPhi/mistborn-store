@@ -1,0 +1,29 @@
+{
+  "services": [
+    {
+      "name": "homeway",
+      "image": "homewayio/homeway:latest",
+      "isMain": true,
+      "internalPort": 11027,
+      "environment": {
+        "HOME_ASSISTANT_IP": "${HOMEWAY_HA_IP}",
+        "HOME_ASSISTANT_ACCESS_TOKEN": "${HOMEWAY_HA_TOKEN}"
+      },
+      "addPorts": [
+        {
+          "containerPort": 11027,
+          "hostPort": 11027
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "./data",
+          "containerPath": "/data",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ]
+    }
+  ]
+}
