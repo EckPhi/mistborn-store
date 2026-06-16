@@ -9,7 +9,7 @@ Add this repository as a custom app store in your Runtipi instance:
 1. Open Runtipi → **Settings → App Stores**
 2. Add a new store with this repository URL:
    ```
-   https://github.com/mistborn/mistborn-store
+   https://github.com/EckPhi/mistborn-store
    ```
 3. The apps below become available in your app catalog.
 
