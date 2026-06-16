@@ -1,0 +1,51 @@
+{
+  "name": "OpenThread Border Router",
+  "id": "openthread-border-router",
+  "available": true,
+  "short_desc": "Thread mesh network border router",
+  "author": "OpenThread",
+  "port": 8080,
+  "categories": [
+    "automation",
+    "network"
+  ],
+  "description": "OpenThread Border Router (OTBR) connects a Thread mesh network to other IP-based networks such as your LAN and the internet. It is required to bring Thread-based smart-home devices (Matter-over-Thread) onto your network and needs a connected 802.15.4 Radio Co-Processor (RCP) dongle.",
+  "tipi_version": 1,
+  "version": "latest",
+  "source": "https://github.com/openthread/ot-br-posix",
+  "website": "https://openthread.io",
+  "exposable": true,
+  "supported_architectures": [
+    "arm64",
+    "amd64"
+  ],
+  "created_at": 1781308800000,
+  "updated_at": 1781308800000,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "RCP radio device URL",
+      "env_variable": "OTBR_RCP_DEVICE",
+      "required": true,
+      "default": "spinel+hdlc+uart:///dev/ttyACM0?uart-baudrate=460800",
+      "hint": "Spinel URL of your 802.15.4 RCP dongle. The serial device must exist on the host (see below)."
+    },
+    {
+      "type": "text",
+      "label": "Serial device path",
+      "env_variable": "OTBR_DEVICE_PATH",
+      "required": true,
+      "default": "/dev/ttyACM0",
+      "hint": "Host path of the RCP dongle, passed through to the container."
+    },
+    {
+      "type": "text",
+      "label": "Infrastructure interface",
+      "env_variable": "OTBR_INFRA_IF",
+      "required": true,
+      "default": "eth0",
+      "hint": "Host LAN/Wi-Fi interface, e.g. eth0 or wlan0."
+    }
+  ]
+}

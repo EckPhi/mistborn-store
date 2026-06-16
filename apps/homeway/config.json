@@ -1,0 +1,43 @@
+{
+  "name": "Homeway",
+  "id": "homeway",
+  "available": true,
+  "short_desc": "Free, secure remote access for Home Assistant",
+  "author": "Homeway",
+  "port": 11027,
+  "categories": [
+    "automation",
+    "network"
+  ],
+  "description": "Homeway provides free, secure remote access to your Home Assistant instance, plus Amazon Alexa and Google Assistant integration and free remote access notifications. It runs as a lightweight relay container alongside Home Assistant — no port forwarding, VPN or dynamic DNS required.",
+  "tipi_version": 1,
+  "version": "latest",
+  "source": "https://homeway.io",
+  "website": "https://homeway.io",
+  "exposable": false,
+  "no_gui": true,
+  "supported_architectures": [
+    "arm64",
+    "amd64"
+  ],
+  "created_at": 1781308800000,
+  "updated_at": 1781308800000,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Home Assistant IP / hostname",
+      "env_variable": "HOMEWAY_HA_IP",
+      "required": true,
+      "placeholder": "homeassistant.local",
+      "hint": "IP or hostname of your Home Assistant server."
+    },
+    {
+      "type": "text",
+      "label": "Long-Lived Access Token",
+      "env_variable": "HOMEWAY_HA_TOKEN",
+      "required": true,
+      "hint": "Create one in Home Assistant under Profile > Security."
+    }
+  ]
+}

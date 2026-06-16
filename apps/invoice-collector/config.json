@@ -7,7 +7,7 @@
   "port": 8080,
   "categories": [
     "finance",
-    "productivity"
+    "utilities"
   ],
   "description": "Invoice Collector is a free Docker image designed to retrieve invoices and receipts from suppliers. It seamlessly connects to customer portals, APIs, and email inboxes to automatically gather invoices.",
   "tipi_version": 2,

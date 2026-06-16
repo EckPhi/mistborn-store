@@ -1,0 +1,26 @@
+{
+  "name": "Music Assistant",
+  "id": "music-assistant",
+  "available": true,
+  "short_desc": "Music library manager and multi-room streaming",
+  "author": "Music Assistant",
+  "port": 8095,
+  "categories": [
+    "music",
+    "media"
+  ],
+  "description": "Music Assistant is a free, open-source media library manager that connects your streaming services and local media to a wide range of supported players. It enables multi-room audio and integrates tightly with Home Assistant.",
+  "tipi_version": 1,
+  "version": "latest",
+  "source": "https://github.com/music-assistant/server",
+  "website": "https://www.music-assistant.io",
+  "exposable": true,
+  "supported_architectures": [
+    "arm64",
+    "amd64"
+  ],
+  "created_at": 1781308800000,
+  "updated_at": 1781308800000,
+  "dynamic_config": true,
+  "form_fields": []
+}

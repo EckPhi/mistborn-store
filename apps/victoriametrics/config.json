@@ -1,0 +1,35 @@
+{
+  "name": "VictoriaMetrics",
+  "id": "victoriametrics",
+  "available": true,
+  "short_desc": "Fast, cost-effective time-series database",
+  "author": "VictoriaMetrics",
+  "port": 8428,
+  "categories": [
+    "data",
+    "utilities"
+  ],
+  "description": "VictoriaMetrics is a fast, cost-effective and scalable monitoring solution and time-series database. It is a drop-in replacement for Prometheus remote storage, supports PromQL/MetricsQL, the Prometheus and InfluxDB ingestion protocols, and runs as a single small binary.",
+  "tipi_version": 1,
+  "version": "latest",
+  "source": "https://github.com/VictoriaMetrics/VictoriaMetrics",
+  "website": "https://victoriametrics.com",
+  "exposable": true,
+  "supported_architectures": [
+    "arm64",
+    "amd64"
+  ],
+  "created_at": 1781308800000,
+  "updated_at": 1781308800000,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Retention period",
+      "env_variable": "VM_RETENTION_PERIOD",
+      "required": false,
+      "default": "12",
+      "hint": "How long to keep data, e.g. 12 (months), 1y, 30d."
+    }
+  ]
+}

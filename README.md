@@ -1,31 +1,55 @@
-# Example App Store Template
+# Mistborn Store
 
-This repository serves as a template for creating your own custom app store for the Runtipi platform. Use this as a starting point to create and share your own collection of applications.
+A custom [Runtipi](https://runtipi.io) app store. A curated collection of self-hosted apps — focused on home automation, IoT and observability — packaged for one-click install on Runtipi.
 
-## Repository Structure
+## Using this store
 
-- **apps/**: Contains individual app directories
+Add this repository as a custom app store in your Runtipi instance:
 
-  - Each app has its own folder (e.g., `whoami/`) with the following structure:
-    - `config.json`: App configuration file
-    - `docker-compose.json`: Docker setup for the app
-    - `metadata/`: Contains app visuals and descriptions
-      - `description.md`: Markdown description of the app
-      - `logo.jpg`: App logo image
+1. Open Runtipi → **Settings → App Stores**
+2. Add a new store with this repository URL:
+   ```
+   https://github.com/mistborn/mistborn-store
+   ```
+3. The apps below become available in your app catalog.
 
-- **tests/**: Contains test files for the app store
+See the [Runtipi custom app store guide](https://runtipi.io/docs/guides/create-your-own-app-store) for details.
 
-  - `apps.test.ts`: Test suite for validating apps
+## Apps
 
-## Getting Started
+| | Name | Description |
+|---|---|---|
+| <img src="apps/appdaemon/metadata/logo.jpg" width="32"> | [AppDaemon](https://github.com/AppDaemon/appdaemon) | Python apps and HADashboard for Home Assistant automation |
+| <img src="apps/diyhue/metadata/logo.jpg" width="32"> | [diyHue](https://github.com/diyhue/diyHue) | Open-source Philips Hue bridge emulator |
+| <img src="apps/homey/metadata/logo.jpg" width="32"> | [Homey Pro](https://homey.app) | Run Homey Pro as a virtual smart-home hub |
+| <img src="apps/homeway/metadata/logo.jpg" width="32"> | [Homeway](https://homeway.io) | Free remote access for Home Assistant |
+| <img src="apps/influxdb/metadata/logo.jpg" width="32"> | [InfluxDB](https://github.com/influxdata/influxdb) | Time-series database for metrics and events |
+| <img src="apps/music-assistant/metadata/logo.jpg" width="32"> | [Music Assistant](https://github.com/music-assistant/server) | Music library manager and multi-room streaming |
+| <img src="apps/openthread-border-router/metadata/logo.jpg" width="32"> | [OpenThread Border Router](https://github.com/openthread/ot-br-posix) | Thread mesh network border router |
+| <img src="apps/victoriametrics/metadata/logo.jpg" width="32"> | [VictoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics) | Fast, cost-effective time-series database |
+| <img src="apps/invoice-collector/metadata/logo.jpg" width="32"> | [Invoice Collector](https://github.com/invoice-collector/invoice-collector) | Automatically collect invoices from your suppliers |
 
-This repository is intended to serve as a template for creating your own app store. Follow these steps to get started:
+## Repository structure
 
-1. Click the "Use this template" button to create a new repository based on this template
-2. Customize the apps or add your own app folders in the `apps/` directory
-3. Test your app store by using it with Runtipi
+```
+apps/
+  <app-id>/
+    config.json            # app metadata (Runtipi config schema)
+    docker-compose.json    # dynamic compose definition
+    metadata/
+      description.md        # long description shown in the app page
+      logo.jpg             # app logo
+```
 
-## Documentation
+## Contributing / adding an app
 
-For detailed instructions on creating your own app store, please refer to the official guide:
-[Create Your Own App Store Guide](https://runtipi.io/docs/guides/create-your-own-app-store)
+The app-add process — file layout, schema rules and validation — is documented in [AGENTS.md](AGENTS.md). All apps are validated in CI against the official `@runtipi/common` schemas:
+
+```bash
+bun install
+bun run test
+```
+
+## License
+
+See [LICENSE](LICENSE).

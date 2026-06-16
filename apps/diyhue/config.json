@@ -1,0 +1,36 @@
+{
+  "name": "diyHue",
+  "id": "diyhue",
+  "available": true,
+  "short_desc": "Open-source Philips Hue bridge emulator",
+  "author": "diyHue",
+  "port": 80,
+  "categories": [
+    "automation"
+  ],
+  "description": "diyHue is an open-source emulator of the Philips Hue bridge. It lets you control a wide range of smart lights (Hue, Yeelight, Tasmota, ESPHome, WLED, MiLight and many more) from the official Hue app, Home Assistant, Alexa and Google Home without the original hardware bridge.",
+  "tipi_version": 1,
+  "version": "latest",
+  "source": "https://github.com/diyhue/diyHue",
+  "website": "https://diyhue.org",
+  "exposable": true,
+  "supported_architectures": [
+    "arm64",
+    "amd64"
+  ],
+  "created_at": 1781308800000,
+  "updated_at": 1781308800000,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "MAC address",
+      "env_variable": "DIYHUE_MAC",
+      "required": true,
+      "placeholder": "XX:XX:XX:XX:XX:XX",
+      "regex": "^([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}$",
+      "pattern_error": "Enter a valid MAC address (e.g. AA:BB:CC:DD:EE:FF).",
+      "hint": "MAC address of the host network interface. Required to generate valid Hue certificates."
+    }
+  ]
+}

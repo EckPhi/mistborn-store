@@ -1,0 +1,38 @@
+{
+  "services": [
+    {
+      "name": "otbr",
+      "image": "openthread/border-router:latest",
+      "isMain": true,
+      "internalPort": 80,
+      "networkMode": "host",
+      "capAdd": [
+        "NET_ADMIN"
+      ],
+      "sysctls": {
+        "net.ipv6.conf.all.disable_ipv6": 0,
+        "net.ipv4.conf.all.forwarding": 1,
+        "net.ipv6.conf.all.forwarding": 1
+      },
+      "devices": [
+        "${OTBR_DEVICE_PATH}:${OTBR_DEVICE_PATH}",
+        "/dev/net/tun:/dev/net/tun"
+      ],
+      "environment": {
+        "OT_RCP_DEVICE": "${OTBR_RCP_DEVICE}",
+        "OT_INFRA_IF": "${OTBR_INFRA_IF}",
+        "OT_THREAD_IF": "wpan0",
+        "OT_LOG_LEVEL": "7"
+      },
+      "volumes": [
+        {
+          "hostPath": "./data",
+          "containerPath": "/data",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "services": [
+    {
+      "name": "homey",
+      "image": "ghcr.io/athombv/homey-shs:latest",
+      "isMain": true,
+      "internalPort": 80,
+      "networkMode": "host",
+      "privileged": true,
+      "volumes": [
+        {
+          "hostPath": "./data",
+          "containerPath": "/homey/user",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ]
+    }
+  ]
+}

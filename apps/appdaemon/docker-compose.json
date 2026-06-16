@@ -1,0 +1,30 @@
+{
+  "services": [
+    {
+      "name": "appdaemon",
+      "image": "acockburn/appdaemon:latest",
+      "isMain": true,
+      "internalPort": 5050,
+      "environment": {
+        "HA_URL": "${HA_URL}",
+        "TOKEN": "${HA_TOKEN}",
+        "DASH_URL": "http://0.0.0.0:5050"
+      },
+      "addPorts": [
+        {
+          "containerPort": 5050,
+          "hostPort": 5050
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "./conf",
+          "containerPath": "/conf",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ]
+    }
+  ]
+}
