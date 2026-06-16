@@ -14,7 +14,7 @@
   "version": "latest",
   "source": "https://github.com/music-assistant/server",
   "website": "https://www.music-assistant.io",
-  "exposable": true,
+  "exposable": false,
   "supported_architectures": [
     "arm64",
     "amd64"

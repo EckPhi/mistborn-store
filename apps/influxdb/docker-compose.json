@@ -12,12 +12,6 @@
         "DOCKER_INFLUXDB_INIT_ORG": "${INFLUXDB_INIT_ORG}",
         "DOCKER_INFLUXDB_INIT_BUCKET": "${INFLUXDB_INIT_BUCKET}"
       },
-      "addPorts": [
-        {
-          "containerPort": 8086,
-          "hostPort": 8086
-        }
-      ],
       "volumes": [
         {
           "hostPath": "./data",

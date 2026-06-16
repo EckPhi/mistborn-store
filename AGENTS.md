@@ -74,18 +74,35 @@ Each service object supports (subset most used):
 - `internalPort` — port the container listens on
 - `isMain` — mark the primary web UI service
 - `environment` — **object** map `{ "KEY": "value" }` (not an array)
-- `addPorts` — array of `{ containerPort, hostPort, udp?, tcp?, interface? }`
+- `addPorts` — array of `{ containerPort, hostPort, udp?, tcp?, interface? }`. **Only for _extra_ ports.** Do **not** republish the main `internalPort` here — see Reverse proxy below
 - `volumes` — array of `{ hostPath, containerPath, readOnly?, shared?, private? }`. Use `./<name>/...` relative host paths (resolved under the app data dir)
 - `dependsOn` — `{ "<service>": { "condition": "service_started" | "service_healthy" | "service_completed_successfully" } }`
 - `command`, `entrypoint`, `user`, `hostname`, `networkMode`, `privileged`, `capAdd`, `devices`, `healthCheck`, `restart` via `deploy`, etc.
 
-The main service's exposed host port should match `config.json`'s `port`.
+## Reverse proxy / networking
+
+Runtipi **auto-generates** the reverse proxy. For the service marked `isMain: true` with an `internalPort`, it:
+
+1. adds traefik routing labels,
+2. joins the container to `tipi_main_network`,
+3. maps `${APP_PORT}` (= `config.json` `port`) → `internalPort` on the host.
+
+You do **not** write traefik labels or publish the main port yourself. Official store apps (e.g. grafana) carry only `isMain` + `internalPort` and nothing else — match that.
+
+**Rules learned the hard way:**
+
+- **Every app needs exactly one `isMain: true` service.** Without it there is no proxy, no `tipi_main_network` join, no `${APP_PORT}` mapping — the app is unreachable. (This bit invoice-collector.)
+- **Never put the main port in `addPorts`.** Runtipi already publishes `config.port → internalPort`; adding `internalPort:internalPort` in `addPorts` double-binds the host port → docker `port is already allocated` and bypasses traefik. Use `addPorts` only for *additional* ports (e.g. a raw TCP/UDP ingestion port). Direct `http://<host-ip>:<port>` access still works without `addPorts` via the auto `${APP_PORT}` map.
+- **Backing services (db, cache, etc.) get no `internalPort` and no `addPorts`.** They are reached over the app's compose network by service name (e.g. `mongodb://mongodb:27017`). Don't expose them to the host. Only set `addToMainNetwork: true` on a non-main service if it genuinely must be proxied.
+- **`networkMode: host` cannot be reverse-proxied.** A host-network container is not on `tipi_main_network`, so traefik can't route to it → set `config.json` `exposable: false`. Such apps (LAN device discovery, mDNS, Thread/Zigbee, multi-room audio) are reached directly at `http://<host-ip>:<port>`; document that in `description.md`.
+
+The main service's direct-access host port = `config.json`'s `port`.
 
 ## Adding an app — checklist
 
 1. Create `apps/<app-id>/` with the four files.
 2. Set `categories` from the valid enum; `id` == folder name.
-3. Pick a unique host `port`; make `internalPort`/`addPorts` consistent.
+3. Pick a unique host `port`. Mark one service `isMain: true` with its `internalPort`; do **not** republish that port in `addPorts`. Host-network apps → `exposable: false`. See Reverse proxy.
 4. Map persistent data to `volumes`.
 5. Keep secrets out of the repo — expose them as `form_fields` / env with empty defaults.
 6. Add a logo at `metadata/logo.jpg` and a real `metadata/description.md`.

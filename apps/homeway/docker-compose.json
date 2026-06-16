@@ -9,12 +9,6 @@
         "HOME_ASSISTANT_IP": "${HOMEWAY_HA_IP}",
         "HOME_ASSISTANT_ACCESS_TOKEN": "${HOMEWAY_HA_TOKEN}"
       },
-      "addPorts": [
-        {
-          "containerPort": 11027,
-          "hostPort": 11027
-        }
-      ],
       "volumes": [
         {
           "hostPath": "./data",
