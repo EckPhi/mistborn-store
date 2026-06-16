@@ -21,6 +21,7 @@ See the [Runtipi custom app store guide](https://runtipi.io/docs/guides/create-y
 |---|---|---|
 | <img src="apps/appdaemon/metadata/logo.jpg" width="32"> | [AppDaemon](https://github.com/AppDaemon/appdaemon) | Python apps and HADashboard for Home Assistant automation |
 | <img src="apps/diyhue/metadata/logo.jpg" width="32"> | [diyHue](https://github.com/diyhue/diyHue) | Open-source Philips Hue bridge emulator |
+| <img src="apps/eufy-security-ws/metadata/logo.jpg" width="32"> | [Eufy Security WS](https://github.com/bropat/eufy-security-ws) | WebSocket server for Eufy Security devices |
 | <img src="apps/homey/metadata/logo.jpg" width="32"> | [Homey Pro](https://homey.app) | Run Homey Pro as a virtual smart-home hub |
 | <img src="apps/homeway/metadata/logo.jpg" width="32"> | [Homeway](https://homeway.io) | Free remote access for Home Assistant |
 | <img src="apps/influxdb/metadata/logo.jpg" width="32"> | [InfluxDB](https://github.com/influxdata/influxdb) | Time-series database for metrics and events |

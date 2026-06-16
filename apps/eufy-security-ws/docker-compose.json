@@ -1,0 +1,26 @@
+{
+  "services": [
+    {
+      "name": "eufy-security-ws",
+      "image": "bropat/eufy-security-ws:3.0.1",
+      "isMain": true,
+      "internalPort": 3000,
+      "environment": {
+        "USERNAME": "${EUFY_USERNAME}",
+        "PASSWORD": "${EUFY_PASSWORD}",
+        "COUNTRY": "${EUFY_COUNTRY}",
+        "LANGUAGE": "${EUFY_LANGUAGE}",
+        "TRUSTED_DEVICE_NAME": "${EUFY_TRUSTED_DEVICE_NAME}"
+      },
+      "volumes": [
+        {
+          "hostPath": "./data",
+          "containerPath": "/data",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ]
+    }
+  ]
+}

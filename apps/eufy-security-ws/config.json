@@ -1,0 +1,64 @@
+{
+  "name": "Eufy Security WS",
+  "id": "eufy-security-ws",
+  "available": true,
+  "short_desc": "WebSocket server for Eufy Security devices",
+  "author": "bropat",
+  "port": 3000,
+  "categories": [
+    "security",
+    "automation"
+  ],
+  "description": "eufy-security-ws is a small server wrapper around the eufy-security-client library that exposes Eufy Security devices (cameras, doorbells, sensors, base stations) over a WebSocket API. It is the backend used by the Home Assistant eufy-security integration and similar clients. It has no web UI — clients connect to the WebSocket on port 3000.",
+  "tipi_version": 1,
+  "version": "3.0.1",
+  "source": "https://github.com/bropat/eufy-security-ws",
+  "website": "https://bropat.github.io/eufy-security-ws/",
+  "exposable": false,
+  "no_gui": true,
+  "supported_architectures": [
+    "arm64",
+    "amd64"
+  ],
+  "created_at": 1781308800000,
+  "updated_at": 1781308800000,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "email",
+      "label": "Eufy account email",
+      "env_variable": "EUFY_USERNAME",
+      "required": true,
+      "hint": "Email of a dedicated Eufy account (use a second account, not your primary)."
+    },
+    {
+      "type": "password",
+      "label": "Eufy account password",
+      "env_variable": "EUFY_PASSWORD",
+      "required": true,
+      "hint": "Password for the Eufy account above."
+    },
+    {
+      "type": "text",
+      "label": "Country",
+      "env_variable": "EUFY_COUNTRY",
+      "required": false,
+      "default": "US",
+      "hint": "Two-letter ISO 3166-1 country code, e.g. US, DE, GB."
+    },
+    {
+      "type": "text",
+      "label": "Language",
+      "env_variable": "EUFY_LANGUAGE",
+      "required": false,
+      "hint": "Two-letter ISO 639-1 language code, e.g. en, de."
+    },
+    {
+      "type": "text",
+      "label": "Trusted device name",
+      "env_variable": "EUFY_TRUSTED_DEVICE_NAME",
+      "required": false,
+      "hint": "Name shown in the Eufy app for this client."
+    }
+  ]
+}
