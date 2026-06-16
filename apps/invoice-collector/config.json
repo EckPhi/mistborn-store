@@ -10,7 +10,7 @@
     "utilities"
   ],
   "description": "Invoice Collector is a free Docker image designed to retrieve invoices and receipts from suppliers. It seamlessly connects to customer portals, APIs, and email inboxes to automatically gather invoices.",
-  "tipi_version": 2,
+  "tipi_version": 3,
   "version": "0.1",
   "source": "https://github.com/invoice-collector/invoice-collector",
   "website": "https://invoice-collector.com/",
@@ -20,7 +20,7 @@
     "amd64"
   ],
   "created_at": 1745082405284,
-  "updated_at": 1745674974072,
+  "updated_at": 1781651098006,
   "dynamic_config": true,
   "form_fields": []
 }

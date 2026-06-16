@@ -162,3 +162,5 @@ Bump `version`, increment `tipi_version`, refresh `updated_at`. The helper scrip
 ```bash
 bun ./scripts/update-config.ts apps/<app-id>/config.json <newVersion>
 ```
+
+`tipi_version` is the runtipi update counter — it compares the installed value against the store's to offer updates. **Increment it on _any_ change to an already-published app** (compose, volumes, `form_fields`, env, image tag), not only on upstream version upgrades. Otherwise existing installs never see the fix. `updated_at` must stay `< Date.now()`.
