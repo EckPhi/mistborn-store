@@ -11,7 +11,7 @@
   ],
   "description": "Homeway provides free, secure remote access to your Home Assistant instance, plus Amazon Alexa and Google Assistant integration and free remote access notifications. It runs as a lightweight relay container alongside Home Assistant — no port forwarding, VPN or dynamic DNS required.",
   "tipi_version": 1,
-  "version": "latest",
+  "version": "3.0.8",
   "source": "https://homeway.io",
   "website": "https://homeway.io",
   "exposable": false,

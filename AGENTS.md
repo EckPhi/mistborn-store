@@ -45,7 +45,13 @@ Required fields:
 | `source` | Source repo URL |
 | `exposable` | `true` if it can be exposed on a domain |
 
-Useful optional fields: `website`, `supported_architectures` (`["amd64","arm64"]`), `dynamic_config: true`, `form_fields`, `https`, `no_gui`, `url_suffix`, `force_expose`, `created_at`, `updated_at`.
+Useful optional fields: `website`, `supported_architectures` (`["amd64","arm64"]`), `dynamic_config: true`, `form_fields`, `https`, `no_gui`, `url_suffix`, `force_expose`, `force_pull`, `generate_vapid_keys`, `deprecated`, `min_tipi_version`, `uid`/`gid` (metadata, currently unused), `created_at`, `updated_at`.
+
+Notes:
+
+- `created_at` / `updated_at` are epoch **milliseconds** and are validated `< Date.now()` — a future/today-midnight value fails CI. Reuse an existing past timestamp.
+- `no_gui: true` for headless apps (no web UI) — hides the "Open" button. Pair with `exposable: false` if there is nothing to proxy (e.g. a WebSocket/API-only backend).
+- `version` should mirror the pinned `image` tag (see Image pinning). `force_pull` is generally unnecessary once images are pinned.
 
 **Valid `categories`** (any other value fails CI):
 
@@ -63,21 +69,39 @@ Each field: `type`, `label`, `env_variable`, `required` (all required) plus opti
 
 Field `type` is one of: `text, password, email, number, fqdn, ip, fqdnip, random, boolean`.
 
+- `default` only allowed when `required: false`.
+- `options` (for dropdowns): array of `{ "label": "<shown>", "value": "<env value>" }`.
+- For `type: random`: `min` sets the generated string length (default 32); `encoding` is `"base64"` or `"hex"`.
+- The `env_variable` is what you reference as `${VAR}` in `docker-compose.json`. Prefix app-specific vars to avoid collisions with upstream image vars (e.g. form `EUFY_USERNAME` → compose `"USERNAME": "${EUFY_USERNAME}"`).
+
 ## docker-compose.json
 
-Top-level shape: `{ "services": [ ... ] }` (optional `overrides`).
+Top-level shape:
+
+```json
+{
+  "schemaVersion": 2,
+  "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json",
+  "services": [ ... ],
+  "overrides": [ ... ]   // optional, per-architecture
+}
+```
+
+`schemaVersion` and `$schema` are stripped by the validator but included for parity with the official store and for editor schema support — add them.
 
 Each service object supports (subset most used):
 
 - `name` (required) — service name
-- `image` (required) — pin a real tag, avoid bare `latest` where possible
+- `image` (required) — **always pin an explicit immutable tag, never `latest`** (and never a floating major like `:2`). See Image pinning below
 - `internalPort` — port the container listens on
 - `isMain` — mark the primary web UI service
-- `environment` — **object** map `{ "KEY": "value" }` (not an array)
+- `environment` — **object** map `{ "KEY": "value" }`. ⚠️ The runtipi docs show an array `[{ "key", "value" }]` ("legacy v2 JSON") — ignore that. The installed `@runtipi/common` Zod schema is `z.record(...)`, i.e. an **object**, and that is what CI validates. Use the object form.
 - `addPorts` — array of `{ containerPort, hostPort, udp?, tcp?, interface? }`. **Only for _extra_ ports.** Do **not** republish the main `internalPort` here — see Reverse proxy below
-- `volumes` — array of `{ hostPath, containerPath, readOnly?, shared?, private? }`. Use `./<name>/...` relative host paths (resolved under the app data dir)
+- `volumes` — array of `{ hostPath, containerPath, readOnly?, shared?, private? }`. Write `hostPath` with the **`${APP_DATA_DIR}/...`** variable (e.g. `"${APP_DATA_DIR}/data"`), not a bare `./...` relative path. `./` passes CI (schema only checks it's a string) but is not the documented/official convention and resolution is not guaranteed.
 - `dependsOn` — `{ "<service>": { "condition": "service_started" | "service_healthy" | "service_completed_successfully" } }`
-- `command`, `entrypoint`, `user`, `hostname`, `networkMode`, `privileged`, `capAdd`, `devices`, `healthCheck`, `restart` via `deploy`, etc.
+- `command`, `entrypoint`, `user`, `hostname`, `networkMode`, `privileged`, `capAdd`, `capDrop`, `securityOpt`, `devices`, `sysctls`, `healthCheck`, `extraLabels`, `deploy` (resource limits), etc.
+
+Other runtipi variables usable as `${...}`: `${APP_DATA_DIR}`, `${APP_PORT}`, `${TZ}`, `${UID}`, plus any `env_variable` from `form_fields`.
 
 ## Reverse proxy / networking
 
@@ -98,12 +122,34 @@ You do **not** write traefik labels or publish the main port yourself. Official 
 
 The main service's direct-access host port = `config.json`'s `port`.
 
+## Image pinning
+
+Always pin every `image` to an explicit, immutable tag and mirror it in `config.json` `version`.
+
+Why: reproducible installs, no surprise breakage when upstream re-pushes, and **`renovate.json` only bumps pinned tags**. Renovate's custom regex manager matches `"image": "<dep>:<currentValue>"` against the docker datasource — `latest` (or a floating `:2`) gives it nothing to compare, so it silently never updates. A real version unlocks auto bump PRs (which also run `scripts/update-config.ts` to sync `config.json`).
+
+Finding the current tag:
+
+- Docker Hub: `https://hub.docker.com/v2/repositories/<owner>/<image>/tags?page_size=100&ordering=last_updated` (official images use `library/<image>`).
+- GHCR: get a pull token from `https://ghcr.io/token?scope=repository:<owner>/<image>:pull`, then `GET https://ghcr.io/v2/<owner>/<image>/tags/list` with `Authorization: Bearer <token>`.
+
+Pick the newest **immutable** tag, preferring clean semver. Some upstreams only publish rolling tags — pin the current immutable one anyway (still better than `latest`):
+
+- build numbers (e.g. diyhue `1057`),
+- pre-release/RC (e.g. homey `12.10.0-rc.7`, music-assistant `2.0.0b63`) for beta-only projects,
+- commit-sha tags (e.g. openthread-border-router `sha-b868799`) when nothing else exists.
+
+Gotcha: don't assume `latest` exists — some repos (e.g. invoice-collector) publish `0.1`/`master` and **no** `latest` tag at all, so `:latest` would fail to pull. Always verify the tag is in the registry listing.
+
+Note: `renovate.json` disables bumps for the DB images `mariadb`, `mysql`, `mongo`, `postgres`, `redis` (bumped manually). `matchPackageNames` must match the actual image/dep name — e.g. the image is `mongo`, not `mongodb`.
+
 ## Adding an app — checklist
 
 1. Create `apps/<app-id>/` with the four files.
 2. Set `categories` from the valid enum; `id` == folder name.
+3. Pin every `image` to an immutable tag (verify it exists in the registry) and mirror it in `config.json` `version`. See Image pinning.
 3. Pick a unique host `port`. Mark one service `isMain: true` with its `internalPort`; do **not** republish that port in `addPorts`. Host-network apps → `exposable: false`. See Reverse proxy.
-4. Map persistent data to `volumes`.
+4. Map persistent data to `volumes` using `${APP_DATA_DIR}/...` host paths. Add `schemaVersion: 2` + `$schema` at the compose top level.
 5. Keep secrets out of the repo — expose them as `form_fields` / env with empty defaults.
 6. Add a logo at `metadata/logo.jpg` and a real `metadata/description.md`.
 7. Add a row to the Apps table in `README.md`.

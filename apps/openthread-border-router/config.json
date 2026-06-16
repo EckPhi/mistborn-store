@@ -11,7 +11,7 @@
   ],
   "description": "OpenThread Border Router (OTBR) connects a Thread mesh network to other IP-based networks such as your LAN and the internet. It is required to bring Thread-based smart-home devices (Matter-over-Thread) onto your network and needs a connected 802.15.4 Radio Co-Processor (RCP) dongle.",
   "tipi_version": 1,
-  "version": "latest",
+  "version": "sha-b868799",
   "source": "https://github.com/openthread/ot-br-posix",
   "website": "https://openthread.io",
   "exposable": false,

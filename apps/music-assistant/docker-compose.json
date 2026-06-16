@@ -1,8 +1,10 @@
 {
+  "schemaVersion": 2,
+  "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json",
   "services": [
     {
       "name": "music-assistant",
-      "image": "ghcr.io/music-assistant/server:latest",
+      "image": "ghcr.io/music-assistant/server:2.0.0b63",
       "isMain": true,
       "internalPort": 8095,
       "networkMode": "host",
@@ -19,7 +21,7 @@
       },
       "volumes": [
         {
-          "hostPath": "./data",
+          "hostPath": "${APP_DATA_DIR}/data",
           "containerPath": "/data",
           "readOnly": false,
           "shared": false,

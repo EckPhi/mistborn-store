@@ -1,8 +1,10 @@
 {
+  "schemaVersion": 2,
+  "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json",
   "services": [
     {
       "name": "diyhue",
-      "image": "diyhue/core:latest",
+      "image": "diyhue/core:1057",
       "isMain": true,
       "internalPort": 80,
       "networkMode": "host",
@@ -12,7 +14,7 @@
       },
       "volumes": [
         {
-          "hostPath": "./config",
+          "hostPath": "${APP_DATA_DIR}/config",
           "containerPath": "/opt/hue-emulator/config",
           "readOnly": false,
           "shared": false,
