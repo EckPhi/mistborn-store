@@ -7,10 +7,16 @@
       "image": "homewayio/homeway:3.0.8",
       "isMain": true,
       "internalPort": 11027,
-      "environment": {
-        "HOME_ASSISTANT_IP": "${HOMEWAY_HA_IP}",
-        "HOME_ASSISTANT_ACCESS_TOKEN": "${HOMEWAY_HA_TOKEN}"
-      },
+      "environment": [
+        {
+          "key": "HOME_ASSISTANT_IP",
+          "value": "${HOMEWAY_HA_IP}"
+        },
+        {
+          "key": "HOME_ASSISTANT_ACCESS_TOKEN",
+          "value": "${HOMEWAY_HA_TOKEN}"
+        }
+      ],
       "volumes": [
         {
           "hostPath": "${APP_DATA_DIR}/data",

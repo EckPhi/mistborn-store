@@ -8,10 +8,16 @@
       "isMain": true,
       "internalPort": 80,
       "networkMode": "host",
-      "environment": {
-        "MAC": "${DIYHUE_MAC}",
-        "TZ": "${TZ}"
-      },
+      "environment": [
+        {
+          "key": "MAC",
+          "value": "${DIYHUE_MAC}"
+        },
+        {
+          "key": "TZ",
+          "value": "${TZ}"
+        }
+      ],
       "volumes": [
         {
           "hostPath": "${APP_DATA_DIR}/config",
