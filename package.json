@@ -5,19 +5,20 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "bun test"
+    "test": "bun test",
+    "lint": "biome check",
+    "lint:ci": "biome ci"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@biomejs/biome": "^2.5.0",
     "@types/bun": "latest",
     "@types/node": "^22.14.1"
   },
   "dependencies": {
-    "@runtipi/common": "^0.8.0",
-    "bun": "^1.2.10",
-    "zod-validation-error": "^3.4.0"
+    "ajv": "^8.20.0"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
