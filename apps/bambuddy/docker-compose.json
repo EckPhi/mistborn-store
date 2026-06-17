@@ -4,7 +4,7 @@
   "services": [
     {
       "name": "bambuddy",
-      "image": "ghcr.io/maziggy/bambuddy:0.2.3",
+      "image": "ghcr.io/maziggy/bambuddy:0.2.4.7",
       "isMain": true,
       "internalPort": 8000,
       "networkMode": "host",
