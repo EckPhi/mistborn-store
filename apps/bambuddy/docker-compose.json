@@ -11,12 +11,12 @@
       "capAdd": [
         "NET_BIND_SERVICE"
       ],
-      "environment": {
-        "TZ": "${TZ}",
-        "PORT": "8000",
-        "PUID": "${BAMBUDDY_PUID}",
-        "PGID": "${BAMBUDDY_PGID}"
-      },
+      "environment": [
+        { "key": "TZ", "value": "${TZ}" },
+        { "key": "PORT", "value": "8000" },
+        { "key": "PUID", "value": "${BAMBUDDY_PUID}" },
+        { "key": "PGID", "value": "${BAMBUDDY_PGID}" }
+      ],
       "volumes": [
         {
           "hostPath": "${APP_DATA_DIR}/data",

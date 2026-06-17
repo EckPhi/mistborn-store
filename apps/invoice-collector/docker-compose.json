@@ -7,20 +7,44 @@
       "image": "ghcr.io/invoice-collector/invoice-collector:0.1",
       "isMain": true,
       "command": "npm run start",
-      "environment": {
-        "PORT": "8080",
-        "REGISTRY_SERVER_ENDPOINT": "https://registry.invoice-collector.com",
-        "DATABASE_URI": "mongodb://mongodb:27017",
-        "DATABASE_MONGODB_NAME": "prod",
-        "SECRET_MANAGER_TYPE": "bitwarden",
-        "SECRET_MANAGER_BITWARDEN_API_URI": "https://vault.bitwarden.eu/api",
-        "SECRET_MANAGER_BITWARDEN_IDENTITY_URI": "https://vault.bitwarden.eu/identity",
-        "SECRET_MANAGER_BITWARDEN_ACCESS_TOKEN": "",
-        "SECRET_MANAGER_BITWARDEN_ORGANIZATION_ID": "",
-        "SECRET_MANAGER_BITWARDEN_PROJECT_ID": "",
-        "PROXY_TYPE": "none",
-        "ENV": "prod"
-      },
+      "environment": [
+        {
+          "key": "PORT",
+          "value": "8080"
+        },
+        {
+          "key": "REGISTRY_SERVER_ENDPOINT",
+          "value": "https://registry.invoice-collector.com"
+        },
+        {
+          "key": "DATABASE_URI",
+          "value": "mongodb://mongodb:27017"
+        },
+        {
+          "key": "DATABASE_MONGODB_NAME",
+          "value": "prod"
+        },
+        {
+          "key": "SECRET_MANAGER_TYPE",
+          "value": "bitwarden"
+        },
+        {
+          "key": "SECRET_MANAGER_BITWARDEN_API_URI",
+          "value": "https://vault.bitwarden.eu/api"
+        },
+        {
+          "key": "SECRET_MANAGER_BITWARDEN_IDENTITY_URI",
+          "value": "https://vault.bitwarden.eu/identity"
+        },
+        {
+          "key": "PROXY_TYPE",
+          "value": "none"
+        },
+        {
+          "key": "ENV",
+          "value": "prod"
+        }
+      ],
       "internalPort": 8080,
       "dependsOn": {
         "mongodb": {

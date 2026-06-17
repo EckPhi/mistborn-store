@@ -194,9 +194,21 @@
             }
           },
           "environment": {
-            "type": "object",
-            "additionalProperties": {
-              "type": ["string", "number"]
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "value": {
+                  "type": ["string", "number", "boolean"],
+                  "minLength": 1
+                }
+              },
+              "required": ["key", "value"],
+              "additionalProperties": false
             }
           },
           "sysctls": {

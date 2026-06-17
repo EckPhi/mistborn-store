@@ -20,12 +20,24 @@
         "${OTBR_DEVICE_PATH}:${OTBR_DEVICE_PATH}",
         "/dev/net/tun:/dev/net/tun"
       ],
-      "environment": {
-        "OT_RCP_DEVICE": "${OTBR_RCP_DEVICE}",
-        "OT_INFRA_IF": "${OTBR_INFRA_IF}",
-        "OT_THREAD_IF": "wpan0",
-        "OT_LOG_LEVEL": "7"
-      },
+      "environment": [
+        {
+          "key": "OT_RCP_DEVICE",
+          "value": "${OTBR_RCP_DEVICE}"
+        },
+        {
+          "key": "OT_INFRA_IF",
+          "value": "${OTBR_INFRA_IF}"
+        },
+        {
+          "key": "OT_THREAD_IF",
+          "value": "wpan0"
+        },
+        {
+          "key": "OT_LOG_LEVEL",
+          "value": "7"
+        }
+      ],
       "volumes": [
         {
           "hostPath": "${APP_DATA_DIR}/data",

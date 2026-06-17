@@ -7,13 +7,28 @@
       "image": "influxdb:2.9.1",
       "isMain": true,
       "internalPort": 8086,
-      "environment": {
-        "DOCKER_INFLUXDB_INIT_MODE": "setup",
-        "DOCKER_INFLUXDB_INIT_USERNAME": "${INFLUXDB_INIT_USERNAME}",
-        "DOCKER_INFLUXDB_INIT_PASSWORD": "${INFLUXDB_INIT_PASSWORD}",
-        "DOCKER_INFLUXDB_INIT_ORG": "${INFLUXDB_INIT_ORG}",
-        "DOCKER_INFLUXDB_INIT_BUCKET": "${INFLUXDB_INIT_BUCKET}"
-      },
+      "environment": [
+        {
+          "key": "DOCKER_INFLUXDB_INIT_MODE",
+          "value": "setup"
+        },
+        {
+          "key": "DOCKER_INFLUXDB_INIT_USERNAME",
+          "value": "${INFLUXDB_INIT_USERNAME}"
+        },
+        {
+          "key": "DOCKER_INFLUXDB_INIT_PASSWORD",
+          "value": "${INFLUXDB_INIT_PASSWORD}"
+        },
+        {
+          "key": "DOCKER_INFLUXDB_INIT_ORG",
+          "value": "${INFLUXDB_INIT_ORG}"
+        },
+        {
+          "key": "DOCKER_INFLUXDB_INIT_BUCKET",
+          "value": "${INFLUXDB_INIT_BUCKET}"
+        }
+      ],
       "volumes": [
         {
           "hostPath": "${APP_DATA_DIR}/data",

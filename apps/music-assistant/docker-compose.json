@@ -16,9 +16,12 @@
       "securityOpt": [
         "apparmor:unconfined"
       ],
-      "environment": {
-        "LOG_LEVEL": "info"
-      },
+      "environment": [
+        {
+          "key": "LOG_LEVEL",
+          "value": "info"
+        }
+      ],
       "volumes": [
         {
           "hostPath": "${APP_DATA_DIR}/data",
