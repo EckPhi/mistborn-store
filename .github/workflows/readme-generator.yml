@@ -1,0 +1,32 @@
+name: Readme Generator
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "apps/*/config.json"
+
+jobs:
+  generate-readme-file:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Generate README app list
+        run: bun .github/scripts/readme-generator.ts
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "docs: regenerate readme app list"
+          branch: bot/readme-update
+          delete-branch: true
+          title: "readme-generator: update readme"
+          body: "Automated regeneration of the app list in README.md from each app's config.json."
+          labels: bot
