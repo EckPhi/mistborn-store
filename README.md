@@ -20,6 +20,7 @@ See the [Runtipi custom app store guide](https://runtipi.io/docs/guides/create-y
 | | Name | Description |
 |---|---|---|
 | <img src="apps/appdaemon/metadata/logo.jpg" width="32"> | [AppDaemon](https://github.com/AppDaemon/appdaemon) | Python apps and HADashboard for Home Assistant automation |
+| <img src="apps/bambuddy/metadata/logo.jpg" width="32"> | [Bambuddy](https://github.com/maziggy/bambuddy) | Self-hosted command center for Bambu Lab 3D printers |
 | <img src="apps/diyhue/metadata/logo.jpg" width="32"> | [diyHue](https://github.com/diyhue/diyHue) | Open-source Philips Hue bridge emulator |
 | <img src="apps/eufy-security-ws/metadata/logo.jpg" width="32"> | [Eufy Security WS](https://github.com/bropat/eufy-security-ws) | WebSocket server for Eufy Security devices |
 | <img src="apps/homey/metadata/logo.jpg" width="32"> | [Homey Pro](https://homey.app) | Run Homey Pro as a virtual smart-home hub |

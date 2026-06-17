@@ -1,0 +1,43 @@
+{
+  "name": "Bambuddy",
+  "id": "bambuddy",
+  "available": true,
+  "short_desc": "Self-hosted command center for Bambu Lab 3D printers",
+  "author": "maziggy",
+  "port": 8000,
+  "categories": [
+    "automation",
+    "utilities"
+  ],
+  "description": "Bambuddy is a self-hosted, cloud-free command center for Bambu Lab 3D printers — from a single A1 to a large print farm. It talks to printers directly over the local network (Developer Mode), stores all print history locally, and adds scheduling, automation, notifications, server-side slicing and virtual-printer/proxy features. It uses host networking so it can discover printers via SSDP multicast and stream cameras.",
+  "tipi_version": 1,
+  "version": "0.2.4.7",
+  "source": "https://github.com/maziggy/bambuddy",
+  "website": "https://bambuddy.cool",
+  "exposable": false,
+  "supported_architectures": [
+    "arm64",
+    "amd64"
+  ],
+  "created_at": 1781308800000,
+  "updated_at": 1781308800000,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "number",
+      "label": "PUID",
+      "env_variable": "BAMBUDDY_PUID",
+      "required": false,
+      "default": "1000",
+      "hint": "Host user id the container drops to (run `id -u`). Files in the data volume are owned by this user."
+    },
+    {
+      "type": "number",
+      "label": "PGID",
+      "env_variable": "BAMBUDDY_PGID",
+      "required": false,
+      "default": "1000",
+      "hint": "Host group id the container drops to (run `id -g`)."
+    }
+  ]
+}

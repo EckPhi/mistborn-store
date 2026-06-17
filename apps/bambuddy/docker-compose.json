@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 2,
+  "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json",
+  "services": [
+    {
+      "name": "bambuddy",
+      "image": "ghcr.io/maziggy/bambuddy:0.2.4.7",
+      "isMain": true,
+      "internalPort": 8000,
+      "networkMode": "host",
+      "capAdd": [
+        "NET_BIND_SERVICE"
+      ],
+      "environment": {
+        "TZ": "${TZ}",
+        "PORT": "8000",
+        "PUID": "${BAMBUDDY_PUID}",
+        "PGID": "${BAMBUDDY_PGID}"
+      },
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/data",
+          "containerPath": "/app/data",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "${APP_DATA_DIR}/logs",
+          "containerPath": "/app/logs",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ]
+    }
+  ]
+}
