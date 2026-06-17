@@ -33,6 +33,18 @@
       "automerge": false
     },
     {
+      "description": "Label safe updates so the auto-merge workflow merges them after CI passes",
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "addLabels": [
+        "automerge"
+      ]
+    },
+    {
       "matchDepTypes": [
         "devDependencies"
       ],
