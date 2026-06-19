@@ -23,6 +23,23 @@
   ],
   "packageRules": [
     {
+      "description": "Bambuddy slicer sidecars are tagged bambuddy-<semver>; strip the prefix so Renovate can compare them and bump them in lockstep with the main image",
+      "matchPackageNames": [
+        "ghcr.io/maziggy/bambuddy",
+        "ghcr.io/maziggy/orca-slicer-api",
+        "ghcr.io/maziggy/bambu-studio-api"
+      ],
+      "groupName": "bambuddy"
+    },
+    {
+      "matchPackageNames": [
+        "ghcr.io/maziggy/orca-slicer-api",
+        "ghcr.io/maziggy/bambu-studio-api"
+      ],
+      "extractVersion": "^bambuddy-(?<version>.+)$",
+      "versioning": "semver"
+    },
+    {
       "matchUpdateTypes": [
         "minor",
         "major",
