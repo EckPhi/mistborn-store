@@ -16,7 +16,6 @@
   "website": "https://bambuddy.cool",
   "exposable": false,
   "supported_architectures": [
-    "arm64",
     "amd64"
   ],
   "created_at": 1781308800000,

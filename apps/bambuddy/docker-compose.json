@@ -15,7 +15,8 @@
         { "key": "TZ", "value": "${TZ}" },
         { "key": "PORT", "value": "8000" },
         { "key": "PUID", "value": "${BAMBUDDY_PUID}" },
-        { "key": "PGID", "value": "${BAMBUDDY_PGID}" }
+        { "key": "PGID", "value": "${BAMBUDDY_PGID}" },
+        { "key": "SLICER_API_URL", "value": "http://localhost:3003" }
       ],
       "volumes": [
         {
@@ -33,6 +34,68 @@
           "private": false
         }
       ]
+    },
+    {
+      "name": "orca-slicer-api",
+      "image": "ghcr.io/maziggy/orca-slicer-api:bambuddy-0.2.4.7",
+      "environment": [
+        { "key": "NODE_ENV", "value": "production" },
+        { "key": "PORT", "value": "3000" }
+      ],
+      "addPorts": [
+        {
+          "hostPort": 3003,
+          "containerPort": 3000,
+          "tcp": true
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/orca",
+          "containerPath": "/app/data",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ],
+      "healthCheck": {
+        "test": "curl -f http://localhost:3000/health || exit 1",
+        "interval": "30s",
+        "timeout": "5s",
+        "startPeriod": "10s",
+        "retries": 3
+      }
+    },
+    {
+      "name": "bambu-studio-api",
+      "image": "ghcr.io/maziggy/bambu-studio-api:bambuddy-0.2.4.7",
+      "environment": [
+        { "key": "NODE_ENV", "value": "production" },
+        { "key": "PORT", "value": "3000" }
+      ],
+      "addPorts": [
+        {
+          "hostPort": 3001,
+          "containerPort": 3000,
+          "tcp": true
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/bambu",
+          "containerPath": "/app/data",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ],
+      "healthCheck": {
+        "test": "curl -f http://localhost:3000/health || exit 1",
+        "interval": "30s",
+        "timeout": "5s",
+        "startPeriod": "10s",
+        "retries": 3
+      }
     }
   ]
 }
