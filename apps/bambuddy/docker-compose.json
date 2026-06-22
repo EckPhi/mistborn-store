@@ -7,16 +7,12 @@
       "image": "ghcr.io/maziggy/bambuddy:0.2.4.7",
       "isMain": true,
       "internalPort": 8000,
-      "networkMode": "host",
-      "capAdd": [
-        "NET_BIND_SERVICE"
-      ],
       "environment": [
         { "key": "TZ", "value": "${TZ}" },
         { "key": "PORT", "value": "8000" },
         { "key": "PUID", "value": "${BAMBUDDY_PUID}" },
         { "key": "PGID", "value": "${BAMBUDDY_PGID}" },
-        { "key": "SLICER_API_URL", "value": "http://localhost:3003" }
+        { "key": "SLICER_API_URL", "value": "http://orca-slicer-api:3000" }
       ],
       "volumes": [
         {
@@ -42,13 +38,6 @@
         { "key": "NODE_ENV", "value": "production" },
         { "key": "PORT", "value": "3000" }
       ],
-      "addPorts": [
-        {
-          "hostPort": 3003,
-          "containerPort": 3000,
-          "tcp": true
-        }
-      ],
       "volumes": [
         {
           "hostPath": "${APP_DATA_DIR}/orca",
@@ -72,13 +61,6 @@
       "environment": [
         { "key": "NODE_ENV", "value": "production" },
         { "key": "PORT", "value": "3000" }
-      ],
-      "addPorts": [
-        {
-          "hostPort": 3001,
-          "containerPort": 3000,
-          "tcp": true
-        }
       ],
       "volumes": [
         {

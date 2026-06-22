@@ -9,17 +9,17 @@
     "automation",
     "utilities"
   ],
-  "description": "Bambuddy is a self-hosted, cloud-free command center for Bambu Lab 3D printers — from a single A1 to a large print farm. It talks to printers directly over the local network (Developer Mode), stores all print history locally, and adds scheduling, automation, notifications, server-side slicing and virtual-printer/proxy features. It uses host networking so it can discover printers via SSDP multicast and stream cameras.",
-  "tipi_version": 2,
+  "description": "Bambuddy is a self-hosted, cloud-free command center for Bambu Lab 3D printers — from a single A1 to a large print farm. It talks to printers directly over the local network (Developer Mode), stores all print history locally, and adds scheduling, automation, notifications, server-side slicing and virtual-printer/proxy features. Runs on a bridge network so it can sit behind the built-in reverse proxy; add printers manually by IP (automatic SSDP discovery needs host networking).",
+  "tipi_version": 3,
   "version": "0.2.4.7",
   "source": "https://github.com/maziggy/bambuddy",
   "website": "https://bambuddy.cool",
-  "exposable": false,
+  "exposable": true,
   "supported_architectures": [
     "amd64"
   ],
   "created_at": 1781308800000,
-  "updated_at": 1781308800000,
+  "updated_at": 1782147846458,
   "dynamic_config": true,
   "form_fields": [
     {
