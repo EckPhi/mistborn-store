@@ -14,7 +14,7 @@
   "version": "3.0.8",
   "source": "https://homeway.io",
   "website": "https://homeway.io",
-  "exposable": false,
+  "exposable": true,
   "no_gui": true,
   "supported_architectures": [
     "arm64",

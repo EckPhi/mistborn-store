@@ -14,7 +14,7 @@
   "version": "3.0.1",
   "source": "https://github.com/bropat/eufy-security-ws",
   "website": "https://bropat.github.io/eufy-security-ws/",
-  "exposable": false,
+  "exposable": true,
   "no_gui": true,
   "supported_architectures": [
     "arm64",
