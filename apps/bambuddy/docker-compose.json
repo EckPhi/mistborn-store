@@ -4,7 +4,7 @@
   "services": [
     {
       "name": "bambuddy",
-      "image": "ghcr.io/maziggy/bambuddy:0.2.4.7",
+      "image": "ghcr.io/maziggy/bambuddy:0.2.4.8",
       "isMain": true,
       "internalPort": 8000,
       "environment": [
