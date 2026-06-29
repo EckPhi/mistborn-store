@@ -24,6 +24,7 @@ See the [Runtipi custom app store guide](https://runtipi.io/docs/guides/create-y
 | <img src="apps/bambuddy/metadata/logo.jpg" width="32"> | [Bambuddy](https://github.com/maziggy/bambuddy) | Self-hosted command center for Bambu Lab 3D printers |
 | <img src="apps/diyhue/metadata/logo.jpg" width="32"> | [diyHue](https://github.com/diyhue/diyHue) | Open-source Philips Hue bridge emulator |
 | <img src="apps/eufy-security-ws/metadata/logo.jpg" width="32"> | [Eufy Security WS](https://github.com/bropat/eufy-security-ws) | WebSocket server for Eufy Security devices |
+| <img src="apps/home-assistant-matter-hub/metadata/logo.jpg" width="32"> | [Home Assistant Matter Hub](https://github.com/RiDDiX/home-assistant-matter-hub) | Bridge Home Assistant entities to Matter controllers |
 | <img src="apps/homeway/metadata/logo.jpg" width="32"> | [Homeway](https://homeway.io) | Free, secure remote access for Home Assistant |
 | <img src="apps/homey/metadata/logo.jpg" width="32"> | [Homey Pro](https://homey.app) | Run the Homey Self-Hosted smart-home hub |
 | <img src="apps/influxdb/metadata/logo.jpg" width="32"> | [InfluxDB](https://github.com/influxdata/influxdb) | Time-series database for metrics and events |
