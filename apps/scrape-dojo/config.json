@@ -1,0 +1,78 @@
+{
+  "name": "Scrape Dojo",
+  "id": "scrape-dojo",
+  "available": true,
+  "short_desc": "Self-hosted, config-driven web scraping platform",
+  "author": "@disane87",
+  "port": 8092,
+  "categories": [
+    "data",
+    "utilities"
+  ],
+  "description": "Scrape Dojo is a self-hosted web scraping platform. Scrapes are defined as JSONC config files (navigate / extract / transform / log actions) and run via a Puppeteer-driven browser, with a built-in UI and REST API on the same port. A single container serves both API and UI. The five auth/encryption secrets are generated automatically on install and persisted — no manual key generation needed. MFA is enabled by default; set 'Require MFA' to off if you don't want it. Leave 'Initialize database schema' on for the first start so the SQLite tables are created, then turn it off to avoid accidental schema changes on updates.",
+  "tipi_version": 1,
+  "version": "1.15.1",
+  "source": "https://github.com/disane87/scrape-dojo",
+  "website": "https://scrape-dojo.com",
+  "exposable": true,
+  "supported_architectures": [
+    "arm64",
+    "amd64"
+  ],
+  "created_at": 1781340500000,
+  "updated_at": 1781340500000,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "boolean",
+      "label": "Initialize database schema (DB_SYNCHRONIZE)",
+      "env_variable": "SD_DB_SYNCHRONIZE",
+      "required": false,
+      "default": true,
+      "hint": "Must be on for the very first start so the SQLite tables are created. Turn off after initial setup to prevent schema changes or data loss on updates."
+    },
+    {
+      "type": "boolean",
+      "label": "Require MFA",
+      "env_variable": "SD_REQUIRE_MFA",
+      "required": false,
+      "default": true,
+      "hint": "MFA (TOTP) is enabled by default. Turn off to skip MFA on account creation."
+    },
+    {
+      "type": "random",
+      "label": "Encryption key",
+      "env_variable": "SD_ENCRYPTION_KEY",
+      "encoding": "hex",
+      "min": 64
+    },
+    {
+      "type": "random",
+      "label": "JWT secret",
+      "env_variable": "SD_JWT_SECRET",
+      "encoding": "hex",
+      "min": 64
+    },
+    {
+      "type": "random",
+      "label": "Refresh token secret",
+      "env_variable": "SD_REFRESH_TOKEN_SECRET",
+      "encoding": "hex",
+      "min": 64
+    },
+    {
+      "type": "random",
+      "label": "MFA encryption key",
+      "env_variable": "SD_MFA_ENCRYPTION_KEY",
+      "encoding": "hex",
+      "min": 64
+    },
+    {
+      "type": "random",
+      "label": "MFA challenge secret",
+      "env_variable": "SD_MFA_CHALLENGE_SECRET",
+      "encoding": "hex",
+      "min": 64
+    }
+  ]
+}
