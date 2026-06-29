@@ -29,7 +29,7 @@ See the [Runtipi custom app store guide](https://runtipi.io/docs/guides/create-y
 | <img src="apps/influxdb/metadata/logo.jpg" width="32"> | [InfluxDB](https://github.com/influxdata/influxdb) | Time-series database for metrics and events |
 | <img src="apps/invoice-collector/metadata/logo.jpg" width="32"> | [Invoice Collector](https://github.com/invoice-collector/invoice-collector) | Collect your invoices in seconds |
 | <img src="apps/music-assistant/metadata/logo.jpg" width="32"> | [Music Assistant](https://github.com/music-assistant/server) | Music library manager and multi-room streaming |
-| <img src="apps/openthread-border-router/metadata/logo.jpg" width="32"> | [OpenThread Border Router](https://github.com/openthread/ot-br-posix) | Thread mesh network border router |
+| <img src="apps/openthread-border-router/metadata/logo.jpg" width="32"> | [OpenThread Border Router](https://github.com/bnutzer/docker-otbr-tcp) | Thread mesh network border router (network RCP) |
 | <img src="apps/victoriametrics/metadata/logo.jpg" width="32"> | [VictoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics) | Fast, cost-effective time-series database |
 | <img src="apps/zigbee2mqtt/metadata/logo.jpg" width="32"> | [Zigbee2MQTT](https://github.com/Koenkk/zigbee2mqtt) | Zigbee to MQTT bridge (network or USB adapter) |
 <!-- APPS:END -->

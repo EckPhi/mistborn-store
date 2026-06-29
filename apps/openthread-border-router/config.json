@@ -2,17 +2,17 @@
   "name": "OpenThread Border Router",
   "id": "openthread-border-router",
   "available": true,
-  "short_desc": "Thread mesh network border router",
+  "short_desc": "Thread mesh network border router (network RCP)",
   "author": "OpenThread",
   "port": 8080,
   "categories": [
     "automation",
     "network"
   ],
-  "description": "OpenThread Border Router (OTBR) connects a Thread mesh network to other IP-based networks such as your LAN and the internet. It is required to bring Thread-based smart-home devices (Matter-over-Thread) onto your network and needs a connected 802.15.4 Radio Co-Processor (RCP) dongle.",
-  "tipi_version": 2,
-  "version": "sha-b868799",
-  "source": "https://github.com/openthread/ot-br-posix",
+  "description": "OpenThread Border Router (OTBR) connects a Thread mesh network to other IP-based networks such as your LAN and the internet. It is required to bring Thread-based smart-home devices (Matter-over-Thread) onto your network. This build uses the bnutzer/otbr-tcp image, which bridges a network-attached (serial-over-IP) 802.15.4 Radio Co-Processor — e.g. an SLZB-06/-MR — to OTBR via socat. No USB dongle or host serial device is needed; point it at the radio's IP and TCP port.",
+  "tipi_version": 3,
+  "version": "build-55",
+  "source": "https://github.com/bnutzer/docker-otbr-tcp",
   "website": "https://openthread.io",
   "exposable": false,
   "supported_architectures": [
@@ -20,30 +20,38 @@
     "amd64"
   ],
   "created_at": 1781308800000,
-  "updated_at": 1781651098006,
+  "updated_at": 1782743000000,
   "dynamic_config": true,
   "form_fields": [
     {
       "type": "text",
-      "label": "RCP radio device URL",
-      "env_variable": "OTBR_RCP_DEVICE",
+      "label": "RCP radio host",
+      "env_variable": "OTBR_RCP_HOST",
       "required": true,
-      "default": "spinel+hdlc+uart:///dev/ttyACM0?uart-baudrate=460800",
-      "hint": "Spinel URL of your 802.15.4 RCP dongle. The serial device must exist on the host (see below)."
+      "placeholder": "192.168.68.100",
+      "hint": "IP or hostname of your network-attached Thread radio (e.g. SLZB-06M)."
+    },
+    {
+      "type": "number",
+      "label": "RCP radio TCP port",
+      "env_variable": "OTBR_RCP_PORT",
+      "required": false,
+      "default": "6638",
+      "hint": "Serial-over-IP TCP port of the Thread radio. SLZB default is 6638."
+    },
+    {
+      "type": "number",
+      "label": "RCP baudrate",
+      "env_variable": "OTBR_RCP_BAUDRATE",
+      "required": false,
+      "default": "460800",
+      "hint": "RCP UART baudrate. Leave at 460800 unless your radio differs."
     },
     {
       "type": "text",
-      "label": "Serial device path",
-      "env_variable": "OTBR_DEVICE_PATH",
-      "required": true,
-      "default": "/dev/ttyACM0",
-      "hint": "Host path of the RCP dongle, passed through to the container."
-    },
-    {
-      "type": "text",
-      "label": "Infrastructure interface",
-      "env_variable": "OTBR_INFRA_IF",
-      "required": true,
+      "label": "Backbone interface",
+      "env_variable": "OTBR_BACKBONE_IF",
+      "required": false,
       "default": "eth0",
       "hint": "Host LAN/Wi-Fi interface, e.g. eth0 or wlan0."
     }

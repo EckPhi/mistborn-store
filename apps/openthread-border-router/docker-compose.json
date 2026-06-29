@@ -4,10 +4,11 @@
   "services": [
     {
       "name": "otbr",
-      "image": "openthread/border-router:sha-b868799",
+      "image": "bnutzer/otbr-tcp:build-55",
       "isMain": true,
-      "internalPort": 80,
+      "internalPort": 8080,
       "networkMode": "host",
+      "privileged": true,
       "capAdd": [
         "NET_ADMIN"
       ],
@@ -17,21 +18,32 @@
         "net.ipv6.conf.all.forwarding": 1
       },
       "devices": [
-        "${OTBR_DEVICE_PATH}:${OTBR_DEVICE_PATH}",
         "/dev/net/tun:/dev/net/tun"
       ],
       "environment": [
         {
-          "key": "OT_RCP_DEVICE",
-          "value": "${OTBR_RCP_DEVICE}"
+          "key": "RCP_HOST",
+          "value": "${OTBR_RCP_HOST}"
         },
         {
-          "key": "OT_INFRA_IF",
-          "value": "${OTBR_INFRA_IF}"
+          "key": "RCP_PORT",
+          "value": "${OTBR_RCP_PORT}"
         },
         {
-          "key": "OT_THREAD_IF",
-          "value": "wpan0"
+          "key": "RCP_BAUDRATE",
+          "value": "${OTBR_RCP_BAUDRATE}"
+        },
+        {
+          "key": "OTBR_BACKBONE_IF",
+          "value": "${OTBR_BACKBONE_IF}"
+        },
+        {
+          "key": "OTBR_WEB_ENABLE",
+          "value": "1"
+        },
+        {
+          "key": "OTBR_WEB_PORT",
+          "value": "8080"
         },
         {
           "key": "OT_LOG_LEVEL",
@@ -41,7 +53,7 @@
       "volumes": [
         {
           "hostPath": "${APP_DATA_DIR}/data",
-          "containerPath": "/data",
+          "containerPath": "/var/lib/thread",
           "readOnly": false,
           "shared": false,
           "private": false
