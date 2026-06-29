@@ -1,0 +1,43 @@
+{
+  "name": "Zigbee2MQTT",
+  "id": "zigbee2mqtt",
+  "available": true,
+  "short_desc": "Zigbee to MQTT bridge (network or USB adapter)",
+  "author": "@Koenkk",
+  "port": 8290,
+  "categories": [
+    "utilities",
+    "automation"
+  ],
+  "description": "Zigbee to MQTT bridge — get rid of your proprietary Zigbee bridges. This build of Zigbee2MQTT drops the mandatory USB device passthrough so it works with a network (TCP/serial-over-IP) Zigbee adapter such as a SLZB-06 or a ser2net host. The adapter is configured via the Serial port field (e.g. tcp://192.168.68.100:6638). For a local USB stick you would still need to add a docker device mapping manually.",
+  "tipi_version": 1,
+  "version": "2.12.0",
+  "source": "https://github.com/Koenkk/zigbee2mqtt",
+  "website": "https://www.zigbee2mqtt.io/",
+  "exposable": true,
+  "supported_architectures": [
+    "arm64",
+    "amd64"
+  ],
+  "created_at": 1691943801422,
+  "updated_at": 1781340416941,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Serial port (adapter)",
+      "env_variable": "Z2M_SERIAL_PORT",
+      "required": true,
+      "placeholder": "tcp://192.168.68.100:6638",
+      "hint": "Network adapter: tcp://<host>:<port> (e.g. tcp://192.168.68.100:6638). USB adapter: a /dev path (also requires a manual device mapping)."
+    },
+    {
+      "type": "text",
+      "label": "MQTT server",
+      "env_variable": "Z2M_MQTT_SERVER",
+      "required": false,
+      "default": "mqtt://localhost:1883",
+      "hint": "MQTT broker URL, e.g. mqtt://192.168.68.10:1883"
+    }
+  ]
+}
