@@ -12,11 +12,6 @@
       "capAdd": [
         "NET_ADMIN"
       ],
-      "sysctls": {
-        "net.ipv6.conf.all.disable_ipv6": 0,
-        "net.ipv4.conf.all.forwarding": 1,
-        "net.ipv6.conf.all.forwarding": 1
-      },
       "devices": [
         "/dev/net/tun:/dev/net/tun"
       ],
@@ -46,8 +41,8 @@
           "value": "8080"
         },
         {
-          "key": "OT_LOG_LEVEL",
-          "value": "7"
+          "key": "OTBR_LOG_LEVEL_INT",
+          "value": "6"
         }
       ],
       "volumes": [
