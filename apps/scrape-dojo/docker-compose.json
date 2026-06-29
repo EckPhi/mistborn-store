@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 2,
+  "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json",
+  "services": [
+    {
+      "name": "scrape-dojo",
+      "image": "ghcr.io/disane87/scrape-dojo:1.15.1",
+      "isMain": true,
+      "internalPort": 80,
+      "environment": [
+        {
+          "key": "TZ",
+          "value": "${TZ}"
+        },
+        {
+          "key": "DB_TYPE",
+          "value": "sqlite"
+        },
+        {
+          "key": "DB_SYNCHRONIZE",
+          "value": "${SD_DB_SYNCHRONIZE}"
+        },
+        {
+          "key": "SCRAPE_DOJO_AUTH_REQUIRE_MFA",
+          "value": "${SD_REQUIRE_MFA}"
+        },
+        {
+          "key": "SCRAPE_DOJO_ENCRYPTION_KEY",
+          "value": "${SD_ENCRYPTION_KEY}"
+        },
+        {
+          "key": "SCRAPE_DOJO_AUTH_JWT_SECRET",
+          "value": "${SD_JWT_SECRET}"
+        },
+        {
+          "key": "SCRAPE_DOJO_AUTH_REFRESH_TOKEN_SECRET",
+          "value": "${SD_REFRESH_TOKEN_SECRET}"
+        },
+        {
+          "key": "SCRAPE_DOJO_AUTH_MFA_ENCRYPTION_KEY",
+          "value": "${SD_MFA_ENCRYPTION_KEY}"
+        },
+        {
+          "key": "SCRAPE_DOJO_AUTH_MFA_CHALLENGE_SECRET",
+          "value": "${SD_MFA_CHALLENGE_SECRET}"
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/data",
+          "containerPath": "/home/pptruser/app/data",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "${APP_DATA_DIR}/config",
+          "containerPath": "/home/pptruser/app/config",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "${APP_DATA_DIR}/downloads",
+          "containerPath": "/home/pptruser/app/downloads",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "${APP_DATA_DIR}/logs",
+          "containerPath": "/home/pptruser/app/logs",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "${APP_DATA_DIR}/browser-data",
+          "containerPath": "/home/pptruser/app/browser-data",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ]
+    }
+  ]
+}
