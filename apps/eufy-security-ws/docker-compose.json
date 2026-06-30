@@ -38,6 +38,47 @@
           "private": false
         }
       ]
+    },
+    {
+      "name": "go2rtc",
+      "image": "alexxit/go2rtc:1.9.14",
+      "environment": [
+        {
+          "key": "TZ",
+          "value": "${TZ}"
+        }
+      ],
+      "addPorts": [
+        {
+          "containerPort": 1984,
+          "hostPort": 1984,
+          "tcp": true
+        },
+        {
+          "containerPort": 8554,
+          "hostPort": 8554,
+          "tcp": true
+        },
+        {
+          "containerPort": 8555,
+          "hostPort": 8555,
+          "tcp": true
+        },
+        {
+          "containerPort": 8555,
+          "hostPort": 8555,
+          "udp": true
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/go2rtc",
+          "containerPath": "/config",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ]
     }
   ]
 }
