@@ -1,0 +1,25 @@
+{
+  "name": "Matter Server",
+  "id": "matter-server",
+  "available": true,
+  "short_desc": "Python Matter controller server (WebSocket)",
+  "author": "home-assistant-libs",
+  "port": 5580,
+  "categories": [
+    "automation",
+    "network"
+  ],
+  "description": "Python Matter Server is a Matter (CHIP) controller exposed over a WebSocket API. It is the backend Home Assistant's built-in Matter integration talks to, letting you commission and control Matter devices. It runs in host network mode (required by Matter for mDNS/IPv6 discovery and on-network commissioning) and has no web UI — it is a WebSocket service on port 5580 that you point the Home Assistant Matter integration at (ws://<host-ip>:5580/ws). Bluetooth commissioning is supported via the host D-Bus socket. Fabric state and PAA certificates are persisted in the data volume.",
+  "tipi_version": 1,
+  "version": "8.1.2",
+  "source": "https://github.com/home-assistant-libs/python-matter-server",
+  "website": "https://github.com/home-assistant-libs/python-matter-server",
+  "exposable": false,
+  "no_gui": true,
+  "supported_architectures": [
+    "arm64",
+    "amd64"
+  ],
+  "created_at": 1781340500000,
+  "updated_at": 1781340500000
+}

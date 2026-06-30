@@ -5,8 +5,6 @@
     {
       "name": "otbr",
       "image": "bnutzer/otbr-tcp:build-55",
-      "isMain": true,
-      "internalPort": 8080,
       "networkMode": "host",
       "privileged": true,
       "capAdd": [
