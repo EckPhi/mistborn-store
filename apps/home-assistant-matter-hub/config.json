@@ -1,0 +1,50 @@
+{
+  "name": "Home Assistant Matter Hub",
+  "id": "home-assistant-matter-hub",
+  "available": true,
+  "short_desc": "Bridge Home Assistant entities to Matter controllers",
+  "author": "@RiDDiX",
+  "port": 8482,
+  "categories": [
+    "automation",
+    "network"
+  ],
+  "description": "Home Assistant Matter Hub simulates Matter bridges to publish your Home Assistant entities to any Matter-compatible controller like Amazon Alexa, Apple Home or Google Home. This is the community-maintained RiDDiX fork that continues development after the original t0bst4r project was discontinued; existing paired devices keep working. It runs in host network mode (required by Matter for mDNS/IPv6 discovery), so it cannot be reverse-proxied — reach the web UI directly at http://<host-ip>:8482. You need a Home Assistant URL and a long-lived access token. Bridges and their entity filters are configured from the web UI; state is persisted in the data volume.",
+  "tipi_version": 1,
+  "version": "1.7.18",
+  "source": "https://github.com/RiDDiX/home-assistant-matter-hub",
+  "website": "https://riddix.github.io/home-assistant-matter-hub",
+  "exposable": false,
+  "supported_architectures": [
+    "arm64",
+    "amd64"
+  ],
+  "created_at": 1781340500000,
+  "updated_at": 1781340500000,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Home Assistant URL",
+      "env_variable": "HAMH_HOME_ASSISTANT_URL",
+      "required": true,
+      "placeholder": "http://192.168.1.10:8123",
+      "hint": "Base URL of your Home Assistant instance, including http(s):// and port."
+    },
+    {
+      "type": "password",
+      "label": "Home Assistant access token",
+      "env_variable": "HAMH_HOME_ASSISTANT_ACCESS_TOKEN",
+      "required": true,
+      "hint": "A long-lived access token. Create it in Home Assistant under your profile > Security > Long-lived access tokens."
+    },
+    {
+      "type": "text",
+      "label": "Log level",
+      "env_variable": "HAMH_LOG_LEVEL",
+      "required": false,
+      "default": "info",
+      "hint": "One of: silly, debug, http, info, warn, error."
+    }
+  ]
+}

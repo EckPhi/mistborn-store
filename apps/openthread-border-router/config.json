@@ -10,7 +10,7 @@
     "network"
   ],
   "description": "OpenThread Border Router (OTBR) connects a Thread mesh network to other IP-based networks such as your LAN and the internet. It is required to bring Thread-based smart-home devices (Matter-over-Thread) onto your network. This build uses the bnutzer/otbr-tcp image, which bridges a network-attached (serial-over-IP) 802.15.4 Radio Co-Processor — e.g. an SLZB-06/-MR — to OTBR via socat. No USB dongle or host serial device is needed; point it at the radio's IP and TCP port.",
-  "tipi_version": 4,
+  "tipi_version": 5,
   "version": "build-55",
   "source": "https://github.com/bnutzer/docker-otbr-tcp",
   "website": "https://openthread.io",
@@ -20,7 +20,7 @@
     "amd64"
   ],
   "created_at": 1781308800000,
-  "updated_at": 1782773000000,
+  "updated_at": 1782800000000,
   "dynamic_config": true,
   "form_fields": [
     {

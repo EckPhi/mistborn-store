@@ -21,6 +21,20 @@ Set these at install time:
 
 Two-factor authentication / CAPTCHA may be requested on first login; follow the project docs for completing it via the WebSocket API.
 
+## go2rtc (live streaming)
+
+This package also bundles **[go2rtc](https://github.com/AlexxIT/go2rtc)**, which the [eufy_security integration recommends](https://github.com/fuatakgun/eufy_security#2-install-go2rtc-add-on) for camera **live streaming** (RTSP / WebRTC). The integration registers each camera's stream with go2rtc at runtime via its API — you do not need to write a `go2rtc.yaml` by hand.
+
+go2rtc publishes these host ports:
+
+| Port | Use |
+|---|---|
+| `1984` | Web UI / API (`http://<host-ip>:1984`) |
+| `8554` | RTSP |
+| `8555` (tcp+udp) | WebRTC |
+
+In the eufy_security integration, point the go2rtc host/port at `<host-ip>:1984`. go2rtc config is persisted in the `go2rtc` volume (`/config`).
+
 ## Data
 
 Persistent state (tokens, device data) is stored in the app's `data` volume (`/data` in the container).
