@@ -77,6 +77,8 @@ describe("app config invariants", () => {
     app,
     config: JSON.parse(readFile(app, "config.json") ?? "{}") as {
       id?: string;
+      created_at?: number;
+      updated_at?: number;
       form_fields?: { type: string; required?: boolean }[];
     },
   }));
@@ -89,6 +91,19 @@ describe("app config invariants", () => {
   test("each app id should match its directory name", () => {
     for (const { app, config } of configs) {
       expect(config.id).toBe(app);
+    }
+  });
+
+  test("created_at / updated_at should be epoch ms in the past", () => {
+    const now = Date.now();
+    for (const { app, config } of configs) {
+      for (const key of ["created_at", "updated_at"] as const) {
+        const value = config[key];
+        if (value === undefined) continue;
+        if (value >= now) {
+          throw new Error(`${app}: ${key} (${value}) must be before now (${now})`);
+        }
+      }
     }
   });
 
