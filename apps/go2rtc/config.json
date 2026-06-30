@@ -1,0 +1,24 @@
+{
+  "name": "go2rtc",
+  "id": "go2rtc",
+  "available": true,
+  "short_desc": "Ultimate camera streaming (RTSP, WebRTC, HomeKit)",
+  "author": "AlexxIT",
+  "port": 1984,
+  "categories": [
+    "media",
+    "utilities"
+  ],
+  "description": "go2rtc is a streaming application that supports RTSP, WebRTC, MSE, HomeKit, RTMP, MJPEG and more, with zero-delay streaming from many camera sources. It ships a web UI and a REST API on port 1984, an RTSP server on 8554 and WebRTC on 8555. It runs in host network mode (required for WebRTC ICE candidate discovery and camera/mDNS access), so it cannot be reverse-proxied — open the web UI directly at http://<host-ip>:1984. It is commonly paired with the Home Assistant eufy_security integration (install the 'Eufy Security WS' app too) and other camera integrations, which register streams with go2rtc at runtime over its API. You can also predefine streams in go2rtc.yaml inside the config volume.",
+  "tipi_version": 1,
+  "version": "1.9.14",
+  "source": "https://github.com/AlexxIT/go2rtc",
+  "website": "https://github.com/AlexxIT/go2rtc",
+  "exposable": false,
+  "supported_architectures": [
+    "arm64",
+    "amd64"
+  ],
+  "created_at": 1781340500000,
+  "updated_at": 1782779000000
+}
