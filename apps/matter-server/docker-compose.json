@@ -4,7 +4,7 @@
   "services": [
     {
       "name": "matter-server",
-      "image": "ghcr.io/matter-js/matterjs-server:0.7.1",
+      "image": "ghcr.io/matter-js/matterjs-server:0.8.0",
       "networkMode": "host",
       "securityOpt": [
         "apparmor=unconfined"
