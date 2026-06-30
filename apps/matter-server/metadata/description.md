@@ -1,8 +1,8 @@
 # Matter Server
 
-[Python Matter Server](https://github.com/home-assistant-libs/python-matter-server) is a **Matter (CHIP) controller** exposed over a WebSocket API. It is the backend that **Home Assistant's built-in Matter integration** talks to, handling commissioning and control of Matter devices on your network.
+[Matter.js Server](https://github.com/matter-js/matterjs-server) is a **Matter controller** exposed over a WebSocket API, built on the JavaScript Matter SDK ([matter.js](https://github.com/project-chip/matter.js)). It is a **drop-in replacement for the Python Matter Server** and acts as the backend that **Home Assistant's Matter integration** talks to, handling commissioning and control of Matter devices on your network.
 
-This package pins `ghcr.io/matter-js/python-matter-server:8.1.2` (latest stable).
+This package pins `ghcr.io/matter-js/matterjs-server:0.7.1` (latest stable).
 
 ## No web UI
 
@@ -18,13 +18,10 @@ It runs in **host network mode**, which Matter requires for mDNS service discove
 
 ## Bluetooth commissioning
 
-Bluetooth commissioning of new devices is supported via the host **D-Bus** socket (`/run/dbus`, mounted read-only) and `apparmor=unconfined`. If your host has no Bluetooth adapter you can still commission devices that are already reachable on the IP network / Thread.
+Bluetooth (BLE) commissioning of new devices is supported via the host **D-Bus** socket (`/run/dbus`, mounted read-only) and `apparmor=unconfined`. If your host has no Bluetooth adapter you can still commission devices that are already reachable on the IP network / Thread.
 
 ## Storage
 
-- `--storage-path /data` — fabric and device state.
-- `--paa-root-cert-dir /data/credentials` — PAA root certificates.
+`--storage-path /data` keeps fabric and device state under the persistent `data` volume.
 
-Both live under the persistent `data` volume.
-
-See the [project documentation](https://github.com/home-assistant-libs/python-matter-server) and the [Docker guide](https://github.com/home-assistant-libs/python-matter-server/blob/main/docs/docker.md) for details.
+See the [project documentation](https://github.com/matter-js/matterjs-server) for details.
