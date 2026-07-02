@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 2,
+  "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json",
+  "services": [
+    {
+      "name": "home-assistant",
+      "image": "homeassistant/home-assistant:2026.7.0",
+      "networkMode": "host",
+      "environment": [
+        {
+          "key": "TZ",
+          "value": "${TZ}"
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/config",
+          "containerPath": "/config",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "/run/dbus",
+          "containerPath": "/run/dbus",
+          "readOnly": true,
+          "shared": false,
+          "private": false
+        }
+      ]
+    },
+    {
+      "name": "filebrowser",
+      "image": "filebrowser/filebrowser:v2.63.17",
+      "addPorts": [
+        {
+          "containerPort": 80,
+          "hostPort": 8124
+        }
+      ],
+      "environment": [
+        {
+          "key": "TZ",
+          "value": "${TZ}"
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/config",
+          "containerPath": "/srv",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "${APP_DATA_DIR}/filebrowser/database",
+          "containerPath": "/database",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "${APP_DATA_DIR}/filebrowser/config",
+          "containerPath": "/config",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ]
+    }
+  ]
+}

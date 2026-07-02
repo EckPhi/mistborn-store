@@ -95,7 +95,7 @@ Each service object supports (subset most used):
 - `image` (required) — **always pin an explicit immutable tag, never `latest`** (and never a floating major like `:2`). See Image pinning below
 - `internalPort` — port the container listens on
 - `isMain` — mark the primary web UI service
-- `environment` — **object** map `{ "KEY": "value" }`. ⚠️ The runtipi docs show an array `[{ "key", "value" }]` ("legacy v2 JSON") — ignore that. The installed `@runtipi/common` Zod schema is `z.record(...)`, i.e. an **object**, and that is what CI validates. Use the object form.
+- `environment` — **array** of `{ "key": "...", "value": "..." }` objects. ⚠️ CI validates against the vendored `apps/dynamic-compose-schema.json`, which requires the array form — the `@runtipi/common` Zod schema uses an object record (`z.record(...)`) but is **not** what CI checks. All apps in this repo use the array form; match them.
 - `addPorts` — array of `{ containerPort, hostPort, udp?, tcp?, interface? }`. **Only for _extra_ ports.** Do **not** republish the main `internalPort` here — see Reverse proxy below
 - `volumes` — array of `{ hostPath, containerPath, readOnly?, shared?, private? }`. Write `hostPath` with the **`${APP_DATA_DIR}/...`** variable (e.g. `"${APP_DATA_DIR}/data"`), not a bare `./...` relative path. `./` passes CI (schema only checks it's a string) but is not the documented/official convention and resolution is not guaranteed.
 - `dependsOn` — `{ "<service>": { "condition": "service_started" | "service_healthy" | "service_completed_successfully" } }`
