@@ -25,6 +25,7 @@ See the [Runtipi custom app store guide](https://runtipi.io/docs/guides/create-y
 | <img src="apps/diyhue/metadata/logo.jpg" width="32"> | [diyHue](https://github.com/diyhue/diyHue) | Open-source Philips Hue bridge emulator |
 | <img src="apps/eufy-security-ws/metadata/logo.jpg" width="32"> | [Eufy Security WS](https://github.com/bropat/eufy-security-ws) | WebSocket server for Eufy Security devices |
 | <img src="apps/go2rtc/metadata/logo.jpg" width="32"> | [go2rtc](https://github.com/AlexxIT/go2rtc) | Ultimate camera streaming (RTSP, WebRTC, HomeKit) |
+| <img src="apps/home-assistant/metadata/logo.jpg" width="32"> | [Home Assistant](https://github.com/home-assistant/core) | Open-source home automation hub with built-in config file browser |
 | <img src="apps/home-assistant-matter-hub/metadata/logo.jpg" width="32"> | [Home Assistant Matter Hub](https://github.com/RiDDiX/home-assistant-matter-hub) | Bridge Home Assistant entities to Matter controllers |
 | <img src="apps/homeway/metadata/logo.jpg" width="32"> | [Homeway](https://homeway.io) | Free, secure remote access for Home Assistant |
 | <img src="apps/homey/metadata/logo.jpg" width="32"> | [Homey Pro](https://homey.app) | Run the Homey Self-Hosted smart-home hub |
@@ -35,6 +36,7 @@ See the [Runtipi custom app store guide](https://runtipi.io/docs/guides/create-y
 | <img src="apps/openthread-border-router/metadata/logo.jpg" width="32"> | [OpenThread Border Router](https://github.com/bnutzer/docker-otbr-tcp) | Thread mesh network border router (network RCP) |
 | <img src="apps/scrape-dojo/metadata/logo.jpg" width="32"> | [Scrape Dojo](https://github.com/disane87/scrape-dojo) | Self-hosted, config-driven web scraping platform |
 | <img src="apps/victoriametrics/metadata/logo.jpg" width="32"> | [VictoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics) | Fast, cost-effective time-series database |
+| <img src="apps/youtrack/metadata/logo.jpg" width="32"> | [YouTrack](https://github.com/JetBrains) | Project management and issue tracker by JetBrains |
 | <img src="apps/zigbee2mqtt/metadata/logo.jpg" width="32"> | [Zigbee2MQTT](https://github.com/Koenkk/zigbee2mqtt) | Zigbee to MQTT bridge (network or USB adapter) |
 <!-- APPS:END -->
 
