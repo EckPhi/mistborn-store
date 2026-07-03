@@ -10,8 +10,8 @@
     "automation"
   ],
   "description": "eufy-security-ws is a small server wrapper around the eufy-security-client library that exposes Eufy Security devices (cameras, doorbells, sensors, base stations) over a WebSocket API. It is the backend used by the Home Assistant eufy-security integration and similar clients. It has no web UI — clients connect to the WebSocket on port 3000. For camera live streaming (RTSP/WebRTC) the eufy_security integration also needs go2rtc; install the separate 'go2rtc' app from this store.",
-  "tipi_version": 6,
-  "version": "3.0.1",
+  "tipi_version": 7,
+  "version": "3.1.0",
   "source": "https://github.com/bropat/eufy-security-ws",
   "website": "https://bropat.github.io/eufy-security-ws/",
   "exposable": true,
@@ -21,7 +21,7 @@
     "amd64"
   ],
   "created_at": 1781308800000,
-  "updated_at": 1782779000000,
+  "updated_at": 1783047535181,
   "dynamic_config": true,
   "form_fields": [
     {
