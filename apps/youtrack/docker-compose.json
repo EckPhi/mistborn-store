@@ -4,7 +4,7 @@
   "services": [
     {
       "name": "permissions",
-      "image": "busybox:1.37.0",
+      "image": "busybox:1.38.0",
       "command": ["sh", "-c", "chown -R 13001:13001 /opt/youtrack/data /opt/youtrack/conf /opt/youtrack/logs /opt/youtrack/backups"],
       "volumes": [
         {
