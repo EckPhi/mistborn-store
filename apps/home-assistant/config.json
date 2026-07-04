@@ -9,8 +9,8 @@
     "automation"
   ],
   "description": "Home Assistant is an open-source home automation platform that puts local control and privacy first. This app runs the Home Assistant Container image in host network mode (required for device discovery via mDNS/SSDP, HomeKit, and many LAN integrations), so it cannot be reverse-proxied — open the UI directly at http://<host-ip>:8123. A File Browser sidecar is bundled on port 8124 with full access to the Home Assistant config directory, so you can view and edit configuration.yaml, automations, blueprints and other internal files from the browser — no SSH needed. You can also embed File Browser inside the Home Assistant sidebar as a webpage dashboard. The File Browser admin password is printed in its container logs on first start.",
-  "tipi_version": 1,
-  "version": "2026.7.0",
+  "tipi_version": 2,
+  "version": "2026.7.1",
   "source": "https://github.com/home-assistant/core",
   "website": "https://www.home-assistant.io",
   "exposable": false,
@@ -19,5 +19,5 @@
     "amd64"
   ],
   "created_at": 1782779000000,
-  "updated_at": 1782779000000
+  "updated_at": 1783133945303
 }
