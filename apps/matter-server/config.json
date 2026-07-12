@@ -10,8 +10,8 @@
     "network"
   ],
   "description": "Matter.js Server is a Matter controller exposed over a WebSocket API, built on the JavaScript Matter SDK (matter.js). It is a drop-in replacement for the Python Matter Server and acts as the backend Home Assistant's Matter integration talks to, letting you commission and control Matter devices. It runs in host network mode (required by Matter for mDNS/IPv6 discovery and on-network commissioning) and has no web UI — it is a WebSocket service on port 5580 that you point the Home Assistant Matter integration at (ws://<host-ip>:5580/ws). Bluetooth (BLE) commissioning is supported via the host D-Bus socket. Fabric state is persisted in the data volume.",
-  "tipi_version": 6,
-  "version": "1.2.2",
+  "tipi_version": 7,
+  "version": "1.2.3",
   "source": "https://github.com/matter-js/matterjs-server",
   "website": "https://github.com/matter-js/matterjs-server",
   "exposable": false,
@@ -21,5 +21,5 @@
     "amd64"
   ],
   "created_at": 1781340500000,
-  "updated_at": 1783738694511
+  "updated_at": 1783825121847
 }
