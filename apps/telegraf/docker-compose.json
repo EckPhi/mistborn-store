@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 2,
+  "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json",
+  "services": [
+    {
+      "name": "telegraf",
+      "image": "telegraf:1.39.1",
+      "environment": [
+        {
+          "key": "HOST_MOUNT_PREFIX",
+          "value": "/hostfs"
+        },
+        {
+          "key": "HOST_PROC",
+          "value": "/hostfs/proc"
+        },
+        {
+          "key": "HOST_SYS",
+          "value": "/hostfs/sys"
+        },
+        {
+          "key": "HOST_ETC",
+          "value": "/hostfs/etc"
+        },
+        {
+          "key": "HOST_VAR",
+          "value": "/hostfs/var"
+        },
+        {
+          "key": "HOST_RUN",
+          "value": "/hostfs/run"
+        },
+        {
+          "key": "TELEGRAF_INFLUX_URL",
+          "value": "${TELEGRAF_INFLUX_URL}"
+        },
+        {
+          "key": "TELEGRAF_INFLUX_TOKEN",
+          "value": "${TELEGRAF_INFLUX_TOKEN}"
+        },
+        {
+          "key": "TELEGRAF_INFLUX_ORG",
+          "value": "${TELEGRAF_INFLUX_ORG}"
+        },
+        {
+          "key": "TELEGRAF_INFLUX_BUCKET",
+          "value": "${TELEGRAF_INFLUX_BUCKET}"
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/data/config",
+          "containerPath": "/etc/telegraf",
+          "readOnly": true,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "/",
+          "containerPath": "/hostfs",
+          "readOnly": true,
+          "shared": false,
+          "private": false
+        }
+      ]
+    }
+  ]
+}

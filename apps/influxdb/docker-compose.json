@@ -27,6 +27,10 @@
         {
           "key": "DOCKER_INFLUXDB_INIT_BUCKET",
           "value": "${INFLUXDB_INIT_BUCKET}"
+        },
+        {
+          "key": "DOCKER_INFLUXDB_INIT_ADMIN_TOKEN",
+          "value": "${INFLUXDB_ADMIN_TOKEN}"
         }
       ],
       "volumes": [
@@ -45,6 +49,65 @@
           "private": false
         }
       ]
+    },
+    {
+      "name": "influxdb-jobs",
+      "image": "influxdb:2.9.1",
+      "entrypoint": [
+        "bash",
+        "/scripts/jobs.sh"
+      ],
+      "environment": [
+        {
+          "key": "INFLUX_HOST",
+          "value": "http://influxdb:8086"
+        },
+        {
+          "key": "INFLUX_TOKEN",
+          "value": "${INFLUXDB_ADMIN_TOKEN}"
+        },
+        {
+          "key": "INFLUX_ORG",
+          "value": "${INFLUXDB_INIT_ORG}"
+        },
+        {
+          "key": "INFLUX_BUCKET",
+          "value": "${INFLUXDB_INIT_BUCKET}"
+        },
+        {
+          "key": "RETENTION_STAGES",
+          "value": "${INFLUXDB_RETENTION_STAGES}"
+        },
+        {
+          "key": "BACKUP_INTERVAL_HOURS",
+          "value": "${INFLUXDB_BACKUP_INTERVAL_HOURS}"
+        },
+        {
+          "key": "BACKUP_KEEP",
+          "value": "${INFLUXDB_BACKUP_KEEP}"
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/data/scripts",
+          "containerPath": "/scripts",
+          "readOnly": true,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "${APP_DATA_DIR}/data/backups",
+          "containerPath": "/backups",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ],
+      "dependsOn": {
+        "influxdb": {
+          "condition": "service_started"
+        }
+      }
     }
   ]
 }

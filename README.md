@@ -34,7 +34,10 @@ See the [Runtipi custom app store guide](https://runtipi.io/docs/guides/create-y
 | <img src="apps/matter-server/metadata/logo.jpg" width="32"> | [Matter Server](https://github.com/matter-js/matterjs-server) | Matter.js controller server (WebSocket) |
 | <img src="apps/music-assistant/metadata/logo.jpg" width="32"> | [Music Assistant](https://github.com/music-assistant/server) | Music library manager and multi-room streaming |
 | <img src="apps/openthread-border-router/metadata/logo.jpg" width="32"> | [OpenThread Border Router](https://github.com/bnutzer/docker-otbr-tcp) | Thread mesh network border router (network RCP) |
+| <img src="apps/questdb/metadata/logo.jpg" width="32"> | [QuestDB](https://github.com/questdb/questdb) | High-performance time-series database with SQL |
 | <img src="apps/scrape-dojo/metadata/logo.jpg" width="32"> | [Scrape Dojo](https://github.com/disane87/scrape-dojo) | Self-hosted, config-driven web scraping platform |
+| <img src="apps/seamtec-scraper/metadata/logo.jpg" width="32"> | [Seamtec Scraper](https://github.com/EckPhi/seamtec-scraper) | Scraper for the Seamtec SCADA web UI |
+| <img src="apps/telegraf/metadata/logo.jpg" width="32"> | [Telegraf](https://github.com/influxdata/telegraf) | Plugin-driven agent for collecting and sending metrics |
 | <img src="apps/victoriametrics/metadata/logo.jpg" width="32"> | [VictoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics) | Fast, cost-effective time-series database |
 | <img src="apps/youtrack/metadata/logo.jpg" width="32"> | [YouTrack](https://github.com/JetBrains) | Project management and issue tracker by JetBrains |
 | <img src="apps/zigbee2mqtt/metadata/logo.jpg" width="32"> | [Zigbee2MQTT](https://github.com/Koenkk/zigbee2mqtt) | Zigbee to MQTT bridge (network or USB adapter) |

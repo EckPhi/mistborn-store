@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 2,
+  "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json",
+  "services": [
+    {
+      "name": "questdb",
+      "image": "questdb/questdb:9.4.3",
+      "isMain": true,
+      "internalPort": 9000,
+      "environment": [
+        {
+          "key": "QDB_PG_USER",
+          "value": "${QUESTDB_PG_USER}"
+        },
+        {
+          "key": "QDB_PG_PASSWORD",
+          "value": "${QUESTDB_PG_PASSWORD}"
+        },
+        {
+          "key": "QDB_TELEMETRY_ENABLED",
+          "value": "false"
+        }
+      ],
+      "addPorts": [
+        {
+          "containerPort": 8812,
+          "hostPort": 8812,
+          "tcp": true
+        },
+        {
+          "containerPort": 9009,
+          "hostPort": 9009,
+          "tcp": true
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/data/questdb",
+          "containerPath": "/var/lib/questdb",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ]
+    },
+    {
+      "name": "questdb-jobs",
+      "image": "alpine:3.24.1",
+      "command": [
+        "sh",
+        "-c",
+        "apk add --no-cache curl >/dev/null && exec sh /scripts/jobs.sh"
+      ],
+      "environment": [
+        {
+          "key": "QUESTDB_URL",
+          "value": "http://questdb:9000"
+        },
+        {
+          "key": "RETENTION_TABLES",
+          "value": "${QUESTDB_RETENTION_TABLES}"
+        },
+        {
+          "key": "RETENTION_STAGES",
+          "value": "${QUESTDB_RETENTION_STAGES}"
+        },
+        {
+          "key": "ARCHIVE_ENABLED",
+          "value": "${QUESTDB_ARCHIVE_ENABLED}"
+        },
+        {
+          "key": "BACKUP_INTERVAL_HOURS",
+          "value": "${QUESTDB_BACKUP_INTERVAL_HOURS}"
+        },
+        {
+          "key": "BACKUP_KEEP",
+          "value": "${QUESTDB_BACKUP_KEEP}"
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/data/scripts",
+          "containerPath": "/scripts",
+          "readOnly": true,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "${APP_DATA_DIR}/data/questdb",
+          "containerPath": "/questdb-data",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "${APP_DATA_DIR}/data/archive",
+          "containerPath": "/archive",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "${APP_DATA_DIR}/data/backups",
+          "containerPath": "/backups",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "${APP_DATA_DIR}/data/state",
+          "containerPath": "/state",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ],
+      "dependsOn": {
+        "questdb": {
+          "condition": "service_started"
+        }
+      }
+    }
+  ]
+}

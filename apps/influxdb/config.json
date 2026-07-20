@@ -8,8 +8,8 @@
   "categories": [
     "data"
   ],
-  "description": "InfluxDB is an open-source time-series database designed to handle high write and query loads. It is widely used for storing metrics, events, IoT sensor data and real-time analytics, and integrates with Telegraf, Grafana and many home automation platforms.",
-  "tipi_version": 2,
+  "description": "InfluxDB is an open-source time-series database designed to handle high write and query loads. It is widely used for storing metrics, events, IoT sensor data and real-time analytics, and integrates with Telegraf, Grafana and many home automation platforms. This app bundles a maintenance sidecar that can provision a configurable multi-stage downsampling pipeline (buckets + Flux tasks) and takes automatic compressed backups.",
+  "tipi_version": 3,
   "version": "2.9.1",
   "source": "https://github.com/influxdata/influxdb",
   "website": "https://www.influxdata.com",
@@ -19,7 +19,7 @@
     "amd64"
   ],
   "created_at": 1781308800000,
-  "updated_at": 1781651098006,
+  "updated_at": 1784419200000,
   "dynamic_config": true,
   "form_fields": [
     {
@@ -50,6 +50,37 @@
       "env_variable": "INFLUXDB_INIT_BUCKET",
       "required": true,
       "default": "default"
+    },
+    {
+      "type": "random",
+      "label": "Admin API token",
+      "env_variable": "INFLUXDB_ADMIN_TOKEN",
+      "required": false,
+      "min": 48,
+      "hint": "Used by the maintenance sidecar for retention tasks and backups. Auto-generated on fresh installs; for existing installs replace it with an all-access token created in the InfluxDB UI."
+    },
+    {
+      "type": "text",
+      "label": "Retention stages",
+      "env_variable": "INFLUXDB_RETENTION_STAGES",
+      "required": false,
+      "default": "",
+      "hint": "Empty = disabled. Semicolon-separated <age>:<resolution> stages, last stage may be <age>:drop, e.g. 30d:1h;2y:1d;10y:drop. WARNING: enabling sets the retention of the initial bucket to the first stage age — older raw data is deleted."
+    },
+    {
+      "type": "number",
+      "label": "Backup interval (hours)",
+      "env_variable": "INFLUXDB_BACKUP_INTERVAL_HOURS",
+      "required": false,
+      "default": 24,
+      "hint": "Compressed backups via influx backup. 0 disables backups."
+    },
+    {
+      "type": "number",
+      "label": "Backups to keep",
+      "env_variable": "INFLUXDB_BACKUP_KEEP",
+      "required": false,
+      "default": 7
     }
   ]
 }

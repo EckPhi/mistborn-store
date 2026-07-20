@@ -1,0 +1,57 @@
+{
+  "name": "Telegraf",
+  "id": "telegraf",
+  "available": true,
+  "short_desc": "Plugin-driven agent for collecting and sending metrics",
+  "author": "InfluxData",
+  "port": 8094,
+  "categories": [
+    "data",
+    "utilities"
+  ],
+  "description": "Telegraf is a plugin-driven server agent for collecting and reporting metrics. It ships with hundreds of input plugins (system stats, Docker, MQTT, SNMP, ...) and outputs to InfluxDB, QuestDB (via ILP), Prometheus and many more. This app mounts the host filesystem read-only so the default configuration reports CPU, memory, disk and network stats of the host, and writes them to an InfluxDB 2.x instance configured via the app settings. The full configuration lives in app-data/data/config/telegraf.conf and can be freely customized.",
+  "tipi_version": 1,
+  "version": "1.39.1",
+  "source": "https://github.com/influxdata/telegraf",
+  "website": "https://www.influxdata.com/time-series-platform/telegraf/",
+  "exposable": false,
+  "no_gui": true,
+  "supported_architectures": [
+    "arm64",
+    "amd64"
+  ],
+  "created_at": 1784419200000,
+  "updated_at": 1784419200000,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "InfluxDB URL",
+      "env_variable": "TELEGRAF_INFLUX_URL",
+      "required": false,
+      "default": "http://127.0.0.1:8086",
+      "hint": "URL of your InfluxDB 2.x instance. Use the host LAN IP (e.g. http://192.168.1.10:8086) to reach the InfluxDB app on the same runtipi host."
+    },
+    {
+      "type": "password",
+      "label": "InfluxDB API token",
+      "env_variable": "TELEGRAF_INFLUX_TOKEN",
+      "required": false,
+      "hint": "API token with write access to the target bucket."
+    },
+    {
+      "type": "text",
+      "label": "InfluxDB organization",
+      "env_variable": "TELEGRAF_INFLUX_ORG",
+      "required": false,
+      "default": "home"
+    },
+    {
+      "type": "text",
+      "label": "InfluxDB bucket",
+      "env_variable": "TELEGRAF_INFLUX_BUCKET",
+      "required": false,
+      "default": "default"
+    }
+  ]
+}
