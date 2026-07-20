@@ -5,6 +5,8 @@
     {
       "name": "seamtec-scraper",
       "image": "eckphi/seamtec-scraper:1.0.0",
+      "isMain": true,
+      "internalPort": 8099,
       "command": [
         "--config",
         "${SEAMTEC_CONFIG_FILE}",

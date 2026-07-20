@@ -10,7 +10,7 @@
     "data"
   ],
   "description": "Read-only scraper for the Seamtec SCADA web UI (scc.seamtec.net). Logs in with a headless Chromium (the site is a Blazor Server app, so a real browser is required), walks the configured entity pages plus the active-errors and event-history pages on individual schedules, and emits datapoints to one or more sinks: stdout JSON lines, InfluxDB line protocol (QuestDB/InfluxDB), MQTT or Telegraf HTTP. Ships the Weissenberg facility config baked in; custom facilities via an editable TOML in app-data. Headless service without a web UI.",
-  "tipi_version": 1,
+  "tipi_version": 2,
   "version": "1.0.0",
   "source": "https://github.com/EckPhi/seamtec-scraper",
   "website": "https://github.com/EckPhi/seamtec-scraper",
@@ -40,16 +40,16 @@
       "label": "Config file",
       "env_variable": "SEAMTEC_CONFIG_FILE",
       "required": true,
-      "default": "weissenberg.toml",
-      "hint": "weissenberg.toml uses the facility config baked into the image. Use /config/seamtec.toml to load the editable copy in app-data/data/config/."
+      "default": "/config/seamtec.toml",
+      "hint": "/config/seamtec.toml is the editable Weissenberg+QuestDB config in app-data/data/config/ (default). weissenberg.toml uses the stdout-only facility config baked into the image."
     },
     {
       "type": "text",
-      "label": "Sink",
+      "label": "Sink override",
       "env_variable": "SEAMTEC_SINK",
-      "required": true,
-      "default": "stdout",
-      "hint": "stdout, or ilp:<host-ip>:9009 to write line protocol to the QuestDB/InfluxDB app. Overrides the sinks defined in the config file; for multiple sinks define them in a custom config and set this to match one of them."
+      "required": false,
+      "default": "",
+      "hint": "Leave empty to use the sinks from the config file (recommended; the default config writes to the QuestDB app). Set e.g. stdout or ilp:host:9009 to override."
     },
     {
       "type": "text",

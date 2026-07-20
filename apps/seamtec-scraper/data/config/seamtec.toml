@@ -1,23 +1,33 @@
-# seamtec-scraper configuration (editable copy shipped by the runtipi app).
+# seamtec-scraper: Weissenberg facility -> QuestDB (runtipi).
 # Loaded when the app's "Config file" setting is /config/seamtec.toml.
 # Precedence: CLI args > env vars (SEAMTEC_*) > this file > defaults.
-# Username/password come from the app settings (environment) — no need to
-# put them here.
+# Username/password come from the app settings (environment) — do not put
+# them here. Leave the app's "Sink" setting empty so these sinks apply.
 
 [scraper]
 base_url = "https://scc.seamtec.net"
 facility = "weissenberg"
-schedule = 60            # base interval in seconds for every job without its own
+schedule = 60              # base interval (seconds)
 
-# Entities: either a plain list ...
-#   entities = [1, 2, 19]
-# ... or tables with optional name/schedule overrides:
 [[entities]]
 id = 2
 name = "turbine"
-schedule = 30            # scrape the turbine page more often
-# groups = ["power"]     # routing labels: sinks with a matching group receive
-                         # this entity; sinks without groups receive everything
+
+[[entities]]
+id = 4
+name = "hydraulik-aggregat"
+
+[[entities]]
+id = 10
+name = "leitapparat"
+
+[[entities]]
+id = 13
+name = "laufrad"
+
+[[entities]]
+id = 16
+name = "synchrongenerator"
 
 [[entities]]
 id = 19
@@ -28,9 +38,51 @@ id = 27
 name = "stahlwasserbau"
 
 [[entities]]
+id = 29
+name = "einlaufschuetz-1-2"
+
+# ids 30-44 are currently unconfigured in the SCADA app ("Empty div Layout");
+# scraped rarely so they start delivering automatically once configured.
+[[entities]]
+id = 30
+name = "einlaufschuetz-1"
+schedule = 3600
+
+[[entities]]
+id = 32
+name = "einlaufschuetz-2"
+schedule = 3600
+
+[[entities]]
+id = 34
+name = "grundablassschuetz"
+schedule = 3600
+
+[[entities]]
+id = 36
+name = "schwemmgutklappe"
+schedule = 3600
+
+[[entities]]
+id = 38
+name = "sandspuelschuetz"
+schedule = 3600
+
+[[entities]]
+id = 40
+name = "stauklappe"
+schedule = 3600
+
+[[entities]]
+id = 44
+name = "baggerarm-rechenreiniger"
+schedule = 3600
+
+# dashboard: repeats subpage datapoints under entity=anlage -> scrape rarely
+[[entities]]
 id = 1
 name = "anlage"
-schedule = 300           # dashboard repeats subpage values; scrape it rarely
+schedule = 300
 
 [errors]
 enabled = true
@@ -40,29 +92,21 @@ schedule = 120
 enabled = true
 schedule = 300
 
-[notify]                 # failure notifications via apprise (optional, in-process)
-# urls = ["tgram://bottoken/chatid", "discord://webhook_id/webhook_token"]
-# min_interval = 300     # at most one notification per failing job per 5 min
+[notify]                   # failure notifications via apprise (optional)
+# urls = ["tgram://bottoken/chatid"]
+# min_interval = 300
 
+# QuestDB app (this store) over the shared runtipi network: the scraper
+# reaches the database by container name, no host IP needed. Full snapshot
+# every tick -> regular time series for Grafana (query via port 8812,
+# PostgreSQL wire protocol, or the web console on 9000).
+[[sinks]]
+type = "ilp"
+host = "questdb"
+port = 9009
+only_changes = false
+
+# change-only copy in the container logs (docker logs / runtipi log viewer)
 [[sinks]]
 type = "stdout"
-only_changes = true      # emit only values that changed since the last emit
-
-# [[sinks]]
-# type = "ilp"           # QuestDB / InfluxDB line protocol over TCP
-# host = "192.168.1.10"  # runtipi host IP; QuestDB app listens on 9009
-# port = 9009
-# only_changes = false   # full snapshot every tick
-
-# [[sinks]]
-# type = "mqtt"          # JSON per datapoint on <base_topic>/<facility>/<entity>/<section>/<name>
-# host = "broker.local"
-# port = 1883
-# base_topic = "seamtec"
-# qos = 0
-# retain = true          # broker keeps last value per topic
-# only_changes = true    # pairs well with retain
-
-# [[sinks]]
-# type = "telegraf"      # HTTP POST (influx line protocol) to inputs.http_listener_v2
-# url = "http://192.168.1.10:8186/telegraf"
+only_changes = true
