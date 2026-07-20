@@ -1,0 +1,68 @@
+# seamtec-scraper configuration (editable copy shipped by the runtipi app).
+# Loaded when the app's "Config file" setting is /config/seamtec.toml.
+# Precedence: CLI args > env vars (SEAMTEC_*) > this file > defaults.
+# Username/password come from the app settings (environment) — no need to
+# put them here.
+
+[scraper]
+base_url = "https://scc.seamtec.net"
+facility = "weissenberg"
+schedule = 60            # base interval in seconds for every job without its own
+
+# Entities: either a plain list ...
+#   entities = [1, 2, 19]
+# ... or tables with optional name/schedule overrides:
+[[entities]]
+id = 2
+name = "turbine"
+schedule = 30            # scrape the turbine page more often
+# groups = ["power"]     # routing labels: sinks with a matching group receive
+                         # this entity; sinks without groups receive everything
+
+[[entities]]
+id = 19
+name = "leistungsmessung-generator"
+
+[[entities]]
+id = 27
+name = "stahlwasserbau"
+
+[[entities]]
+id = 1
+name = "anlage"
+schedule = 300           # dashboard repeats subpage values; scrape it rarely
+
+[errors]
+enabled = true
+schedule = 120
+
+[events]
+enabled = true
+schedule = 300
+
+[notify]                 # failure notifications via apprise (optional, in-process)
+# urls = ["tgram://bottoken/chatid", "discord://webhook_id/webhook_token"]
+# min_interval = 300     # at most one notification per failing job per 5 min
+
+[[sinks]]
+type = "stdout"
+only_changes = true      # emit only values that changed since the last emit
+
+# [[sinks]]
+# type = "ilp"           # QuestDB / InfluxDB line protocol over TCP
+# host = "192.168.1.10"  # runtipi host IP; QuestDB app listens on 9009
+# port = 9009
+# only_changes = false   # full snapshot every tick
+
+# [[sinks]]
+# type = "mqtt"          # JSON per datapoint on <base_topic>/<facility>/<entity>/<section>/<name>
+# host = "broker.local"
+# port = 1883
+# base_topic = "seamtec"
+# qos = 0
+# retain = true          # broker keeps last value per topic
+# only_changes = true    # pairs well with retain
+
+# [[sinks]]
+# type = "telegraf"      # HTTP POST (influx line protocol) to inputs.http_listener_v2
+# url = "http://192.168.1.10:8186/telegraf"

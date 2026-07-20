@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 2,
+  "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json",
+  "services": [
+    {
+      "name": "seamtec-scraper",
+      "image": "eckphi/seamtec-scraper:1.0.0",
+      "command": [
+        "--config",
+        "${SEAMTEC_CONFIG_FILE}",
+        "--sink",
+        "${SEAMTEC_SINK}"
+      ],
+      "environment": [
+        {
+          "key": "SEAMTEC_USERNAME",
+          "value": "${SEAMTEC_USERNAME}"
+        },
+        {
+          "key": "SEAMTEC_PASSWORD",
+          "value": "${SEAMTEC_PASSWORD}"
+        },
+        {
+          "key": "SEAMTEC_BASE_URL",
+          "value": "${SEAMTEC_BASE_URL}"
+        },
+        {
+          "key": "SEAMTEC_NOTIFY_URLS",
+          "value": "${SEAMTEC_NOTIFY_URLS}"
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/data/storage",
+          "containerPath": "/data",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "${APP_DATA_DIR}/data/config",
+          "containerPath": "/config",
+          "readOnly": true,
+          "shared": false,
+          "private": false
+        }
+      ]
+    }
+  ]
+}

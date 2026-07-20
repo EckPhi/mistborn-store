@@ -1,0 +1,70 @@
+{
+  "name": "Seamtec Scraper",
+  "id": "seamtec-scraper",
+  "available": true,
+  "short_desc": "Scraper for the Seamtec SCADA web UI",
+  "author": "EckPhi",
+  "port": 8099,
+  "categories": [
+    "automation",
+    "data"
+  ],
+  "description": "Read-only scraper for the Seamtec SCADA web UI (scc.seamtec.net). Logs in with a headless Chromium (the site is a Blazor Server app, so a real browser is required), walks the configured entity pages plus the active-errors and event-history pages on individual schedules, and emits datapoints to one or more sinks: stdout JSON lines, InfluxDB line protocol (QuestDB/InfluxDB), MQTT or Telegraf HTTP. Ships the Weissenberg facility config baked in; custom facilities via an editable TOML in app-data. Headless service without a web UI.",
+  "tipi_version": 1,
+  "version": "1.0.0",
+  "source": "https://github.com/EckPhi/seamtec-scraper",
+  "website": "https://github.com/EckPhi/seamtec-scraper",
+  "exposable": false,
+  "no_gui": true,
+  "supported_architectures": [
+    "amd64"
+  ],
+  "created_at": 1784419200000,
+  "updated_at": 1784419200000,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Seamtec username",
+      "env_variable": "SEAMTEC_USERNAME",
+      "required": true
+    },
+    {
+      "type": "password",
+      "label": "Seamtec password",
+      "env_variable": "SEAMTEC_PASSWORD",
+      "required": true
+    },
+    {
+      "type": "text",
+      "label": "Config file",
+      "env_variable": "SEAMTEC_CONFIG_FILE",
+      "required": true,
+      "default": "weissenberg.toml",
+      "hint": "weissenberg.toml uses the facility config baked into the image. Use /config/seamtec.toml to load the editable copy in app-data/data/config/."
+    },
+    {
+      "type": "text",
+      "label": "Sink",
+      "env_variable": "SEAMTEC_SINK",
+      "required": true,
+      "default": "stdout",
+      "hint": "stdout, or ilp:<host-ip>:9009 to write line protocol to the QuestDB/InfluxDB app. Overrides the sinks defined in the config file; for multiple sinks define them in a custom config and set this to match one of them."
+    },
+    {
+      "type": "text",
+      "label": "Base URL",
+      "env_variable": "SEAMTEC_BASE_URL",
+      "required": false,
+      "default": "https://scc.seamtec.net"
+    },
+    {
+      "type": "text",
+      "label": "Failure notification URLs",
+      "env_variable": "SEAMTEC_NOTIFY_URLS",
+      "required": false,
+      "default": "",
+      "hint": "Optional comma-separated apprise URLs, e.g. tgram://bottoken/chatid."
+    }
+  ]
+}
