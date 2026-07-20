@@ -100,11 +100,18 @@ schedule = 300
 # reaches the database by container name, no host IP needed. Full snapshot
 # every tick -> regular time series for Grafana (query via port 8812,
 # PostgreSQL wire protocol, or the web console on 9000).
+# All metrics land in one "seamtec" table (metric name as 'name' symbol);
+# writes are batched to keep QuestDB transactions large:
+#   SELECT time, value FROM seamtec WHERE name = 'wirkleistung' AND entity = 'turbine'
 [[sinks]]
-type = "ilp"
+type = "questdb"         # official questdb client, auto-batched writes
 host = "questdb"
 port = 9009
+protocol = "tcp"
 only_changes = false
+table = "seamtec"
+flush_rows = 500         # client flushes once 500 rows buffered ...
+flush_interval = 30      # ... or the oldest buffered row is 30 s old
 
 # change-only copy in the container logs (docker logs / runtipi log viewer)
 [[sinks]]
