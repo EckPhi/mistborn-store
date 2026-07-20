@@ -2,6 +2,18 @@
 
 QuestDB is a high-performance, open-source time-series database with SQL support. It ingests millions of rows per second and is a great fit for IoT sensor data, home automation metrics and real-time analytics.
 
+## Host prerequisites
+
+QuestDB memory-maps every column file and warns at startup when the kernel's file-handle and mapping limits are low, e.g. `fs.file-max limit is too low [current=524288, recommended=1048576]`. These are host-global kernel settings and cannot be raised from inside the container — set them once on the runtipi host:
+
+```sh
+echo "fs.file-max = 1048576" | sudo tee /etc/sysctl.d/99-questdb.conf
+echo "vm.max_map_count = 1048576" | sudo tee -a /etc/sysctl.d/99-questdb.conf
+sudo sysctl --system
+```
+
+The warnings are harmless for small setups; the limits matter once you have many tables/partitions.
+
 ## Endpoints
 
 - **Web console / REST / ILP-over-HTTP**: the app port (`9000` inside the container) — query UI, `/exec`, `/exp`, `/imp` and InfluxDB line protocol ingestion (`/write`).
