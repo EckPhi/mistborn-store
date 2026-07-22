@@ -10,8 +10,8 @@
     "utilities"
   ],
   "description": "VictoriaMetrics is a fast, cost-effective and scalable monitoring solution and time-series database. It is a drop-in replacement for Prometheus remote storage, supports PromQL/MetricsQL, the Prometheus and InfluxDB ingestion protocols, and runs as a single small binary.",
-  "tipi_version": 4,
-  "version": "v1.147.0",
+  "tipi_version": 5,
+  "version": "v1.148.0",
   "source": "https://github.com/VictoriaMetrics/VictoriaMetrics",
   "website": "https://victoriametrics.com",
   "exposable": true,
@@ -20,7 +20,7 @@
     "amd64"
   ],
   "created_at": 1781308800000,
-  "updated_at": 1783393158711,
+  "updated_at": 1784689144527,
   "dynamic_config": true,
   "form_fields": [
     {
