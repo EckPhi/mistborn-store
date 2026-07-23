@@ -7,7 +7,8 @@
   "scripts": {
     "test": "bun test",
     "lint": "biome check",
-    "lint:ci": "biome ci"
+    "lint:ci": "biome ci",
+    "update:apps": "bash ./scripts/update-apps.sh"
   },
   "keywords": [],
   "author": "",

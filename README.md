@@ -64,6 +64,20 @@ bun install
 bun run test
 ```
 
+## Updating apps locally
+
+The local updater runs the repository's Renovate configuration against every app image, validates each detected update, and creates one local commit per update. It requires a clean working tree but does not require a GitHub token or push anything.
+
+```bash
+bun run update:apps
+```
+
+To check for updates without creating branches or commits:
+
+```bash
+bun run update:apps --dry-run
+```
+
 ## License
 
 See [LICENSE](LICENSE).
