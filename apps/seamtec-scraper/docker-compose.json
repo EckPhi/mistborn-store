@@ -4,7 +4,7 @@
   "services": [
     {
       "name": "seamtec-scraper",
-      "image": "eckphi/seamtec-scraper:1.2.1",
+      "image": "eckphi/seamtec-scraper:1.2.2",
       "isMain": true,
       "internalPort": 8099,
       "command": [
