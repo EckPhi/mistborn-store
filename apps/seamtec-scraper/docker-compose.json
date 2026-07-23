@@ -4,14 +4,13 @@
   "services": [
     {
       "name": "seamtec-scraper",
-      "image": "eckphi/seamtec-scraper:1.1.0",
+      "image": "eckphi/seamtec-scraper:1.2.0",
       "isMain": true,
       "internalPort": 8099,
       "command": [
         "--config",
         "${SEAMTEC_CONFIG_FILE}",
-        "--sink",
-        "${SEAMTEC_SINK}"
+        "--web"
       ],
       "environment": [
         {
@@ -42,7 +41,7 @@
         {
           "hostPath": "${APP_DATA_DIR}/data/config",
           "containerPath": "/config",
-          "readOnly": true,
+          "readOnly": false,
           "shared": false,
           "private": false
         }

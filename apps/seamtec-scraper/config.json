@@ -9,13 +9,13 @@
     "automation",
     "data"
   ],
-  "description": "Read-only scraper for the Seamtec SCADA web UI (scc.seamtec.net). Logs in with a headless Chromium (the site is a Blazor Server app, so a real browser is required), walks the configured entity pages plus the active-errors and event-history pages on individual schedules, and emits datapoints to one or more sinks: stdout JSON lines, InfluxDB line protocol (QuestDB/InfluxDB), MQTT or Telegraf HTTP. Ships the Weissenberg facility config baked in; custom facilities via an editable TOML in app-data. Headless service without a web UI.",
-  "tipi_version": 4,
-  "version": "1.1.0",
+  "description": "Read-only scraper for the Seamtec SCADA web UI (scc.seamtec.net). Includes a dashboard and form-based configuration editor with validation, connectivity tests, persistent Save, and runtime Apply without a restart. Emits datapoints to stdout, QuestDB/InfluxDB line protocol, MQTT, or Telegraf HTTP.",
+  "tipi_version": 5,
+  "version": "1.2.0",
   "source": "https://github.com/EckPhi/seamtec-scraper",
   "website": "https://github.com/EckPhi/seamtec-scraper",
-  "exposable": false,
-  "no_gui": true,
+  "exposable": true,
+  "no_gui": false,
   "supported_architectures": [
     "amd64"
   ],
