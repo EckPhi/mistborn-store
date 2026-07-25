@@ -19,6 +19,18 @@
         {
           "key": "QDB_TELEMETRY_ENABLED",
           "value": "false"
+        },
+        {
+          "key": "QDB_PG_READONLY_USER_ENABLED",
+          "value": "${QUESTDB_PG_READONLY_ENABLED}"
+        },
+        {
+          "key": "QDB_PG_READONLY_USER",
+          "value": "${QUESTDB_PG_READONLY_USER}"
+        },
+        {
+          "key": "QDB_PG_READONLY_PASSWORD",
+          "value": "${QUESTDB_PG_READONLY_PASSWORD}"
         }
       ],
       "addPorts": [

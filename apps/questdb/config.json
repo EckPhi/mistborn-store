@@ -9,7 +9,7 @@
     "data"
   ],
   "description": "QuestDB is a high-performance open-source time-series database with SQL support. It ingests millions of rows per second via InfluxDB line protocol, PostgreSQL wire protocol or REST, and ships a built-in web console for queries and charts. This app bundles a maintenance sidecar that provides configurable multi-stage downsampling (via incremental materialized views and TTLs), optional compressed archiving of expired raw partitions, and automatic compressed backups.",
-  "tipi_version": 2,
+  "tipi_version": 3,
   "version": "9.4.3",
   "source": "https://github.com/questdb/questdb",
   "website": "https://questdb.com",
@@ -19,7 +19,7 @@
     "amd64"
   ],
   "created_at": 1784419200000,
-  "updated_at": 1784480000000,
+  "updated_at": 1784851200000,
   "dynamic_config": true,
   "form_fields": [
     {
@@ -36,6 +36,28 @@
       "required": true,
       "min": 8,
       "hint": "At least 8 characters. Used for connections on the PostgreSQL wire port 8812."
+    },
+    {
+      "type": "boolean",
+      "label": "Enable read-only Postgres user",
+      "env_variable": "QUESTDB_PG_READONLY_ENABLED",
+      "required": false,
+      "default": true,
+      "hint": "Second Postgres wire account that can only run SELECT queries — hand this one to Grafana and other dashboards."
+    },
+    {
+      "type": "text",
+      "label": "Read-only username",
+      "env_variable": "QUESTDB_PG_READONLY_USER",
+      "required": false,
+      "default": "viewer"
+    },
+    {
+      "type": "password",
+      "label": "Read-only password",
+      "env_variable": "QUESTDB_PG_READONLY_PASSWORD",
+      "required": false,
+      "default": "questdb"
     },
     {
       "type": "text",

@@ -17,7 +17,7 @@ The warnings are harmless for small setups; the limits matter once you have many
 ## Endpoints
 
 - **Web console / REST / ILP-over-HTTP**: the app port (`9000` inside the container) — query UI, `/exec`, `/exp`, `/imp` and InfluxDB line protocol ingestion (`/write`).
-- **PostgreSQL wire**: `<host-ip>:8812` — connect with any Postgres client using the username/password configured in the app settings.
+- **PostgreSQL wire**: `<host-ip>:8812` — connect with any Postgres client using the username/password configured in the app settings. A second, read-only account (default `viewer`, SELECT only) can be enabled in the settings — use that one for Grafana and other dashboards.
 - **ILP over TCP**: `<host-ip>:9009` — legacy InfluxDB line protocol socket.
 
 ## Retention pipeline (maintenance sidecar)
