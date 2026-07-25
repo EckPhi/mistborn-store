@@ -1,0 +1,88 @@
+{
+  "name": "Power Price Collector",
+  "id": "power-price-collector",
+  "available": true,
+  "short_desc": "European day-ahead power prices into QuestDB, MQTT, Grist and more",
+  "author": "EckPhi",
+  "port": 8100,
+  "categories": [
+    "automation",
+    "data",
+    "finance"
+  ],
+  "description": "Collects EPEX SPOT day-ahead power prices via the ENTSO-E Transparency Platform and writes them to configurable sinks: QuestDB, generic InfluxDB line protocol, Telegraf, MQTT (with optional Home Assistant discovery) and Grist. Ships a web UI for configuration, component health and the current price curve. Covers 40 European bidding zones, handles 15/30/60-minute market time units, and keeps negative prices intact.",
+  "tipi_version": 1,
+  "version": "1.0.0",
+  "source": "https://github.com/EckPhi/power-price-collector",
+  "website": "https://github.com/EckPhi/power-price-collector",
+  "exposable": true,
+  "no_gui": false,
+  "supported_architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "created_at": 1784419200000,
+  "updated_at": 1785018503098,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "password",
+      "label": "ENTSO-E API token",
+      "env_variable": "ENTSOE_API_TOKEN",
+      "required": true,
+      "hint": "Free. Register at transparency.entsoe.eu, then email transparency@entsoe.eu from that address with subject 'Restful API access'. Reference it in the config as ${ENTSOE_API_TOKEN}."
+    },
+    {
+      "type": "text",
+      "label": "QuestDB host",
+      "env_variable": "QUESTDB_HOST",
+      "required": false,
+      "default": "",
+      "hint": "Host LAN IP of the QuestDB app, e.g. 192.168.1.10 — apps sit on separate compose networks, so the service name 'questdb' will not resolve. Reference it as ${QUESTDB_HOST}."
+    },
+    {
+      "type": "text",
+      "label": "MQTT host",
+      "env_variable": "MQTT_HOST",
+      "required": false,
+      "default": "",
+      "hint": "Broker host LAN IP. Reference it as ${MQTT_HOST}."
+    },
+    {
+      "type": "text",
+      "label": "MQTT username",
+      "env_variable": "MQTT_USER",
+      "required": false,
+      "default": ""
+    },
+    {
+      "type": "password",
+      "label": "MQTT password",
+      "env_variable": "MQTT_PASSWORD",
+      "required": false,
+      "default": ""
+    },
+    {
+      "type": "password",
+      "label": "InfluxDB token",
+      "env_variable": "INFLUX_TOKEN",
+      "required": false,
+      "default": "",
+      "hint": "Only for the generic ILP sink pointed at InfluxDB 2.x."
+    },
+    {
+      "type": "password",
+      "label": "Grist API key",
+      "env_variable": "GRIST_API_KEY",
+      "required": false,
+      "default": ""
+    },
+    {
+      "type": "text",
+      "label": "Grist document ID",
+      "env_variable": "GRIST_DOC_ID",
+      "required": false,
+      "default": ""
+    }
+  ]
+}

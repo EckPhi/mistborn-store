@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 2,
+  "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json",
+  "services": [
+    {
+      "name": "power-price-collector",
+      "image": "eckphi/power-price-collector:1.0.0",
+      "isMain": true,
+      "internalPort": 8080,
+      "environment": [
+        {
+          "key": "POWER_PRICES_CONFIG",
+          "value": "/config/config.yaml"
+        },
+        {
+          "key": "TZ",
+          "value": "${TZ}"
+        },
+        {
+          "key": "ENTSOE_API_TOKEN",
+          "value": "${ENTSOE_API_TOKEN}"
+        },
+        {
+          "key": "QUESTDB_HOST",
+          "value": "${QUESTDB_HOST}"
+        },
+        {
+          "key": "MQTT_HOST",
+          "value": "${MQTT_HOST}"
+        },
+        {
+          "key": "MQTT_USER",
+          "value": "${MQTT_USER}"
+        },
+        {
+          "key": "MQTT_PASSWORD",
+          "value": "${MQTT_PASSWORD}"
+        },
+        {
+          "key": "INFLUX_TOKEN",
+          "value": "${INFLUX_TOKEN}"
+        },
+        {
+          "key": "GRIST_API_KEY",
+          "value": "${GRIST_API_KEY}"
+        },
+        {
+          "key": "GRIST_DOC_ID",
+          "value": "${GRIST_DOC_ID}"
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/data/config",
+          "containerPath": "/config",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ]
+    }
+  ]
+}
