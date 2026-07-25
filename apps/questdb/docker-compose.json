@@ -7,6 +7,12 @@
       "image": "questdb/questdb:9.4.3",
       "isMain": true,
       "internalPort": 9000,
+      "ulimits": {
+        "nofile": {
+          "soft": 1048576,
+          "hard": 1048576
+        }
+      },
       "environment": [
         {
           "key": "QDB_PG_USER",

@@ -14,6 +14,8 @@ sudo sysctl --system
 
 The warnings are harmless for small setups; the limits matter once you have many tables/partitions.
 
+The per-process file-descriptor limit is a separate knob: containers inherit it from the Docker daemon (not from host sysctls), so the app sets `ulimits.nofile` to 1048576 in its compose file. If a low limit persists, raise the daemon default in `/etc/docker/daemon.json` (`default-ulimits`) or the dockerd systemd unit (`LimitNOFILE`).
+
 ## Endpoints
 
 - **Web console / REST / ILP-over-HTTP**: the app port (`9000` inside the container) — query UI, `/exec`, `/exp`, `/imp` and InfluxDB line protocol ingestion (`/write`).
