@@ -31,7 +31,7 @@
     },
     {
       "name": "filebrowser",
-      "image": "filebrowser/filebrowser:v2.63.18",
+      "image": "filebrowser/filebrowser:v2.63.19",
       "addPorts": [
         {
           "containerPort": 80,
