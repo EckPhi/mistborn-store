@@ -2,6 +2,33 @@
 
 Collects European day-ahead power prices and writes them to whichever sinks you configure. A scheduler fetches once the daily auction has cleared, and a web UI shows component health, run history and the current price curve.
 
+## Upgrading from 1.x — breaking config change
+
+**2.0.0 replaces `source:` with a `sources:` list, and moves `zones` onto each source.** A 1.x config will not load; the app logs a validation error and stays degraded until you edit it.
+
+Old:
+
+```yaml
+source:
+  type: entsoe
+  api_token: ${ENTSOE_API_TOKEN}
+collection:
+  zones: [DE_LU, AT]
+```
+
+New:
+
+```yaml
+sources:
+  - type: entsoe
+    api_token: ${ENTSOE_API_TOKEN}
+    zones: [DE_LU, AT]
+```
+
+`collection:` still exists and keeps `lookback_days`, `lookahead_days` and `fail_fast` — only `zones` moved out of it.
+
+(1.1.0 shipped this same change as a minor version by mistake. 2.0.0 is the same code under an honest version number; use 2.0.0.)
+
 ## Why ENTSO-E and not EPEX directly
 
 EPEX SPOT's own data feed needs a commercial licence. The auction results are published to the ENTSO-E Transparency Platform as document type `A44` (day-ahead prices), which is free and covers every European bidding zone through one API — DE-LU, AT, FR, NL, BE, CH, GB, PL and the Nordics included, 40 zones in total.
@@ -9,6 +36,20 @@ EPEX SPOT's own data feed needs a commercial licence. The auction results are pu
 Get a token: register at [transparency.entsoe.eu](https://transparency.entsoe.eu/), then email `transparency@entsoe.eu` from the registered address with the subject "Restful API access" and your account email in the body. The token appears under Account Settings.
 
 Until a token is set the app runs but every fetch fails with that instruction, and the health endpoint reports degraded.
+
+## Sources
+
+Each source owns its own zones, because coverage is a property of the upstream.
+
+| Type | Key needed | Coverage | Resolution | Independent of ENTSO-E? |
+| --- | --- | --- | --- | --- |
+| `entsoe` | yes, free | all 40 zones | 15/30/60 min | — (is the source) |
+| `awattar` | no | DE-LU, AT | 60 min only | **Yes** — EPEX reseller |
+| `energy_charts` | no | 39 zones | 15 min | **No** — relays SMARD/ENTSO-E |
+
+Zones must not overlap between sources — the sinks de-duplicate on (timestamp, zone), so two sources writing one zone would race and the later write would silently win. The config refuses to load rather than let that happen.
+
+energy-charts is not a second opinion: it relays SMARD/ENTSO-E, so it fails whenever the upstream publication chain does. What it buys is working without an API token and covering the ENTSO-E web API being unreachable. Note also that 24 of its 39 zones are licensed by Fraunhofer for private and internal use only; those are refused unless you set `allow_restricted_zones: true`.
 
 ## Sinks
 
@@ -20,21 +61,25 @@ Until a token is set the app runs but every fetch fails with that instruction, a
 | `mqtt` | Retained messages, optional Home Assistant discovery |
 | `grist` | REST, add-or-update |
 
-Every sink is idempotent. The collector deliberately re-fetches overlapping windows to pick up late corrections, so re-runs update in place instead of duplicating — QuestDB via `DEDUP UPSERT KEYS(timestamp, zone)` on the auto-created table, Grist via `PUT /records` with a `require` clause.
+Every sink is idempotent. The collector deliberately re-fetches overlapping windows to pick up late corrections, so re-runs update in place instead of duplicating — QuestDB via `DEDUP UPSERT KEYS` on the auto-created table, Grist via `PUT /records` with a `require` clause.
+
+## Importing history
+
+The dashboard has an **Import history** panel: pick a date range and it runs in the background with a progress bar. Re-importing a range you already loaded is safe.
+
+Set `backfill: false` on the MQTT sink before importing — a multi-year import would otherwise publish thousands of retained messages and leave the topic holding an arbitrary historic day instead of today's curve.
 
 ## Configuration
 
-The config lives at `/config/config.yaml`, which is `app-data/data/config/config.yaml` on the host. Edit it in the web UI's **Config** tab — saving validates, writes and hot-applies it, rebuilding sinks and reinstalling cron jobs without a restart.
+The config lives at `/config/config.yaml`, which is `app-data/data/config/config.yaml` on the host. Edit it in the web UI's **Config** tab — a generated form, with zones picked from a filterable list. Saving validates, writes and hot-applies without a restart.
 
-Secrets stay out of that file. `${VAR}` and `${VAR:-default}` expand from the environment when the config is loaded, so reference the app's form fields instead of pasting values:
+Secrets stay out of that file. `${VAR}` and `${VAR:-default}` expand from the environment when the config is loaded, and are stored verbatim, so reference the app's form fields instead of pasting values:
 
 ```yaml
-source:
-  type: entsoe
-  api_token: ${ENTSOE_API_TOKEN}
-
-collection:
-  zones: [DE_LU, AT]
+sources:
+  - type: entsoe
+    api_token: ${ENTSOE_API_TOKEN}
+    zones: [DE_LU, AT]
 
 sinks:
   - name: questdb
