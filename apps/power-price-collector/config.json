@@ -2,7 +2,7 @@
   "name": "Power Price Collector",
   "id": "power-price-collector",
   "available": true,
-  "short_desc": "European day-ahead power prices into QuestDB, MQTT, Grist and more",
+  "short_desc": "European power prices into QuestDB, MQTT, Grist and more",
   "author": "EckPhi",
   "port": 8100,
   "categories": [
@@ -10,9 +10,9 @@
     "data",
     "finance"
   ],
-  "description": "Collects European day-ahead power prices and writes them to configurable sinks: QuestDB, generic InfluxDB line protocol, Telegraf, MQTT (with optional Home Assistant discovery) and Grist. Sources are configured as a list, each owning its own bidding zones \u2014 ENTSO-E for all 40 zones, plus aWATTar and energy-charts. Ships a web UI with a form-based config editor, component health, the current price curve, and a background history import. Handles 15/30/60-minute market time units and keeps negative prices intact. NOTE: 2.0.0 is a breaking config change from 1.x \u2014 see the description for the migration.",
-  "tipi_version": 3,
-  "version": "2.0.0",
+  "description": "Collects European power prices and writes them to configurable sinks: QuestDB, generic InfluxDB line protocol, Telegraf, MQTT (with optional Home Assistant discovery) and Grist. Sources are a list, each owning its own bidding zones and markets \u2014 ENTSO-E for all 40 zones plus the intraday auctions and imbalance prices, Nord Pool and OMIE as independent exchanges, aWATTar and energy-charts. Ships a web UI with a form-based config editor, zone picker, component health, the price curve and a background history import. Handles 15/30/60-minute market time units and keeps negative prices intact. Configs from 1.x are migrated automatically on startup.",
+  "tipi_version": 4,
+  "version": "2.2.0",
   "source": "https://github.com/EckPhi/power-price-collector",
   "website": "https://github.com/EckPhi/power-price-collector",
   "exposable": true,
@@ -22,7 +22,7 @@
     "arm64"
   ],
   "created_at": 1784419200000,
-  "updated_at": 1785155233342,
+  "updated_at": 1785232469219,
   "dynamic_config": true,
   "form_fields": [
     {

@@ -1,10 +1,10 @@
 # Power Price Collector
 
-Collects European day-ahead power prices and writes them to whichever sinks you configure. A scheduler fetches once the daily auction has cleared, and a web UI shows component health, run history and the current price curve.
+Collects European power prices and writes them to whichever sinks you configure. A scheduler fetches once the daily auction has cleared, and a web UI shows component health, run history and the current price curve.
 
-## Upgrading from 1.x — breaking config change
+## Upgrading from 1.x
 
-**2.0.0 replaces `source:` with a `sources:` list, and moves `zones` onto each source.** A 1.x config will not load; the app logs a validation error and stays degraded until you edit it.
+2.x replaced the single `source:` block and the global `collection.zones` with a `sources:` list, each entry owning its own zones. **Since 2.2.0 an old config is migrated automatically on startup** — nothing to edit by hand. The log says what it changed, and the file on disk is left alone until you save from the UI, so a downgrade still works.
 
 Old:
 
@@ -16,7 +16,7 @@ collection:
   zones: [DE_LU, AT]
 ```
 
-New:
+New (what the migration produces):
 
 ```yaml
 sources:
@@ -27,7 +27,9 @@ sources:
 
 `collection:` still exists and keeps `lookback_days`, `lookahead_days` and `fail_fast` — only `zones` moved out of it.
 
-(1.1.0 shipped this same change as a minor version by mistake. 2.0.0 is the same code under an honest version number; use 2.0.0.)
+> **Avoid 2.0.0 and 2.1.0.** They rejected a 1.x config and exited, which under runtipi's restart policy is a crash loop with no web UI to fix it from. 2.2.0 migrates instead. If you are stuck on one of those, upgrading is enough — no manual edit needed.
+
+QuestDB tables created before 2.2.0 are migrated on startup too: a `product` column is added and the dedup keys widen to `(timestamp, zone, product)`, so day-ahead and imbalance prices for the same hour stop overwriting each other.
 
 ## Why ENTSO-E and not EPEX directly
 
@@ -41,13 +43,17 @@ Until a token is set the app runs but every fetch fails with that instruction, a
 
 Each source owns its own zones, because coverage is a property of the upstream.
 
-| Type | Key needed | Coverage | Resolution | Independent of ENTSO-E? |
-| --- | --- | --- | --- | --- |
-| `entsoe` | yes, free | all 40 zones | 15/30/60 min | — (is the source) |
-| `awattar` | no | DE-LU, AT | 60 min only | **Yes** — EPEX reseller |
-| `energy_charts` | no | 39 zones | 15 min | **No** — relays SMARD/ENTSO-E |
+| Type | Key needed | Coverage | Resolution | Markets | Independent of ENTSO-E? |
+| --- | --- | --- | --- | --- | --- |
+| `entsoe` | yes, free | all 40 zones | 15/30/60 min | day-ahead, intraday auctions, imbalance | — (is the source) |
+| `nordpool` | no, but only the last ~90 days | Nordics + Baltics | 15 min | day-ahead | **Yes** — the exchange itself |
+| `omie` | no | ES, PT | 15 min | day-ahead | **Yes** — the exchange itself |
+| `awattar` | no | DE-LU, AT | 60 min only | day-ahead | **Yes** — EPEX reseller |
+| `energy_charts` | no | 39 zones | 15 min | day-ahead | **No** — relays SMARD/ENTSO-E |
 
-Zones must not overlap between sources — the sinks de-duplicate on (timestamp, zone), so two sources writing one zone would race and the later write would silently win. The config refuses to load rather than let that happen.
+Each source also has `products:`, defaulting to `[day_ahead]`. Only ENTSO-E carries more; the config form greys out markets a given type cannot serve. Nord Pool's public portal only serves roughly the last 90 days without credentials, so pair it with ENTSO-E if you want to backfill years.
+
+Two sources must not claim the same zone **and** market — the sinks de-duplicate on (timestamp, zone, product), so both writing one would race and the later write would silently win. The config refuses to load rather than let that happen. Splitting by market is fine: one source can take DE-LU day-ahead while another takes its imbalance prices.
 
 energy-charts is not a second opinion: it relays SMARD/ENTSO-E, so it fails whenever the upstream publication chain does. What it buys is working without an API token and covering the ENTSO-E web API being unreachable. Note also that 24 of its 39 zones are licensed by Fraunhofer for private and internal use only; those are refused unless you set `allow_restricted_zones: true`.
 
@@ -61,7 +67,9 @@ energy-charts is not a second opinion: it relays SMARD/ENTSO-E, so it fails when
 | `mqtt` | Retained messages, optional Home Assistant discovery |
 | `grist` | REST, add-or-update |
 
-Every sink is idempotent. The collector deliberately re-fetches overlapping windows to pick up late corrections, so re-runs update in place instead of duplicating — QuestDB via `DEDUP UPSERT KEYS` on the auto-created table, Grist via `PUT /records` with a `require` clause.
+Every sink is idempotent. The collector deliberately re-fetches overlapping windows to pick up late corrections, so re-runs update in place instead of duplicating — QuestDB via `DEDUP UPSERT KEYS(timestamp, zone, product)` on the auto-created table, Grist via `PUT /records` with a `require` clause.
+
+If you collect more than day-ahead, keep `{product}` in the MQTT topic template (it is there by default). Without it every market publishes to the same topic and the last write wins.
 
 ## Importing history
 
@@ -90,6 +98,8 @@ sinks:
 ```
 
 On a fresh install no config file exists yet, so the app starts with defaults and **no sinks** — it fetches nothing useful until you configure it in the UI.
+
+If the config cannot be loaded at all, the app still starts and still serves the UI — inert, with no sources, sinks or scheduler — showing the error and the offending values in the editor so you can fix and save without a restart. It reports unhealthy throughout, so it never looks fine while collecting nothing.
 
 ## Pairing with the QuestDB app
 
