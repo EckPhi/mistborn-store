@@ -29,7 +29,9 @@ sources:
 
 > **Avoid 2.0.0 and 2.1.0.** They rejected a 1.x config and exited, which under runtipi's restart policy is a crash loop with no web UI to fix it from. 2.2.0 migrates instead. If you are stuck on one of those, upgrading is enough — no manual edit needed.
 
-QuestDB tables created before 2.2.0 are migrated on startup too: a `product` column is added and the dedup keys widen to `(timestamp, zone, product)`, so day-ahead and imbalance prices for the same hour stop overwriting each other.
+QuestDB tables are migrated on startup too: `product` and `marketplace` columns are added and the dedup keys widen to `(timestamp, zone, product, marketplace)`, so day-ahead, imbalance and rival exchanges stop overwriting each other at the same hour. Nothing to run by hand, and re-imports stay idempotent afterwards.
+
+The exception is `transport: tcp` — QuestDB's `/exec` is HTTP-only, so on port 9009 the table is neither created nor migrated. The SQL is printed at startup; run it yourself.
 
 ## Why ENTSO-E and not EPEX directly
 
@@ -51,9 +53,24 @@ Each source owns its own zones, because coverage is a property of the upstream.
 | `awattar` | no | DE-LU, AT | 60 min only | day-ahead | **Yes** — EPEX reseller |
 | `energy_charts` | no | 39 zones | 15 min | day-ahead | **No** — relays SMARD/ENTSO-E |
 
+### Marketplaces
+
+`source` records who the price came *from*; `marketplace` records which exchange *cleared* it. ENTSO-E is a publication platform rather than an exchange, and for Austria it relays both an EPEX SPOT and an EXAA day-ahead sequence for the same hours.
+
+Those are two real prices, so both are stored and told apart by `marketplace` instead of one being discarded. It is part of the key alongside zone, instant and product. For the ordinary case of one exchange per zone it stays empty. Where a zone does publish several, the raw auction identifiers are logged so they can be mapped to names:
+
+```yaml
+sources:
+  - type: entsoe
+    zones: [AT]
+    marketplaces:
+      "auction.mRID=EPEX_AT": epex
+      "auction.mRID=EXAA_AT": exaa
+```
+
 Each source also has `products:`, defaulting to `[day_ahead]`. Only ENTSO-E carries more; the config form greys out markets a given type cannot serve. Nord Pool's public portal only serves roughly the last 90 days without credentials, so pair it with ENTSO-E if you want to backfill years.
 
-Two sources must not claim the same zone **and** market — the sinks de-duplicate on (timestamp, zone, product), so both writing one would race and the later write would silently win. The config refuses to load rather than let that happen. Splitting by market is fine: one source can take DE-LU day-ahead while another takes its imbalance prices.
+Two sources must not claim the same zone **and** market — the sinks de-duplicate on (timestamp, zone, product, marketplace), so both writing one would race and the later write would silently win. The config refuses to load rather than let that happen. Splitting by market is fine: one source can take DE-LU day-ahead while another takes its imbalance prices.
 
 energy-charts is not a second opinion: it relays SMARD/ENTSO-E, so it fails whenever the upstream publication chain does. What it buys is working without an API token and covering the ENTSO-E web API being unreachable. Note also that 24 of its 39 zones are licensed by Fraunhofer for private and internal use only; those are refused unless you set `allow_restricted_zones: true`.
 
@@ -67,9 +84,9 @@ energy-charts is not a second opinion: it relays SMARD/ENTSO-E, so it fails when
 | `mqtt` | Retained messages, optional Home Assistant discovery |
 | `grist` | REST, add-or-update |
 
-Every sink is idempotent. The collector deliberately re-fetches overlapping windows to pick up late corrections, so re-runs update in place instead of duplicating — QuestDB via `DEDUP UPSERT KEYS(timestamp, zone, product)` on the auto-created table, Grist via `PUT /records` with a `require` clause.
+Every sink is idempotent. The collector deliberately re-fetches overlapping windows to pick up late corrections, so re-runs update in place instead of duplicating — QuestDB via `DEDUP UPSERT KEYS(timestamp, zone, product, marketplace)` on the auto-created table, Grist via `PUT /records` with a `require` clause.
 
-If you collect more than day-ahead, keep `{product}` in the MQTT topic template (it is there by default). Without it every market publishes to the same topic and the last write wins.
+Keep `{product}` and `{marketplace}` in the MQTT topic template (both are there by default). Without them every market and exchange publishes to the same topic and the last write wins.
 
 ## Importing history
 

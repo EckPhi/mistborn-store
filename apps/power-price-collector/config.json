@@ -10,9 +10,9 @@
     "data",
     "finance"
   ],
-  "description": "Collects European power prices and writes them to configurable sinks: QuestDB, generic InfluxDB line protocol, Telegraf, MQTT (with optional Home Assistant discovery) and Grist. Sources are a list, each owning its own bidding zones and markets \u2014 ENTSO-E for all 40 zones plus the intraday auctions and imbalance prices, Nord Pool and OMIE as independent exchanges, aWATTar and energy-charts. Ships a web UI with a form-based config editor, zone picker, component health, the price curve and a background history import. Handles 15/30/60-minute market time units and keeps negative prices intact. Configs from 1.x are migrated automatically on startup.",
-  "tipi_version": 4,
-  "version": "2.2.0",
+  "description": "Collects European power prices and writes them to configurable sinks: QuestDB, generic InfluxDB line protocol, Telegraf, MQTT (with optional Home Assistant discovery) and Grist. Sources are a list, each owning its own bidding zones and markets — ENTSO-E for all 40 zones plus the intraday auctions and imbalance prices, Nord Pool and OMIE as independent exchanges, aWATTar and energy-charts. Ships a web UI with a form-based config editor, zone picker, component health, the price curve and a background history import. Handles 15/30/60-minute market time units and keeps negative prices intact. Configs from 1.x are migrated automatically on startup.",
+  "tipi_version": 5,
+  "version": "2.3.0",
   "source": "https://github.com/EckPhi/power-price-collector",
   "website": "https://github.com/EckPhi/power-price-collector",
   "exposable": true,
@@ -22,7 +22,7 @@
     "arm64"
   ],
   "created_at": 1784419200000,
-  "updated_at": 1785232469219,
+  "updated_at": 1785278531604,
   "dynamic_config": true,
   "form_fields": [
     {
@@ -38,7 +38,7 @@
       "env_variable": "QUESTDB_HOST",
       "required": false,
       "default": "",
-      "hint": "Host LAN IP of the QuestDB app, e.g. 192.168.1.10 \u2014 apps sit on separate compose networks, so the service name 'questdb' will not resolve. Reference it as ${QUESTDB_HOST}."
+      "hint": "Host LAN IP of the QuestDB app, e.g. 192.168.1.10 — apps sit on separate compose networks, so the service name 'questdb' will not resolve. Reference it as ${QUESTDB_HOST}."
     },
     {
       "type": "text",

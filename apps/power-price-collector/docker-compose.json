@@ -4,7 +4,7 @@
   "services": [
     {
       "name": "power-price-collector",
-      "image": "eckphi/power-price-collector:2.2.0",
+      "image": "eckphi/power-price-collector:2.3.0",
       "isMain": true,
       "internalPort": 8080,
       "environment": [
