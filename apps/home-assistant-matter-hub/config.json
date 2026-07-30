@@ -10,8 +10,8 @@
     "network"
   ],
   "description": "Home Assistant Matter Hub simulates Matter bridges to publish your Home Assistant entities to any Matter-compatible controller like Amazon Alexa, Apple Home or Google Home. This is the community-maintained RiDDiX fork that continues development after the original t0bst4r project was discontinued; existing paired devices keep working. It runs in host network mode (required by Matter for mDNS/IPv6 discovery), so it cannot be reverse-proxied — reach the web UI directly at http://<host-ip>:8482. You need a Home Assistant URL and a long-lived access token. Bridges and their entity filters are configured from the web UI; state is persisted in the data volume.",
-  "tipi_version": 4,
-  "version": "2.0.49",
+  "tipi_version": 5,
+  "version": "2.0.50",
   "source": "https://github.com/RiDDiX/home-assistant-matter-hub",
   "website": "https://riddix.github.io/home-assistant-matter-hub",
   "exposable": false,
@@ -20,7 +20,7 @@
     "amd64"
   ],
   "created_at": 1781340500000,
-  "updated_at": 1783997873401,
+  "updated_at": 1785370316328,
   "dynamic_config": true,
   "form_fields": [
     {
