@@ -4,9 +4,10 @@
   "services": [
     {
       "name": "seamtec-scraper",
-      "image": "eckphi/seamtec-scraper:1.4.4",
+      "image": "eckphi/seamtec-scraper:1.4.6",
       "isMain": true,
       "internalPort": 8099,
+      "shmSize": "1gb",
       "command": [
         "--config",
         "${SEAMTEC_CONFIG_FILE}",

@@ -10,8 +10,8 @@
     "data"
   ],
   "description": "Read-only scraper for the Seamtec SCADA web UI (scc.seamtec.net). Includes a dashboard and form-based configuration editor with validation, connectivity tests, persistent Save, and runtime Apply without a restart. Emits datapoints to stdout, QuestDB/InfluxDB line protocol, MQTT, or Telegraf HTTP.",
-  "tipi_version": 13,
-  "version": "1.4.4",
+  "tipi_version": 14,
+  "version": "1.4.6",
   "source": "https://github.com/EckPhi/seamtec-scraper",
   "website": "https://github.com/EckPhi/seamtec-scraper",
   "exposable": true,
