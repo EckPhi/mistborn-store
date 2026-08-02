@@ -10,8 +10,8 @@
     "automation"
   ],
   "description": "Zigbee to MQTT bridge — get rid of your proprietary Zigbee bridges. This build of Zigbee2MQTT drops the mandatory USB device passthrough so it works with a network (TCP/serial-over-IP) Zigbee adapter such as a SLZB-06 or a ser2net host. The adapter is configured via the Serial port field (e.g. tcp://192.168.68.100:6638). For a local USB stick you would still need to add a docker device mapping manually.",
-  "tipi_version": 2,
-  "version": "2.12.1",
+  "tipi_version": 3,
+  "version": "2.13.0",
   "source": "https://github.com/Koenkk/zigbee2mqtt",
   "website": "https://www.zigbee2mqtt.io/",
   "exposable": true,
@@ -20,7 +20,7 @@
     "amd64"
   ],
   "created_at": 1691943801422,
-  "updated_at": 1782961187226,
+  "updated_at": 1785639527352,
   "dynamic_config": true,
   "form_fields": [
     {
