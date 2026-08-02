@@ -1,0 +1,108 @@
+{
+  "name": "Leistungsbot",
+  "id": "leistungsbot",
+  "available": true,
+  "short_desc": "Telegram poll bot for the weekly Leistungstag",
+  "author": "EckPhi",
+  "port": 8101,
+  "categories": [
+    "social",
+    "automation",
+    "utilities"
+  ],
+  "description": "Telegram bot that runs the recurring Leistungstag of a chat group: it posts the location poll, keeps a curated location list backed by the Google Places API (opening hours, ratings, address), sends reminders and reservation nudges on a schedule, closes the previous poll and dumps a weekly database backup into a backup chat. State lives in a single SQLite file under app-data, so there is no database container. Headless — the bot is operated from Telegram, not from a web UI.",
+  "tipi_version": 1,
+  "version": "1.3.0",
+  "source": "https://github.com/SharedShithosting/Leistungsbot",
+  "website": "https://github.com/SharedShithosting/Leistungsbot",
+  "exposable": false,
+  "no_gui": true,
+  "supported_architectures": [
+    "amd64"
+  ],
+  "created_at": 1784419200000,
+  "updated_at": 1785600000000,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "password",
+      "label": "Telegram bot token",
+      "env_variable": "LEISTUNGSBOT_BOT_TOKEN",
+      "required": true,
+      "hint": "From @BotFather, e.g. 123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11."
+    },
+    {
+      "type": "text",
+      "label": "Telegram API ID",
+      "env_variable": "LEISTUNGSBOT_API_ID",
+      "required": true,
+      "hint": "From my.telegram.org → API development tools."
+    },
+    {
+      "type": "password",
+      "label": "Telegram API hash",
+      "env_variable": "LEISTUNGSBOT_API_HASH",
+      "required": true,
+      "hint": "From my.telegram.org → API development tools."
+    },
+    {
+      "type": "password",
+      "label": "Google Maps API key",
+      "env_variable": "LEISTUNGSBOT_GOOGLE",
+      "required": true,
+      "hint": "Google Places API key. Used for location search, opening hours and ratings."
+    },
+    {
+      "type": "text",
+      "label": "Leistungschat ID",
+      "env_variable": "LEISTUNGSBOT_LEISTUNGSCHAT_ID",
+      "required": true,
+      "hint": "Chat the polls and reminders are posted in, e.g. -1001234567890. Send /showIds in the chat to read it."
+    },
+    {
+      "type": "text",
+      "label": "Leistungsadmin ID",
+      "env_variable": "LEISTUNGSBOT_LEISTUNGSADMIN_ID",
+      "required": true,
+      "hint": "Chat/user the scheduler reports to, e.g. the admin's own chat ID."
+    },
+    {
+      "type": "text",
+      "label": "Log chat ID",
+      "env_variable": "LEISTUNGSBOT_CHAT_ID",
+      "required": true,
+      "hint": "Private chat or group that receives errors and log output."
+    },
+    {
+      "type": "text",
+      "label": "Bot operator usernames",
+      "env_variable": "LEISTUNGSBOT_USERNAMES",
+      "required": true,
+      "hint": "Telegram usernames allowed to run the privileged commands, without @. Separate several with spaces."
+    },
+    {
+      "type": "text",
+      "label": "Backup chat ID",
+      "env_variable": "LEISTUNGSBOT_BACKUPCHAT_ID",
+      "required": false,
+      "default": "",
+      "hint": "Optional chat the weekly SQLite backup is uploaded to. Leave empty to disable."
+    },
+    {
+      "type": "text",
+      "label": "Config file",
+      "env_variable": "LEISTUNGSBOT_CONFIG_FILE",
+      "required": false,
+      "default": "",
+      "hint": "Leave empty to configure the bot purely from the fields above (recommended). Set /config/BotConfig.yml to additionally read app-data/data/config/BotConfig.yml; the fields above still win over the file."
+    },
+    {
+      "type": "text",
+      "label": "Database path",
+      "env_variable": "LEISTUNGSBOT_SQLITE__PATH",
+      "required": false,
+      "default": "/data/leistungs_db.sqlite",
+      "hint": "Path inside the container. /data is app-data/data/storage on the host."
+    }
+  ]
+}
