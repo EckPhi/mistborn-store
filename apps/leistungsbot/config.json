@@ -10,8 +10,8 @@
     "automation",
     "utilities"
   ],
-  "description": "Telegram bot that runs the recurring Leistungstag of a chat group: it posts the location poll, keeps a curated location list backed by the Google Places API (opening hours, ratings, address), sends reminders and reservation nudges on a schedule, closes the previous poll and dumps a weekly database backup into a backup chat. State lives in a single SQLite file under app-data, so there is no database container. Headless — the bot is operated from Telegram, not from a web UI.",
-  "tipi_version": 3,
+  "description": "Telegram bot that runs the recurring Leistungstag of a chat group: it posts the location poll, keeps a curated location list backed by the Google Places API (opening hours, ratings, address), sends reminders and reservation nudges on a schedule, closes the previous poll and dumps a weekly database backup into a backup chat. It can also keep a Google Calendar in step with the leistungstage. State lives in a single SQLite file under app-data, so there is no database container. Headless — the bot is operated from Telegram, not from a web UI.",
+  "tipi_version": 4,
   "version": "1.3.2",
   "source": "https://github.com/SharedShithosting/Leistungsbot",
   "website": "https://github.com/SharedShithosting/Leistungsbot",
@@ -21,7 +21,7 @@
     "amd64"
   ],
   "created_at": 1784419200000,
-  "updated_at": 1785676408464,
+  "updated_at": 1785685322307,
   "dynamic_config": true,
   "form_fields": [
     {
@@ -87,6 +87,30 @@
       "required": false,
       "default": "",
       "hint": "Optional chat the weekly SQLite backup is uploaded to. Leave empty to disable."
+    },
+    {
+      "type": "text",
+      "label": "Google Calendar ID",
+      "env_variable": "LEISTUNGSBOT_CALENDAR__CALENDAR_ID",
+      "required": false,
+      "default": "",
+      "hint": "Optional. Calendar the leistungstage are written to, e.g. abc123@group.calendar.google.com (Calendar settings → Integrate calendar). Leave empty to keep no calendar."
+    },
+    {
+      "type": "text",
+      "label": "Google service account key",
+      "env_variable": "LEISTUNGSBOT_CALENDAR__CREDENTIALS",
+      "required": false,
+      "default": "",
+      "hint": "Path inside the container to the service account json, e.g. /config/google-service-account.json. Put the file in app-data/data/config and share the calendar with the account's email address as \"Make changes to events\"."
+    },
+    {
+      "type": "text",
+      "label": "Calendar timezone",
+      "env_variable": "LEISTUNGSBOT_CALENDAR__TIMEZONE",
+      "required": false,
+      "default": "",
+      "hint": "Optional IANA zone for the calendar entries, e.g. Europe/Vienna. Leave empty to use the app's timezone."
     },
     {
       "type": "text",

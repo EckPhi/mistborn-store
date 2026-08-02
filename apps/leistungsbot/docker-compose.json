@@ -53,6 +53,18 @@
         {
           "key": "LEISTUNGSBOT_BACKUPCHAT_ID",
           "value": "${LEISTUNGSBOT_BACKUPCHAT_ID}"
+        },
+        {
+          "key": "LEISTUNGSBOT_CALENDAR__CALENDAR_ID",
+          "value": "${LEISTUNGSBOT_CALENDAR__CALENDAR_ID}"
+        },
+        {
+          "key": "LEISTUNGSBOT_CALENDAR__CREDENTIALS",
+          "value": "${LEISTUNGSBOT_CALENDAR__CREDENTIALS}"
+        },
+        {
+          "key": "LEISTUNGSBOT_CALENDAR__TIMEZONE",
+          "value": "${LEISTUNGSBOT_CALENDAR__TIMEZONE}"
         }
       ],
       "volumes": [
