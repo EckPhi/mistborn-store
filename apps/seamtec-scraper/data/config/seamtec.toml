@@ -96,6 +96,24 @@ schedule = 300
 # urls = ["tgram://bottoken/chatid"]
 # min_interval = 300
 
+# Import of SCADA export archives (Reports tab). Archives live in the /data
+# volume so they survive restarts. The mappings put imported history on the
+# same series as the live scrape — without them an import would create its
+# own entity (e.g. entity=pegelstaende) next to the live one.
+[reports]
+download_dir = "/data/reports"
+keep_archives = true
+
+[reports.groups]
+"Pegelstände" = "stahlwasserbau"
+"Allgemein" = "stahlwasserbau"
+
+[[reports.mappings]]
+variable = "Leistungsmessung -Wirkleistung"
+entity = "synchrongenerator"
+name = "wirkleistung"
+section = "leistungsmessung_generator"
+
 # QuestDB app (this store) over the shared runtipi network: the scraper
 # reaches the database by container name, no host IP needed. Full snapshot
 # every tick -> regular time series for Grafana (query via port 8812,
