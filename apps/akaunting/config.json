@@ -1,0 +1,88 @@
+{
+  "name": "Akaunting",
+  "id": "akaunting",
+  "available": true,
+  "short_desc": "Free and open-source accounting software for small businesses",
+  "author": "Akaunting",
+  "port": 8102,
+  "categories": [
+    "finance",
+    "utilities"
+  ],
+  "description": "Akaunting is free, open-source and online accounting software for small businesses and freelancers. It handles invoicing, expense tracking, bank accounts, customers, vendors, taxes and reporting, and can be extended with apps from the Akaunting marketplace. This app bundles a MariaDB database and runs the installer automatically on first start using the company and admin details from the settings below.",
+  "tipi_version": 1,
+  "version": "3.1.21",
+  "source": "https://github.com/akaunting/docker",
+  "website": "https://akaunting.com",
+  "exposable": true,
+  "supported_architectures": [
+    "arm64",
+    "amd64"
+  ],
+  "created_at": 1785690668644,
+  "updated_at": 1785690668644,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Company name",
+      "env_variable": "AKAUNTING_COMPANY_NAME",
+      "required": true,
+      "hint": "The first company created on this instance. Only used during the initial install."
+    },
+    {
+      "type": "email",
+      "label": "Company email",
+      "env_variable": "AKAUNTING_COMPANY_EMAIL",
+      "required": true,
+      "hint": "Only used during the initial install."
+    },
+    {
+      "type": "email",
+      "label": "Admin email",
+      "env_variable": "AKAUNTING_ADMIN_EMAIL",
+      "required": true,
+      "hint": "Login of the first administrative user. Only used during the initial install."
+    },
+    {
+      "type": "password",
+      "label": "Admin password",
+      "env_variable": "AKAUNTING_ADMIN_PASSWORD",
+      "required": true,
+      "min": 6,
+      "hint": "At least 6 characters. Change it later from the Akaunting UI, not from here."
+    },
+    {
+      "type": "text",
+      "label": "App URL",
+      "env_variable": "AKAUNTING_APP_URL",
+      "required": false,
+      "default": "http://localhost:8102",
+      "hint": "Public URL Akaunting builds its links and assets with. Set it to your exposed domain (e.g. https://akaunting.example.com) if you proxy the app."
+    },
+    {
+      "type": "text",
+      "label": "Locale",
+      "env_variable": "AKAUNTING_LOCALE",
+      "required": false,
+      "default": "en-US",
+      "hint": "Initial interface language, e.g. en-US, de-DE, tr-TR."
+    },
+    {
+      "type": "random",
+      "label": "Database password",
+      "env_variable": "AKAUNTING_DB_PASSWORD",
+      "required": false,
+      "min": 32,
+      "hint": "Auto-generated. Do not change it after the first start — the MariaDB user is only created once."
+    },
+    {
+      "type": "text",
+      "label": "Database table prefix",
+      "env_variable": "AKAUNTING_DB_PREFIX",
+      "required": false,
+      "default": "akt_",
+      "hint": "Prefix for the Akaunting tables. Do not change it after the install."
+    }
+  ]
+}
