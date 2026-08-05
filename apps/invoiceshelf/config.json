@@ -1,0 +1,68 @@
+{
+  "name": "InvoiceShelf",
+  "id": "invoiceshelf",
+  "available": true,
+  "short_desc": "Self-hosted invoicing for freelancers and small businesses",
+  "author": "InvoiceShelf",
+  "port": 8090,
+  "categories": [
+    "finance",
+    "utilities"
+  ],
+  "description": "InvoiceShelf is a self-hosted invoicing app for freelancers and small businesses, forked from Crater. It creates invoices, estimates, recurring invoices and payments, tracks expenses and customers, supports multiple companies and currencies, custom invoice templates and taxes, and can email documents to clients. This app runs the SQLite variant — the database is a single file under app-data, so there is no database container.",
+  "tipi_version": 1,
+  "version": "2.4.2",
+  "source": "https://github.com/InvoiceShelf/InvoiceShelf",
+  "website": "https://invoiceshelf.com",
+  "exposable": true,
+  "supported_architectures": [
+    "arm64",
+    "amd64"
+  ],
+  "created_at": 1785690668644,
+  "updated_at": 1785690668644,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "App URL",
+      "env_variable": "INVOICESHELF_APP_URL",
+      "required": false,
+      "default": "http://localhost:8090",
+      "hint": "Exact URL you open InvoiceShelf with, including scheme and port, e.g. http://192.168.1.10:8090 or https://invoices.example.com. A wrong value breaks assets and logins."
+    },
+    {
+      "type": "text",
+      "label": "Session domain",
+      "env_variable": "INVOICESHELF_SESSION_DOMAIN",
+      "required": false,
+      "default": "localhost",
+      "hint": "Host part of the App URL without the scheme, e.g. 192.168.1.10 or invoices.example.com. Session cookies are issued for this domain."
+    },
+    {
+      "type": "text",
+      "label": "Stateful domains",
+      "env_variable": "INVOICESHELF_SANCTUM_STATEFUL_DOMAINS",
+      "required": false,
+      "default": "localhost:8090",
+      "hint": "Host and port you reach the app on, e.g. 192.168.1.10:8090 or invoices.example.com. Comma-separate several entries if you use more than one address. Laravel Sanctum only accepts cookie authentication from these."
+    },
+    {
+      "type": "random",
+      "label": "App key",
+      "env_variable": "INVOICESHELF_APP_KEY",
+      "required": false,
+      "min": 32,
+      "encoding": "base64",
+      "hint": "Laravel APP_KEY. Auto-generated and kept here so it survives container recreation — do not change it after the first start or encrypted settings become unreadable."
+    },
+    {
+      "type": "text",
+      "label": "Timezone",
+      "env_variable": "INVOICESHELF_TIMEZONE",
+      "required": false,
+      "default": "UTC",
+      "hint": "Application timezone, e.g. Europe/Vienna."
+    }
+  ]
+}

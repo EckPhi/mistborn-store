@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 2,
+  "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json",
+  "services": [
+    {
+      "name": "invoiceshelf-permissions",
+      "image": "busybox:1.38.0",
+      "command": ["sh", "-c", "mkdir -p /mnt/storage /mnt/modules && chown -R 82:82 /mnt/storage /mnt/modules"],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/storage",
+          "containerPath": "/mnt/storage",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "${APP_DATA_DIR}/modules",
+          "containerPath": "/mnt/modules",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ]
+    },
+    {
+      "name": "invoiceshelf",
+      "image": "invoiceshelf/invoiceshelf:2.4.2",
+      "isMain": true,
+      "internalPort": 8080,
+      "dependsOn": {
+        "invoiceshelf-permissions": {
+          "condition": "service_completed_successfully"
+        }
+      },
+      "environment": [
+        {
+          "key": "APP_NAME",
+          "value": "InvoiceShelf"
+        },
+        {
+          "key": "APP_ENV",
+          "value": "production"
+        },
+        {
+          "key": "APP_DEBUG",
+          "value": "false"
+        },
+        {
+          "key": "APP_KEY",
+          "value": "base64:${INVOICESHELF_APP_KEY}"
+        },
+        {
+          "key": "APP_URL",
+          "value": "${INVOICESHELF_APP_URL}"
+        },
+        {
+          "key": "APP_TIMEZONE",
+          "value": "${INVOICESHELF_TIMEZONE}"
+        },
+        {
+          "key": "SESSION_DOMAIN",
+          "value": "${INVOICESHELF_SESSION_DOMAIN}"
+        },
+        {
+          "key": "SANCTUM_STATEFUL_DOMAINS",
+          "value": "${INVOICESHELF_SANCTUM_STATEFUL_DOMAINS}"
+        },
+        {
+          "key": "DB_CONNECTION",
+          "value": "sqlite"
+        },
+        {
+          "key": "DB_DATABASE",
+          "value": "/var/www/html/storage/app/database.sqlite"
+        },
+        {
+          "key": "CACHE_STORE",
+          "value": "file"
+        },
+        {
+          "key": "SESSION_DRIVER",
+          "value": "file"
+        },
+        {
+          "key": "SESSION_LIFETIME",
+          "value": "240"
+        },
+        {
+          "key": "AUTORUN_ENABLED",
+          "value": "true"
+        },
+        {
+          "key": "AUTORUN_LARAVEL_MIGRATION",
+          "value": "false"
+        },
+        {
+          "key": "AUTORUN_LARAVEL_OPTIMIZE",
+          "value": "false"
+        },
+        {
+          "key": "PHP_OPCACHE_ENABLE",
+          "value": "1"
+        },
+        {
+          "key": "TZ",
+          "value": "${TZ}"
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/storage",
+          "containerPath": "/var/www/html/storage",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "${APP_DATA_DIR}/modules",
+          "containerPath": "/var/www/html/Modules",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ]
+    }
+  ]
+}
