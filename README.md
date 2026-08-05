@@ -44,6 +44,7 @@ See the [Runtipi custom app store guide](https://runtipi.io/docs/guides/create-y
 | <img src="apps/seamtec-scraper/metadata/logo.jpg" width="32"> | [Seamtec Scraper](https://github.com/EckPhi/seamtec-scraper) | Scraper for the Seamtec SCADA web UI |
 | <img src="apps/telegraf/metadata/logo.jpg" width="32"> | [Telegraf](https://github.com/influxdata/telegraf) | Plugin-driven agent for collecting and sending metrics |
 | <img src="apps/victoriametrics/metadata/logo.jpg" width="32"> | [VictoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics) | Fast, cost-effective time-series database |
+| <img src="apps/wealthfolio/metadata/logo.jpg" width="32"> | [Wealthfolio](https://github.com/wealthfolio/wealthfolio) | Private investment, net worth and portfolio tracker |
 | <img src="apps/youtrack/metadata/logo.jpg" width="32"> | [YouTrack](https://github.com/JetBrains) | Project management and issue tracker by JetBrains |
 | <img src="apps/zigbee2mqtt/metadata/logo.jpg" width="32"> | [Zigbee2MQTT](https://github.com/Koenkk/zigbee2mqtt) | Zigbee to MQTT bridge (network or USB adapter) |
 <!-- APPS:END -->

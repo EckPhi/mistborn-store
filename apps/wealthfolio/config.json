@@ -1,0 +1,66 @@
+{
+  "name": "Wealthfolio",
+  "id": "wealthfolio",
+  "available": true,
+  "short_desc": "Private investment, net worth and portfolio tracker",
+  "author": "Wealthfolio",
+  "port": 8088,
+  "categories": [
+    "finance",
+    "data"
+  ],
+  "description": "Wealthfolio is a privacy-first, open-source portfolio tracker. It consolidates holdings from several brokers and banks into one dashboard and tracks performance, net worth, dividends, income and allocations, benchmarked against indexes such as the S&P 500. Everything lives in a local SQLite database — no account, no cloud sync. This is the self-hosted web edition of the desktop app.",
+  "tipi_version": 1,
+  "version": "3.6.2",
+  "source": "https://github.com/wealthfolio/wealthfolio",
+  "website": "https://wealthfolio.app",
+  "exposable": true,
+  "supported_architectures": [
+    "arm64",
+    "amd64"
+  ],
+  "created_at": 1785690668644,
+  "updated_at": 1785690668644,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "App URL",
+      "env_variable": "WEALTHFOLIO_APP_URL",
+      "required": false,
+      "default": "http://localhost:8088",
+      "hint": "Exact origin you open Wealthfolio with — scheme, host and port, e.g. http://192.168.1.10:8088 or https://wealthfolio.example.com. Used as the allowed CORS origin; a mismatch blocks every API call."
+    },
+    {
+      "type": "password",
+      "label": "Password hash (argon2id)",
+      "env_variable": "WEALTHFOLIO_PASSWORD_HASH",
+      "required": false,
+      "hint": "Argon2id PHC hash of your login password, generated with: printf '%s' 'your-password' | argon2 yoursalt16chars -id -e . If the login fails because the hash contains $ signs, write the hash into app-data/data/password.hash instead — that file wins over this field. See the app description."
+    },
+    {
+      "type": "random",
+      "label": "Secret key",
+      "env_variable": "WEALTHFOLIO_SECRET_KEY",
+      "required": false,
+      "min": 32,
+      "encoding": "base64",
+      "hint": "Encrypts stored API keys and broker credentials and signs session tokens. Back it up together with app-data — the database is useless without it."
+    },
+    {
+      "type": "boolean",
+      "label": "Require login",
+      "env_variable": "WEALTHFOLIO_AUTH_REQUIRED",
+      "required": false,
+      "default": true,
+      "hint": "Leave enabled. Turn it off only when a reverse proxy in front of the app already authenticates every request — otherwise your portfolio is readable by anyone who can reach the port."
+    },
+    {
+      "type": "number",
+      "label": "Session lifetime (minutes)",
+      "env_variable": "WEALTHFOLIO_TOKEN_TTL_MINUTES",
+      "required": false,
+      "default": 60
+    }
+  ]
+}
