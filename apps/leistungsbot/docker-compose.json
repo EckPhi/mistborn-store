@@ -4,7 +4,7 @@
   "services": [
     {
       "name": "leistungsbot",
-      "image": "eckphi/leistungsbot:1.4.2",
+      "image": "eckphi/leistungsbot:1.4.3",
       "environment": [
         {
           "key": "TZ",
