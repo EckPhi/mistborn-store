@@ -39,6 +39,7 @@ See the [Runtipi custom app store guide](https://runtipi.io/docs/guides/create-y
 | <img src="apps/openthread-border-router/metadata/logo.jpg" width="32"> | [OpenThread Border Router](https://github.com/bnutzer/docker-otbr-tcp) | Thread mesh network border router (network RCP) |
 | <img src="apps/power-price-collector/metadata/logo.jpg" width="32"> | [Power Price Collector](https://github.com/EckPhi/power-price-collector) | European power prices into QuestDB, MQTT, Grist and more |
 | <img src="apps/questdb/metadata/logo.jpg" width="32"> | [QuestDB](https://github.com/questdb/questdb) | High-performance time-series database with SQL |
+| <img src="apps/receipt-wrangler/metadata/logo.jpg" width="32"> | [Receipt Wrangler](https://github.com/Receipt-Wrangler/receipt-wrangler) | Self-hosted receipt manager with OCR and AI scanning |
 | <img src="apps/scrape-dojo/metadata/logo.jpg" width="32"> | [Scrape Dojo](https://github.com/disane87/scrape-dojo) | Self-hosted, config-driven web scraping platform |
 | <img src="apps/seamtec-scraper/metadata/logo.jpg" width="32"> | [Seamtec Scraper](https://github.com/EckPhi/seamtec-scraper) | Scraper for the Seamtec SCADA web UI |
 | <img src="apps/telegraf/metadata/logo.jpg" width="32"> | [Telegraf](https://github.com/influxdata/telegraf) | Plugin-driven agent for collecting and sending metrics |

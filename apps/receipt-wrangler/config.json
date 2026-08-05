@@ -1,0 +1,51 @@
+{
+  "name": "Receipt Wrangler",
+  "id": "receipt-wrangler",
+  "available": true,
+  "short_desc": "Self-hosted receipt manager with OCR and AI scanning",
+  "author": "Receipt Wrangler",
+  "port": 9082,
+  "categories": [
+    "finance",
+    "utilities"
+  ],
+  "description": "Receipt Wrangler is a self-hosted receipt manager. Upload a receipt from the web app, an email inbox or the mobile app and it extracts the merchant, date and total with OCR or an AI model, categorises it and splits it between users of a group. It ships receipt workflows, custom fields, budgets and reports. This app bundles MariaDB and Redis; Redis backs the background job queue (OCR, email polling, scheduled tasks) and is required.",
+  "tipi_version": 1,
+  "version": "v7.1.0",
+  "source": "https://github.com/Receipt-Wrangler/receipt-wrangler",
+  "website": "https://receiptwrangler.io",
+  "exposable": true,
+  "supported_architectures": [
+    "arm64",
+    "amd64"
+  ],
+  "created_at": 1785690668644,
+  "updated_at": 1785690668644,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "random",
+      "label": "Encryption key",
+      "env_variable": "RECEIPT_WRANGLER_ENCRYPTION_KEY",
+      "required": false,
+      "min": 32,
+      "hint": "Encrypts stored email passwords and API keys. It cannot be rotated — if you change it, existing encrypted records stop being readable and have to be recreated. Back it up."
+    },
+    {
+      "type": "random",
+      "label": "Secret key",
+      "env_variable": "RECEIPT_WRANGLER_SECRET_KEY",
+      "required": false,
+      "min": 32,
+      "hint": "Signs and verifies the JWT session tokens. Changing it logs everyone out."
+    },
+    {
+      "type": "random",
+      "label": "Database password",
+      "env_variable": "RECEIPT_WRANGLER_DB_PASSWORD",
+      "required": false,
+      "min": 32,
+      "hint": "Auto-generated. Do not change it after the first start — the MariaDB user is only created once."
+    }
+  ]
+}

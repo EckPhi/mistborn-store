@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 2,
+  "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json",
+  "services": [
+    {
+      "name": "receipt-wrangler-db",
+      "image": "mariadb:11.4.12",
+      "environment": [
+        {
+          "key": "MYSQL_DATABASE",
+          "value": "wrangler"
+        },
+        {
+          "key": "MYSQL_USER",
+          "value": "wrangler"
+        },
+        {
+          "key": "MYSQL_PASSWORD",
+          "value": "${RECEIPT_WRANGLER_DB_PASSWORD}"
+        },
+        {
+          "key": "MYSQL_RANDOM_ROOT_PASSWORD",
+          "value": "yes"
+        },
+        {
+          "key": "TZ",
+          "value": "${TZ}"
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/db",
+          "containerPath": "/var/lib/mysql",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ],
+      "healthCheck": {
+        "test": "healthcheck.sh --connect --innodb_initialized || exit 1",
+        "interval": "10s",
+        "timeout": "5s",
+        "startPeriod": "30s",
+        "retries": 10
+      }
+    },
+    {
+      "name": "receipt-wrangler-redis",
+      "image": "redis:8.10.0-alpine",
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/redis",
+          "containerPath": "/data",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ],
+      "healthCheck": {
+        "test": "redis-cli ping || exit 1",
+        "interval": "10s",
+        "timeout": "5s",
+        "startPeriod": "10s",
+        "retries": 5
+      }
+    },
+    {
+      "name": "receipt-wrangler",
+      "image": "noah231515/receipt-wrangler:v7.1.0",
+      "isMain": true,
+      "internalPort": 80,
+      "environment": [
+        {
+          "key": "ENCRYPTION_KEY",
+          "value": "${RECEIPT_WRANGLER_ENCRYPTION_KEY}"
+        },
+        {
+          "key": "SECRET_KEY",
+          "value": "${RECEIPT_WRANGLER_SECRET_KEY}"
+        },
+        {
+          "key": "DB_ENGINE",
+          "value": "mariadb"
+        },
+        {
+          "key": "DB_HOST",
+          "value": "receipt-wrangler-db"
+        },
+        {
+          "key": "DB_PORT",
+          "value": "3306"
+        },
+        {
+          "key": "DB_NAME",
+          "value": "wrangler"
+        },
+        {
+          "key": "DB_USER",
+          "value": "wrangler"
+        },
+        {
+          "key": "DB_PASSWORD",
+          "value": "${RECEIPT_WRANGLER_DB_PASSWORD}"
+        },
+        {
+          "key": "REDIS_HOST",
+          "value": "receipt-wrangler-redis"
+        },
+        {
+          "key": "REDIS_PORT",
+          "value": "6379"
+        },
+        {
+          "key": "TZ",
+          "value": "${TZ}"
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/data",
+          "containerPath": "/app/receipt-wrangler-api/data",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "${APP_DATA_DIR}/logs",
+          "containerPath": "/app/receipt-wrangler-api/logs",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ],
+      "dependsOn": {
+        "receipt-wrangler-db": {
+          "condition": "service_healthy"
+        },
+        "receipt-wrangler-redis": {
+          "condition": "service_healthy"
+        }
+      }
+    }
+  ]
+}
