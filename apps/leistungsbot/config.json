@@ -11,8 +11,8 @@
     "utilities"
   ],
   "description": "Telegram bot that runs the recurring Leistungstag of a chat group: it posts the location poll, keeps a curated location list backed by the Google Places API (opening hours, ratings, address), sends reminders and reservation nudges on a schedule, closes the previous poll and dumps a weekly database backup into a backup chat. It can also keep a Google Calendar in step with the leistungstage. State lives in a single SQLite file under app-data, so there is no database container. Headless — the bot is operated from Telegram, not from a web UI.",
-  "tipi_version": 6,
-  "version": "1.4.2",
+  "tipi_version": 7,
+  "version": "1.4.3",
   "source": "https://github.com/SharedShithosting/Leistungsbot",
   "website": "https://github.com/SharedShithosting/Leistungsbot",
   "exposable": false,
@@ -21,7 +21,7 @@
     "amd64"
   ],
   "created_at": 1784419200000,
-  "updated_at": 1785690668644,
+  "updated_at": 1785898670488,
   "dynamic_config": true,
   "form_fields": [
     {
