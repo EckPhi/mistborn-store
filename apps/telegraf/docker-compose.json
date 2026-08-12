@@ -4,7 +4,7 @@
   "services": [
     {
       "name": "telegraf",
-      "image": "telegraf:1.39.2",
+      "image": "telegraf:1.39.3",
       "environment": [
         {
           "key": "HOST_MOUNT_PREFIX",
