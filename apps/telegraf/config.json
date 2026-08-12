@@ -10,8 +10,8 @@
     "utilities"
   ],
   "description": "Telegraf is a plugin-driven server agent for collecting and reporting metrics. It ships with hundreds of input plugins (system stats, Docker, MQTT, SNMP, ...) and outputs to InfluxDB, QuestDB (via ILP), Prometheus and many more. This app mounts the host filesystem read-only so the default configuration reports CPU, memory, disk and network stats of the host, and writes them to an InfluxDB 2.x instance configured via the app settings. The full configuration lives in app-data/data/config/telegraf.conf and can be freely customized.",
-  "tipi_version": 2,
-  "version": "1.39.2",
+  "tipi_version": 3,
+  "version": "1.39.3",
   "source": "https://github.com/influxdata/telegraf",
   "website": "https://www.influxdata.com/time-series-platform/telegraf/",
   "exposable": false,
@@ -21,7 +21,7 @@
     "amd64"
   ],
   "created_at": 1784419200000,
-  "updated_at": 1784602703978,
+  "updated_at": 1786506725817,
   "dynamic_config": true,
   "form_fields": [
     {
