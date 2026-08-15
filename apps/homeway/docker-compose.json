@@ -4,7 +4,7 @@
   "services": [
     {
       "name": "homeway",
-      "image": "homewayio/homeway:3.1.0",
+      "image": "homewayio/homeway:3.1.1",
       "isMain": true,
       "internalPort": 11027,
       "environment": [
