@@ -8,8 +8,15 @@
       "command": [
         "sh",
         "-c",
-        "set -e; mkdir -p /config /webui; { echo 'metadata_dir = \"/var/lib/garage/meta\"'; echo 'data_dir = \"/var/lib/garage/data\"'; echo 'db_engine = \"lmdb\"'; echo 'metadata_auto_snapshot_interval = \"6h\"'; echo 'replication_factor = 1'; echo 'compression_level = ${GARAGE_COMPRESSION_LEVEL}'; echo 'rpc_bind_addr = \"[::]:3901\"'; echo 'rpc_public_addr = \"127.0.0.1:3901\"'; echo 'rpc_secret = \"${GARAGE_RPC_SECRET}\"'; echo ''; echo '[s3_api]'; echo 'api_bind_addr = \"[::]:3900\"'; echo 's3_region = \"${GARAGE_S3_REGION}\"'; if [ -n '${GARAGE_S3_ROOT_DOMAIN}' ]; then echo 'root_domain = \"${GARAGE_S3_ROOT_DOMAIN}\"'; fi; echo ''; echo '[s3_web]'; echo 'bind_addr = \"[::]:3902\"'; echo 'index = \"index.html\"'; if [ -n '${GARAGE_WEB_ROOT_DOMAIN}' ]; then echo 'root_domain = \"${GARAGE_WEB_ROOT_DOMAIN}\"'; fi; echo ''; echo '[admin]'; echo 'api_bind_addr = \"[::]:3903\"'; echo 'admin_token = \"${GARAGE_ADMIN_TOKEN}\"'; } > /config/garage.toml; chmod 600 /config/garage.toml; if [ -n '${GARAGE_WEBUI_PASSWORD}' ]; then apk add --no-cache apache2-utils >/dev/null; printf \"AUTH_USER_PASS='%s'\\n\" \"`htpasswd -nbBC 10 '${GARAGE_WEBUI_USER}' '${GARAGE_WEBUI_PASSWORD}'`\" > /webui/webui.env; else : > /webui/webui.env; fi; chmod 600 /webui/webui.env"
+        "set -e; mkdir -p /config /webui; { echo 'metadata_dir = \"/var/lib/garage/meta\"'; echo 'data_dir = \"/var/lib/garage/data\"'; echo 'db_engine = \"lmdb\"'; echo 'metadata_auto_snapshot_interval = \"6h\"'; echo 'replication_factor = 1'; echo 'compression_level = ${GARAGE_COMPRESSION_LEVEL}'; echo 'rpc_bind_addr = \"[::]:3901\"'; echo 'rpc_public_addr = \"127.0.0.1:3901\"'; echo 'rpc_secret = \"${GARAGE_RPC_SECRET}\"'; echo ''; echo '[s3_api]'; echo 'api_bind_addr = \"[::]:3900\"'; echo 's3_region = \"${GARAGE_S3_REGION}\"'; if [ -n '${GARAGE_S3_ROOT_DOMAIN}' ]; then echo 'root_domain = \"${GARAGE_S3_ROOT_DOMAIN}\"'; fi; echo ''; echo '[s3_web]'; echo 'bind_addr = \"[::]:3902\"'; echo 'index = \"index.html\"'; if [ -n '${GARAGE_WEB_ROOT_DOMAIN}' ]; then echo 'root_domain = \"${GARAGE_WEB_ROOT_DOMAIN}\"'; fi; echo ''; echo '[admin]'; echo 'api_bind_addr = \"[::]:3903\"'; echo 'admin_token = \"${GARAGE_ADMIN_TOKEN}\"'; } > /config/garage.toml; chmod 600 /config/garage.toml; if [ -n '${GARAGE_WEBUI_PASSWORD}' ]; then apk add --no-cache apache2-utils >/dev/null; printf \"AUTH_USER_PASS='%s'\\n\" \"`htpasswd -nbBC 10 '${GARAGE_WEBUI_USER}' '${GARAGE_WEBUI_PASSWORD}'`\" > /webui/webui.env; else : > /webui/webui.env; fi; chmod 600 /webui/webui.env; touch /tmp/ready; exec sleep infinity"
       ],
+      "healthCheck": {
+        "test": "test -f /tmp/ready || exit 1",
+        "interval": "5s",
+        "timeout": "3s",
+        "startPeriod": "5s",
+        "retries": 12
+      },
       "volumes": [
         {
           "hostPath": "${APP_DATA_DIR}/data/config",
@@ -95,7 +102,7 @@
       ],
       "dependsOn": {
         "garage-init": {
-          "condition": "service_completed_successfully"
+          "condition": "service_healthy"
         }
       }
     },
@@ -144,7 +151,7 @@
       ],
       "dependsOn": {
         "garage-init": {
-          "condition": "service_completed_successfully"
+          "condition": "service_healthy"
         },
         "garage": {
           "condition": "service_started"
