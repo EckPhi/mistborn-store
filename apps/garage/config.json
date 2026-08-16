@@ -1,0 +1,120 @@
+{
+  "name": "Garage",
+  "id": "garage",
+  "available": true,
+  "short_desc": "S3-compatible object storage for self-hosting",
+  "author": "Deuxfleurs",
+  "port": 3909,
+  "categories": [
+    "data",
+    "utilities"
+  ],
+  "description": "Garage is a lightweight, S3-compatible distributed object storage service built by Deuxfleurs for self-hosted infrastructure. This app runs a single-node cluster with the layout configured automatically on first boot, exposes the S3 API on port 3900 and the static website endpoint on port 3902, and bundles the Garage Web UI for managing buckets, access keys and cluster layout from the browser.",
+  "tipi_version": 1,
+  "version": "v2.3.0",
+  "source": "https://git.deuxfleurs.fr/Deuxfleurs/garage",
+  "website": "https://garagehq.deuxfleurs.fr",
+  "exposable": true,
+  "supported_architectures": [
+    "arm64",
+    "amd64"
+  ],
+  "created_at": 1786633202491,
+  "updated_at": 1786633202491,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "random",
+      "label": "RPC secret",
+      "env_variable": "GARAGE_RPC_SECRET",
+      "required": false,
+      "min": 64,
+      "encoding": "hex",
+      "hint": "Cluster RPC secret. Generated once — keep it if you ever restore this install from a backup."
+    },
+    {
+      "type": "random",
+      "label": "Admin API token",
+      "env_variable": "GARAGE_ADMIN_TOKEN",
+      "required": false,
+      "min": 48,
+      "encoding": "hex",
+      "hint": "Bearer token for the admin API on port 3903. The bundled web UI uses it automatically."
+    },
+    {
+      "type": "text",
+      "label": "S3 region",
+      "env_variable": "GARAGE_S3_REGION",
+      "required": false,
+      "default": "garage",
+      "hint": "Region name S3 clients must use. Changing it later invalidates saved client profiles."
+    },
+    {
+      "type": "text",
+      "label": "S3 root domain",
+      "env_variable": "GARAGE_S3_ROOT_DOMAIN",
+      "required": false,
+      "default": "",
+      "hint": "Optional, for vhost-style access (bucket.s3.example.com). Write it with the leading dot: .s3.example.com"
+    },
+    {
+      "type": "text",
+      "label": "Website root domain",
+      "env_variable": "GARAGE_WEB_ROOT_DOMAIN",
+      "required": false,
+      "default": "",
+      "hint": "Optional, serves buckets as static websites on port 3902 (bucket.web.example.com → .web.example.com)."
+    },
+    {
+      "type": "text",
+      "label": "Default bucket",
+      "env_variable": "GARAGE_DEFAULT_BUCKET",
+      "required": false,
+      "default": "default",
+      "hint": "Created on first boot together with the default access key. Lowercase letters, digits, dots and dashes. Do not leave empty."
+    },
+    {
+      "type": "random",
+      "label": "Default access key",
+      "env_variable": "GARAGE_DEFAULT_ACCESS_KEY",
+      "required": false,
+      "min": 24,
+      "encoding": "hex",
+      "hint": "Key ID of the default S3 key, used as GK<value>. Read it back from the web UI after install."
+    },
+    {
+      "type": "random",
+      "label": "Default secret key",
+      "env_variable": "GARAGE_DEFAULT_SECRET_KEY",
+      "required": false,
+      "min": 48,
+      "encoding": "hex",
+      "hint": "Secret of the default S3 key. Changing it later is rejected — create a new key in the web UI instead."
+    },
+    {
+      "type": "number",
+      "label": "Compression level",
+      "env_variable": "GARAGE_COMPRESSION_LEVEL",
+      "required": false,
+      "default": 1,
+      "min": 1,
+      "max": 22,
+      "hint": "Zstd level for stored blocks. 1 is fast, higher trades CPU for disk space."
+    },
+    {
+      "type": "text",
+      "label": "Web UI username",
+      "env_variable": "GARAGE_WEBUI_USER",
+      "required": false,
+      "default": "admin"
+    },
+    {
+      "type": "password",
+      "label": "Web UI password",
+      "env_variable": "GARAGE_WEBUI_PASSWORD",
+      "required": false,
+      "default": "",
+      "hint": "Leave empty to run the web UI without a login — only do that on a trusted LAN. Avoid single quotes in the password."
+    }
+  ]
+}

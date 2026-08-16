@@ -25,6 +25,7 @@ See the [Runtipi custom app store guide](https://runtipi.io/docs/guides/create-y
 | <img src="apps/bambuddy/metadata/logo.jpg" width="32"> | [Bambuddy](https://github.com/maziggy/bambuddy) | Self-hosted command center for Bambu Lab 3D printers |
 | <img src="apps/diyhue/metadata/logo.jpg" width="32"> | [diyHue](https://github.com/diyhue/diyHue) | Open-source Philips Hue bridge emulator |
 | <img src="apps/eufy-security-ws/metadata/logo.jpg" width="32"> | [Eufy Security WS](https://github.com/bropat/eufy-security-ws) | WebSocket server for Eufy Security devices |
+| <img src="apps/garage/metadata/logo.jpg" width="32"> | [Garage](https://git.deuxfleurs.fr/Deuxfleurs/garage) | S3-compatible object storage for self-hosting |
 | <img src="apps/go2rtc/metadata/logo.jpg" width="32"> | [go2rtc](https://github.com/AlexxIT/go2rtc) | Ultimate camera streaming (RTSP, WebRTC, HomeKit) |
 | <img src="apps/grist/metadata/logo.jpg" width="32"> | [Grist](https://github.com/gristlabs/grist-core) | Grist spreadsheet-database with the built-in MCP server enabled |
 | <img src="apps/home-assistant/metadata/logo.jpg" width="32"> | [Home Assistant](https://github.com/home-assistant/core) | Open-source home automation hub with built-in config file browser |

@@ -1,0 +1,155 @@
+{
+  "schemaVersion": 2,
+  "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json",
+  "services": [
+    {
+      "name": "garage-init",
+      "image": "alpine:3.24.1",
+      "command": [
+        "sh",
+        "-c",
+        "set -e; mkdir -p /config /webui; { echo 'metadata_dir = \"/var/lib/garage/meta\"'; echo 'data_dir = \"/var/lib/garage/data\"'; echo 'db_engine = \"lmdb\"'; echo 'metadata_auto_snapshot_interval = \"6h\"'; echo 'replication_factor = 1'; echo 'compression_level = ${GARAGE_COMPRESSION_LEVEL}'; echo 'rpc_bind_addr = \"[::]:3901\"'; echo 'rpc_public_addr = \"127.0.0.1:3901\"'; echo 'rpc_secret = \"${GARAGE_RPC_SECRET}\"'; echo ''; echo '[s3_api]'; echo 'api_bind_addr = \"[::]:3900\"'; echo 's3_region = \"${GARAGE_S3_REGION}\"'; if [ -n '${GARAGE_S3_ROOT_DOMAIN}' ]; then echo 'root_domain = \"${GARAGE_S3_ROOT_DOMAIN}\"'; fi; echo ''; echo '[s3_web]'; echo 'bind_addr = \"[::]:3902\"'; echo 'index = \"index.html\"'; if [ -n '${GARAGE_WEB_ROOT_DOMAIN}' ]; then echo 'root_domain = \"${GARAGE_WEB_ROOT_DOMAIN}\"'; fi; echo ''; echo '[admin]'; echo 'api_bind_addr = \"[::]:3903\"'; echo 'admin_token = \"${GARAGE_ADMIN_TOKEN}\"'; } > /config/garage.toml; chmod 600 /config/garage.toml; if [ -n '${GARAGE_WEBUI_PASSWORD}' ]; then apk add --no-cache apache2-utils >/dev/null; printf \"AUTH_USER_PASS='%s'\\n\" \"`htpasswd -nbBC 10 '${GARAGE_WEBUI_USER}' '${GARAGE_WEBUI_PASSWORD}'`\" > /webui/webui.env; else : > /webui/webui.env; fi; chmod 600 /webui/webui.env"
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/data/config",
+          "containerPath": "/config",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "${APP_DATA_DIR}/data/webui",
+          "containerPath": "/webui",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ]
+    },
+    {
+      "name": "garage",
+      "image": "dxflrs/garage:v2.3.0",
+      "command": [
+        "/garage",
+        "server",
+        "--single-node",
+        "--default-bucket"
+      ],
+      "environment": [
+        {
+          "key": "GARAGE_CONFIG_FILE",
+          "value": "/etc/garage/garage.toml"
+        },
+        {
+          "key": "GARAGE_DEFAULT_ACCESS_KEY",
+          "value": "GK${GARAGE_DEFAULT_ACCESS_KEY}"
+        },
+        {
+          "key": "GARAGE_DEFAULT_SECRET_KEY",
+          "value": "${GARAGE_DEFAULT_SECRET_KEY}"
+        },
+        {
+          "key": "GARAGE_DEFAULT_BUCKET",
+          "value": "${GARAGE_DEFAULT_BUCKET}"
+        },
+        {
+          "key": "RUST_LOG",
+          "value": "garage=info"
+        }
+      ],
+      "addPorts": [
+        {
+          "containerPort": 3900,
+          "hostPort": 3900,
+          "tcp": true
+        },
+        {
+          "containerPort": 3902,
+          "hostPort": 3902,
+          "tcp": true
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/data/config",
+          "containerPath": "/etc/garage",
+          "readOnly": true,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "${APP_DATA_DIR}/data/meta",
+          "containerPath": "/var/lib/garage/meta",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "${APP_DATA_DIR}/data/blocks",
+          "containerPath": "/var/lib/garage/data",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ],
+      "dependsOn": {
+        "garage-init": {
+          "condition": "service_completed_successfully"
+        }
+      }
+    },
+    {
+      "name": "garage-webui",
+      "image": "khairul169/garage-webui:1.1.0",
+      "isMain": true,
+      "internalPort": 3909,
+      "environment": [
+        {
+          "key": "CONFIG_PATH",
+          "value": "/etc/garage/garage.toml"
+        },
+        {
+          "key": "API_BASE_URL",
+          "value": "http://garage:3903"
+        },
+        {
+          "key": "API_ADMIN_KEY",
+          "value": "${GARAGE_ADMIN_TOKEN}"
+        },
+        {
+          "key": "S3_ENDPOINT_URL",
+          "value": "http://garage:3900"
+        },
+        {
+          "key": "S3_REGION",
+          "value": "${GARAGE_S3_REGION}"
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/data/config",
+          "containerPath": "/etc/garage",
+          "readOnly": true,
+          "shared": false,
+          "private": false
+        },
+        {
+          "hostPath": "${APP_DATA_DIR}/data/webui/webui.env",
+          "containerPath": "/.env",
+          "readOnly": true,
+          "shared": false,
+          "private": false
+        }
+      ],
+      "dependsOn": {
+        "garage-init": {
+          "condition": "service_completed_successfully"
+        },
+        "garage": {
+          "condition": "service_started"
+        }
+      }
+    }
+  ]
+}
