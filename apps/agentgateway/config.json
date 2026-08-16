@@ -10,7 +10,7 @@
     "network"
   ],
   "description": "agentgateway is an agentic proxy that fronts any number of MCP servers and exposes them to clients as a single streamable-HTTP endpoint at /mcp, with a management UI at /ui. Two MCP servers ship with it as loopback-only sidecars that can be switched on or off individually \u2014 Grafana (dashboards, datasources, Prometheus/Loki queries, alerting) and Tailscale (devices, routes, ACLs) \u2014 alongside the public Cloudflare documentation server. The install form carries only secrets and sidecar settings; targets themselves are defined in config.yaml, which is seeded on first start and editable from the UI.",
-  "tipi_version": 5,
+  "tipi_version": 6,
   "version": "v1.4.1",
   "source": "https://github.com/agentgateway/agentgateway",
   "website": "https://agentgateway.dev",
@@ -122,7 +122,7 @@
       "env_variable": "AGW_EXTRA_HOST",
       "required": false,
       "default": "localhost:127.0.0.1",
-      "hint": "One <hostname>:<ip> entry added to the gateway's /etc/hosts. Use <domain>:host-gateway to reach another app on this host by its public domain (needed for servers that route on Host, like Grist). The default is a harmless no-op; leaving it empty breaks the app."
+      "hint": "One <hostname>:<ip> entry added to the gateway's /etc/hosts. Use <domain>:host-gateway to reach another app on this host by its public domain \u2014 needed for servers that route on Host, like Grist. Left empty it falls back to a no-op mapping."
     }
   ]
 }

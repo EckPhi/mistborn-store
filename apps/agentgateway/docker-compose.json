@@ -55,7 +55,7 @@
         }
       },
       "extraHosts": [
-        "${AGW_EXTRA_HOST}"
+        "${AGW_EXTRA_HOST:-localhost:127.0.0.1}"
       ]
     },
     {
