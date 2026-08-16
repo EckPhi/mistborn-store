@@ -9,8 +9,8 @@
     "ai",
     "network"
   ],
-  "description": "agentgateway is an agentic proxy that fronts any number of MCP servers and exposes them to clients as a single streamable-HTTP endpoint at /mcp, with a management UI at /ui. This app bundles two MCP servers as loopback-only sidecars — Grafana (dashboards, datasources, Prometheus/Loki queries, alerting) and Tailscale (devices, routes, ACLs) — plus the public Cloudflare documentation server, and seeds a ready-made config on first start. Further targets are added in the UI or by editing config.yaml in app-data.",
-  "tipi_version": 1,
+  "description": "agentgateway is an agentic proxy that fronts any number of MCP servers and exposes them to clients as a single streamable-HTTP endpoint at /mcp, with a management UI at /ui. Two MCP servers ship with it as loopback-only sidecars that can be switched on or off individually \u2014 Grafana (dashboards, datasources, Prometheus/Loki queries, alerting) and Tailscale (devices, routes, ACLs) \u2014 alongside the public Cloudflare documentation server. The install form carries only secrets and sidecar settings; targets themselves are defined in config.yaml, which is seeded on first start and editable from the UI.",
+  "tipi_version": 2,
   "version": "v1.4.1",
   "source": "https://github.com/agentgateway/agentgateway",
   "website": "https://agentgateway.dev",
@@ -24,22 +24,12 @@
   "dynamic_config": true,
   "form_fields": [
     {
-      "type": "random",
-      "label": "Grafana MCP bearer token",
-      "env_variable": "MCP_GRAFANA_SERVER_TOKEN",
+      "type": "boolean",
+      "label": "Enable Grafana MCP sidecar",
+      "env_variable": "MCP_GRAFANA_ENABLED",
       "required": false,
-      "min": 48,
-      "encoding": "hex",
-      "hint": "Generated automatically. Authenticates the gateway to the bundled Grafana MCP sidecar."
-    },
-    {
-      "type": "random",
-      "label": "Tailscale MCP bearer token",
-      "env_variable": "MCP_HTTP_BEARER_TOKEN",
-      "required": false,
-      "min": 48,
-      "encoding": "hex",
-      "hint": "Generated automatically. The Tailscale MCP server rejects tokens shorter than 32 characters."
+      "default": true,
+      "hint": "Runs the Grafana MCP server and adds a grafana target on first start. Turn off to idle the sidecar; remove the target from config.yaml as well."
     },
     {
       "type": "text",
@@ -47,14 +37,31 @@
       "env_variable": "GRAFANA_URL",
       "required": false,
       "default": "",
-      "hint": "Base URL of your Grafana, e.g. https://grafana.example.com/. Leave empty to disable the Grafana tools."
+      "hint": "Base URL of your Grafana, e.g. https://grafana.example.com/. Another Runtipi app is reached by container name, not by its public hostname."
     },
     {
       "type": "password",
       "label": "Grafana service account token",
       "env_variable": "GRAFANA_SERVICE_ACCOUNT_TOKEN",
       "required": false,
-      "hint": "Grafana → Administration → Service accounts. Viewer role is enough for read-only tools."
+      "hint": "Grafana \u2192 Administration \u2192 Service accounts. Viewer role is enough for read-only tools."
+    },
+    {
+      "type": "random",
+      "label": "Grafana MCP bearer token",
+      "env_variable": "MCP_GRAFANA_SERVER_TOKEN",
+      "required": false,
+      "min": 48,
+      "encoding": "hex",
+      "hint": "Generated automatically. Authenticates the gateway to the Grafana sidecar over loopback."
+    },
+    {
+      "type": "boolean",
+      "label": "Enable Tailscale MCP sidecar",
+      "env_variable": "MCP_TAILSCALE_ENABLED",
+      "required": false,
+      "default": true,
+      "hint": "Runs the Tailscale MCP server and adds a tailscale target on first start. Turn off to idle the sidecar; remove the target from config.yaml as well."
     },
     {
       "type": "password",
@@ -79,34 +86,35 @@
       "default": "read",
       "options": [
         {
-          "label": "read — query only",
+          "label": "read \u2014 query only",
           "value": "read"
         },
         {
-          "label": "write — modify devices, routes, ACLs",
+          "label": "write \u2014 modify devices, routes, ACLs",
           "value": "write"
         },
         {
-          "label": "admin — delete, deauthorize, exit-node control",
+          "label": "admin \u2014 delete, deauthorize, exit-node control",
           "value": "admin"
         }
       ],
       "hint": "Highest risk level the Tailscale tools may reach. Leave at read unless you want the agent changing your tailnet."
     },
     {
-      "type": "text",
-      "label": "Grist MCP endpoint",
-      "env_variable": "GRIST_MCP_URL",
+      "type": "random",
+      "label": "Tailscale MCP bearer token",
+      "env_variable": "MCP_HTTP_BEARER_TOKEN",
       "required": false,
-      "default": "",
-      "hint": "Optional extra target, e.g. https://grist.example.com/api/mcp. Only added on first start, when this is set."
+      "min": 48,
+      "encoding": "hex",
+      "hint": "Generated automatically. The Tailscale MCP server rejects tokens shorter than 32 characters."
     },
     {
       "type": "password",
       "label": "Grist API key",
       "env_variable": "GRIST_API_KEY",
       "required": false,
-      "hint": "Grist → Profile Settings → API key. Tools run as that user, under Grist's own access rules."
+      "hint": "Only a secret \u2014 the Grist endpoint itself goes in config.yaml, which has a commented example. Grist \u2192 Profile Settings \u2192 API key."
     }
   ]
 }

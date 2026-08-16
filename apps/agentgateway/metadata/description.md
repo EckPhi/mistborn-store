@@ -1,30 +1,36 @@
 # agentgateway
 
-[agentgateway](https://agentgateway.dev) is an agentic proxy for AI agents. It fronts any number of MCP servers — local processes, remote HTTPS endpoints, or the sidecars bundled here — and presents all of their tools to a client as **one** streamable-HTTP endpoint.
+[agentgateway](https://agentgateway.dev) is an agentic proxy for AI agents. It fronts any number of MCP servers — remote HTTPS endpoints, or the sidecars bundled here — and presents all of their tools to a client as **one** streamable-HTTP endpoint.
 
 - **MCP endpoint:** `http://<tipi-host>:4000/mcp`
 - **Management UI:** `http://<tipi-host>:4000/ui`
 
 Point any MCP client (Claude Code, Claude Desktop, Cursor, …) at the `/mcp` URL and it sees every configured server at once, with tools namespaced per target (`grafana_*`, `tailscale_*`, …).
 
-## What's bundled
+## How it is configured
+
+Two places, split by what the value is:
+
+- **The install form** holds secrets and sidecar settings — tokens, API keys, and the on/off switch for each bundled sidecar. Nothing else.
+- **`app-data/agentgateway/config/config.yaml`** holds the targets. It is seeded on first start, then it is yours. The raw-config editor in the UI writes the same file and the gateway watches it, so edits apply without a restart.
+
+Secrets never go into `config.yaml` as literals. A form field's variable is referenced instead, e.g. `key: $GRIST_API_KEY`, and the gateway expands it from the app environment at load time.
+
+## Bundled sidecars
 
 | Target | Source | Needs |
 |---|---|---|
-| `grafana` | [grafana/mcp-grafana](https://github.com/grafana/mcp-grafana) sidecar | Grafana URL + service account token |
-| `tailscale` | [tailscale-mcp](https://github.com/HexSleeves/tailscale-mcp) sidecar | Tailscale API key + tailnet |
+| `grafana` | [grafana/mcp-grafana](https://github.com/grafana/mcp-grafana) | Grafana URL + service account token |
+| `tailscale` | [tailscale-mcp](https://github.com/HexSleeves/tailscale-mcp) | Tailscale API key + tailnet |
 | `cloudflare-docs` | `docs.mcp.cloudflare.com` | nothing — public |
-| `grist` | your Grist instance | endpoint URL + API key (optional) |
 
 Both sidecars run inside the gateway's own network namespace and listen on **loopback only**. They are never published to the host or reachable from other containers; the gateway authenticates to each with a bearer token generated at install time.
 
-`failureMode` is `failOpen`, so a target that is unconfigured or down is skipped with a warning instead of taking the whole gateway with it. A Tailscale sidecar without an API key exits on start and restarts in a loop — that is expected until you fill the field in, and it does not affect the other targets.
+Each has an enable switch. Turning one **on** adds its target to `config.yaml` on the next start if it isn't there already — so enabling a sidecar later works, and the append never duplicates. Turning one **off** idles the container; its target block stays in `config.yaml` and should be deleted by hand, otherwise the gateway keeps trying to reach a server that isn't listening.
 
-## Configuration
+`failureMode` is `failOpen`, so a target that is unconfigured or down is skipped with a warning instead of taking the whole gateway with it. A Tailscale sidecar left enabled without an API key exits on start and restarts in a loop — expected until the field is filled in, and harmless to the other targets.
 
-The install form covers the common case. Everything else lives in `app-data/agentgateway/config/config.yaml`, which is **seeded on first start only** — later edits to that file survive app updates, and the app never overwrites it. Restart the app to apply changes, or use the UI.
-
-Adding a remote MCP server by hand looks like this:
+## Adding your own targets
 
 ```yaml
   - name: my-server
@@ -38,14 +44,17 @@ Adding a remote MCP server by hand looks like this:
         - origin
 ```
 
-Two things worth knowing before you write your own targets:
+Three things worth knowing, each of which has already cost a debugging round:
 
-- **Variable references expand everywhere in the file, comments included.** A stray `$` in a comment makes the gateway refuse to start with `error looking key '…' up: environment variable not found`. Variables must exist in the app environment, so anything you reference has to come from a form field.
-- **The gateway forwards the client's `Origin` and `Host` headers upstream.** Several MCP servers reject those: Grist answers `403 Credentials not supported for cross-origin requests` when an `Origin` is present, and the bundled sidecars validate `Host`. Hence `remove: [origin]` on every target here, and `set: {host: …}` on the two loopback ones.
+- **Reach other Runtipi apps by container name**, not by their public hostname — `http://grist_mistborn-store-grist-1:8484/api/mcp`. The gateway is on `runtipi_tipi_main_network` with every other app's main service. Going out through the public name usually times out coming back in, and every request then stalls on the gateway's 10s connect timeout. `config.yaml` ships with a commented Grist target showing the shape.
+- **The gateway forwards the client's `Origin` and `Host` headers upstream.** Grist answers `403 Credentials not supported for cross-origin requests` when an `Origin` is present; the sidecars validate `Host`. Hence `remove: [origin]` on every target here and `set: {host: …}` on the loopback ones.
+- **Variable references expand everywhere in the file, comments included.** A stray `$` in a comment makes the gateway refuse to start with `error looking key '…' up: environment variable not found`. Anything referenced must exist as a form field.
+
+Keep `targets` the last key in the file — that is where enabled sidecar targets get appended.
 
 ## Notes
 
-- The Cloudflare **API** server (`mcp.cloudflare.com`) is deliberately absent: it requires an interactive OAuth consent flow and cannot be fronted by a gateway with an API token. Only the public docs server is included.
+- The Cloudflare **API** server (`mcp.cloudflare.com`) is deliberately absent: it requires an interactive OAuth consent flow and cannot be fronted by a gateway holding an API token. Only the public docs server is included.
 - Grafana tools are read/write according to the service account's role — a Viewer token keeps the agent read-only.
 - Tailscale tools are gated by risk level (`read` / `write` / `admin`); the default `read` cannot change your tailnet.
-- State (the gateway's own SQLite database, plus your config) lives in `app-data/agentgateway/config`. Back that directory up.
+- State (the gateway's SQLite database, plus your config) lives in `app-data/agentgateway/config`. Back that directory up.
