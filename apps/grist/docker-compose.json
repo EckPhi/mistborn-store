@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 2,
+  "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json",
+  "services": [
+    {
+      "name": "grist",
+      "image": "gristlabs/grist:1.7.17",
+      "isMain": true,
+      "internalPort": 8484,
+      "environment": [
+        {
+          "key": "APP_HOME_URL",
+          "value": "${APP_PROTOCOL:-http}://${APP_DOMAIN}"
+        },
+        {
+          "key": "GRIST_SANDBOX_FLAVOR",
+          "value": "${GRIST_SANDBOX_FLAVOR}"
+        },
+        {
+          "key": "GRIST_MCP_ENABLED",
+          "value": "${GRIST_MCP_ENABLED}"
+        },
+        {
+          "key": "GRIST_ENABLE_OIDC_SERVER",
+          "value": "${GRIST_ENABLE_OIDC_SERVER}"
+        },
+        {
+          "key": "GRIST_OIDC_CIMD_ALLOWED_HOSTS",
+          "value": "${GRIST_OIDC_CIMD_ALLOWED_HOSTS}"
+        },
+        {
+          "key": "GRIST_ENABLE_OIDC_DCR",
+          "value": "${GRIST_ENABLE_OIDC_DCR}"
+        },
+        {
+          "key": "GRIST_OIDC_DCR_RATE_LIMIT",
+          "value": "${GRIST_OIDC_DCR_RATE_LIMIT}"
+        },
+        {
+          "key": "GRIST_SESSION_SECRET",
+          "value": "${GRIST_SESSION_SECRET}"
+        },
+        {
+          "key": "GRIST_DEFAULT_EMAIL",
+          "value": "${GRIST_DEFAULT_EMAIL}"
+        },
+        {
+          "key": "GRIST_FORCE_LOGIN",
+          "value": "${GRIST_FORCE_LOGIN}"
+        },
+        {
+          "key": "GRIST_ACTIVATION",
+          "value": "${GRIST_ACTIVATION}"
+        },
+        {
+          "key": "TZ",
+          "value": "${TZ}"
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/data/grist-data",
+          "containerPath": "/persist",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ]
+    }
+  ]
+}

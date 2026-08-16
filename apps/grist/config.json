@@ -1,0 +1,122 @@
+{
+  "name": "Grist",
+  "id": "grist",
+  "available": true,
+  "short_desc": "Grist spreadsheet-database with the built-in MCP server enabled",
+  "author": "Grist Labs",
+  "port": 8484,
+  "categories": [
+    "data",
+    "utilities",
+    "ai"
+  ],
+  "description": "Grist is a modern relational spreadsheet: the flexibility of a spreadsheet with the robustness of a database. This build exposes the environment variables the official Runtipi app hides, so the built-in MCP server and Grist's OAuth/OIDC server can be switched on and AI assistants such as Claude and ChatGPT can read and edit documents at https://<your-grist-host>/api/mcp.",
+  "tipi_version": 1,
+  "version": "1.7.17",
+  "source": "https://github.com/gristlabs/grist-core",
+  "website": "https://www.getgrist.com/",
+  "exposable": true,
+  "supported_architectures": [
+    "arm64",
+    "amd64"
+  ],
+  "created_at": 1786800000000,
+  "updated_at": 1786800000000,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Sandbox flavor",
+      "env_variable": "GRIST_SANDBOX_FLAVOR",
+      "required": true,
+      "options": [
+        {
+          "label": "gvisor",
+          "value": "gvisor"
+        },
+        {
+          "label": "unsandboxed",
+          "value": "unsandboxed"
+        },
+        {
+          "label": "pyodide",
+          "value": "pyodide"
+        }
+      ],
+      "hint": "Sandbox used to run formula code. gvisor is the safe default; use unsandboxed only on hardware where gvisor fails."
+    },
+    {
+      "type": "boolean",
+      "label": "Enable MCP server",
+      "env_variable": "GRIST_MCP_ENABLED",
+      "required": false,
+      "default": true,
+      "hint": "Serves the built-in Model Context Protocol endpoint at /api/mcp. Requires the full edition to be activated in the Admin Panel."
+    },
+    {
+      "type": "boolean",
+      "label": "Enable OAuth / OIDC server",
+      "env_variable": "GRIST_ENABLE_OIDC_SERVER",
+      "required": false,
+      "default": true,
+      "hint": "Issues the tokens MCP clients and OAuth apps sign in with. Needed for interactive sign-in from Claude and ChatGPT."
+    },
+    {
+      "type": "text",
+      "label": "CIMD allowed hosts",
+      "env_variable": "GRIST_OIDC_CIMD_ALLOWED_HOSTS",
+      "required": false,
+      "default": "claude.ai,chatgpt.com",
+      "hint": "Comma-separated hosts allowed to register themselves via a Client ID Metadata Document. Empty disables CIMD. Avoid '*'."
+    },
+    {
+      "type": "boolean",
+      "label": "Enable Dynamic Client Registration",
+      "env_variable": "GRIST_ENABLE_OIDC_DCR",
+      "required": false,
+      "default": false,
+      "hint": "Serves POST /oidc/reg so clients that do not support CIMD can register themselves. Leave off unless a client needs it."
+    },
+    {
+      "type": "number",
+      "label": "DCR rate limit (requests/minute)",
+      "env_variable": "GRIST_OIDC_DCR_RATE_LIMIT",
+      "required": false,
+      "default": 60,
+      "hint": "Only relevant when Dynamic Client Registration is enabled."
+    },
+    {
+      "type": "random",
+      "label": "Session secret",
+      "env_variable": "GRIST_SESSION_SECRET",
+      "required": false,
+      "min": 32,
+      "encoding": "hex",
+      "hint": "Keeps login sessions valid across container recreates. Generated once — back it up with your app data."
+    },
+    {
+      "type": "email",
+      "label": "Default email (single-user mode)",
+      "env_variable": "GRIST_DEFAULT_EMAIL",
+      "required": false,
+      "default": "",
+      "hint": "Optional. If set, anonymous visitors are logged in as this user. Leave empty when you want real sign-in — MCP clients authenticate as a real account."
+    },
+    {
+      "type": "boolean",
+      "label": "Force login",
+      "env_variable": "GRIST_FORCE_LOGIN",
+      "required": false,
+      "default": false,
+      "hint": "Blocks all anonymous access, including publicly shared documents."
+    },
+    {
+      "type": "text",
+      "label": "Activation key (full edition)",
+      "env_variable": "GRIST_ACTIVATION",
+      "required": false,
+      "default": "",
+      "hint": "Optional. Paste a full-edition activation key here instead of entering it in the Admin Panel. MCP and the OIDC server are full-edition features."
+    }
+  ]
+}
