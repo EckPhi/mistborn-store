@@ -10,7 +10,7 @@ This app packages Garage as a **single-node** store, with the cluster layout cre
 |---|---|---|
 | Web UI | `3909` | The app's main port — this is what the *Open* button and the exposed domain point at |
 | S3 API | `3900` | Point `aws-cli`, rclone, restic, Nextcloud, backups… here |
-| Static website hosting | `3902` | Serves buckets configured for website access |
+| Static website hosting | `3902` | Off unless you set a *Website root domain* — Garage requires one for this endpoint |
 | Admin API | internal | Reachable only from the web UI container, on `http://garage:3903` |
 
 The S3 API and the website endpoint are published directly on the host: `http://<your-server-ip>:3900` and `:3902`. Only the web UI goes through the runtipi reverse proxy, so exposing this app on a domain gives you TLS for the *admin UI*, not for the S3 endpoint. If you need S3 over HTTPS from outside your LAN, put your own reverse proxy in front of port 3900.
@@ -42,6 +42,8 @@ aws --endpoint-url http://<your-server-ip>:3900 --region garage s3 ls s3://defau
 ```
 
 Vhost-style access (`bucket.s3.example.com`) only works if you set *S3 root domain* to `.s3.example.com` and point that wildcard DNS record at port 3900 yourself.
+
+The same goes for website hosting: Garage has no default for the website root domain, so the `3902` endpoint is left out of the config entirely until you fill in *Website root domain*.
 
 ## Settings that matter
 
