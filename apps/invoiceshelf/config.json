@@ -10,7 +10,7 @@
     "utilities"
   ],
   "description": "InvoiceShelf is a self-hosted invoicing app for freelancers and small businesses, forked from Crater. It creates invoices, estimates, recurring invoices and payments, tracks expenses and customers, supports multiple companies and currencies, custom invoice templates and taxes, and can email documents to clients. This app runs the SQLite variant — the database is a single file under app-data, so there is no database container.",
-  "tipi_version": 1,
+  "tipi_version": 2,
   "version": "2.4.2",
   "source": "https://github.com/InvoiceShelf/InvoiceShelf",
   "website": "https://invoiceshelf.com",
@@ -20,7 +20,7 @@
     "amd64"
   ],
   "created_at": 1785690668644,
-  "updated_at": 1785690668644,
+  "updated_at": 1786895345297,
   "dynamic_config": true,
   "form_fields": [
     {

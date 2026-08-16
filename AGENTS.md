@@ -185,11 +185,29 @@ Runtipi creates bind-mount host dirs as root. An image that runs as a non-root u
 
 ```json
 { "name": "<app>-permissions", "image": "busybox:1.38.0",
-  "command": ["sh", "-c", "mkdir -p /mnt/data && chown -R 1000:1000 /mnt/data"],
+  "command": ["sh", "-c", "mkdir -p /mnt/data && chown -R 1000:1000 /mnt/data && touch /tmp/ready; while :; do sleep 3600; done"],
+  "healthCheck": { "test": "test -f /tmp/ready || exit 1", "interval": "5s", "timeout": "3s", "startPeriod": "5s", "retries": 12 },
   "volumes": [{ "hostPath": "${APP_DATA_DIR}/data", "containerPath": "/mnt/data" }] }
 ```
 
 Known uids: invoiceshelf `82`, wealthfolio `1000`, youtrack `13001`. Read `User` from the image config (above) instead of guessing.
+
+### An init container must never exit — gate dependents on `service_healthy`
+
+Runtipi writes `restart: unless-stopped` onto **every** generated service, and the dynamic-compose schema has no `restart` key to override it. A one-shot init container that finishes its work and exits 0 is therefore restarted forever:
+
+```
+garage-init-1 exited with code 0 (restarting)
+Container ...-garage-1  Waiting
+```
+
+`dependsOn: { "<init>": { "condition": "service_completed_successfully" } }` is never satisfied, so the main service waits forever and the app never comes up. Instead, keep the init container alive and make readiness explicit:
+
+1. end the command with `touch /tmp/ready; while :; do sleep 3600; done` (busybox `sleep` does not accept `infinity`),
+2. add the `healthCheck` shown above,
+3. depend on it with `"condition": "service_healthy"`.
+
+The idle sidecar costs a few MB of RAM. The init work re-runs on every restart, so keep it idempotent.
 
 ### `$` in a form-field value can be eaten before the container sees it
 
