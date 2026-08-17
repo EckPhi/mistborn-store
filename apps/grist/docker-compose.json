@@ -3,6 +3,26 @@
   "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json",
   "services": [
     {
+      "name": "grist-redis",
+      "image": "redis:8.10.0-alpine",
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/redis",
+          "containerPath": "/data",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ],
+      "healthCheck": {
+        "test": "redis-cli ping || exit 1",
+        "interval": "10s",
+        "timeout": "5s",
+        "startPeriod": "10s",
+        "retries": 5
+      }
+    },
+    {
       "name": "grist",
       "image": "gristlabs/grist:1.7.17",
       "isMain": true,
@@ -11,6 +31,10 @@
         {
           "key": "APP_HOME_URL",
           "value": "${APP_PROTOCOL:-http}://${APP_DOMAIN}"
+        },
+        {
+          "key": "REDIS_URL",
+          "value": "redis://grist-redis:6379/0"
         },
         {
           "key": "GRIST_SANDBOX_FLAVOR",
@@ -65,7 +89,12 @@
           "shared": false,
           "private": false
         }
-      ]
+      ],
+      "dependsOn": {
+        "grist-redis": {
+          "condition": "service_healthy"
+        }
+      }
     }
   ]
 }
