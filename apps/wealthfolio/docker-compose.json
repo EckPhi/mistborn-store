@@ -25,7 +25,7 @@
     },
     {
       "name": "wealthfolio",
-      "image": "wealthfolio/wealthfolio:3.6.3",
+      "image": "wealthfolio/wealthfolio:3.7.0",
       "isMain": true,
       "internalPort": 8088,
       "entrypoint": [

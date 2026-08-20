@@ -10,8 +10,8 @@
     "data"
   ],
   "description": "Wealthfolio is a privacy-first, open-source portfolio tracker. It consolidates holdings from several brokers and banks into one dashboard and tracks performance, net worth, dividends, income and allocations, benchmarked against indexes such as the S&P 500. Everything lives in a local SQLite database — no account, no cloud sync. This is the self-hosted web edition of the desktop app.",
-  "tipi_version": 3,
-  "version": "3.6.3",
+  "tipi_version": 4,
+  "version": "3.7.0",
   "source": "https://github.com/wealthfolio/wealthfolio",
   "website": "https://wealthfolio.app",
   "exposable": true,
@@ -20,7 +20,7 @@
     "amd64"
   ],
   "created_at": 1785690668644,
-  "updated_at": 1786895345370,
+  "updated_at": 1787193943895,
   "dynamic_config": true,
   "form_fields": [
     {
