@@ -4,7 +4,7 @@
   "services": [
     {
       "name": "questdb",
-      "image": "questdb/questdb:10.0.0",
+      "image": "questdb/questdb:10.0.1",
       "isMain": true,
       "internalPort": 9000,
       "ulimits": {
