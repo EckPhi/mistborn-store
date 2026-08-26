@@ -9,8 +9,8 @@
     "development"
   ],
   "description": "YouTrack is a project management and issue tracking tool by JetBrains. It supports agile boards, Gantt charts, knowledge base articles, workflows and time tracking. On first start, complete the Configuration Wizard: the wizard token is printed in the container logs and also stored at /opt/youtrack/conf/internal/services/configurationWizard/wizard_token.txt inside the container (conf volume).",
-  "tipi_version": 8,
-  "version": "2026.2.18634",
+  "tipi_version": 9,
+  "version": "2026.2.18695",
   "source": "https://github.com/JetBrains",
   "website": "https://www.jetbrains.com/youtrack/",
   "exposable": true,
@@ -19,5 +19,5 @@
     "amd64"
   ],
   "created_at": 1782779000000,
-  "updated_at": 1787626077983
+  "updated_at": 1787712875635
 }
