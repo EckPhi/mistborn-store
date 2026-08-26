@@ -60,7 +60,7 @@
     },
     {
       "name": "mcp-grafana",
-      "image": "grafana/mcp-grafana:1.1.0-alpine",
+      "image": "grafana/mcp-grafana:1.2.0-alpine",
       "networkMode": "service:agentgateway",
       "entrypoint": [
         "/bin/sh",

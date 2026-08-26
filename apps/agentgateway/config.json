@@ -9,9 +9,9 @@
     "ai",
     "network"
   ],
-  "description": "agentgateway is an agentic proxy that fronts any number of MCP servers and exposes them to clients as a single streamable-HTTP endpoint at /mcp, with a management UI at /ui. Two MCP servers ship with it as loopback-only sidecars that can be switched on or off individually \u2014 Grafana (dashboards, datasources, Prometheus/Loki queries, alerting) and Tailscale (devices, routes, ACLs) \u2014 alongside the public Cloudflare documentation server. The install form carries only secrets and sidecar settings; targets themselves are defined in config.yaml, which is seeded on first start and editable from the UI.",
-  "tipi_version": 6,
-  "version": "v1.4.1",
+  "description": "agentgateway is an agentic proxy that fronts any number of MCP servers and exposes them to clients as a single streamable-HTTP endpoint at /mcp, with a management UI at /ui. Two MCP servers ship with it as loopback-only sidecars that can be switched on or off individually — Grafana (dashboards, datasources, Prometheus/Loki queries, alerting) and Tailscale (devices, routes, ACLs) — alongside the public Cloudflare documentation server. The install form carries only secrets and sidecar settings; targets themselves are defined in config.yaml, which is seeded on first start and editable from the UI.",
+  "tipi_version": 7,
+  "version": "1.2.0",
   "source": "https://github.com/agentgateway/agentgateway",
   "website": "https://agentgateway.dev",
   "exposable": true,
@@ -20,7 +20,7 @@
     "amd64"
   ],
   "created_at": 1786895650408,
-  "updated_at": 1786895650408,
+  "updated_at": 1787712880271,
   "dynamic_config": true,
   "form_fields": [
     {
@@ -44,7 +44,7 @@
       "label": "Grafana service account token",
       "env_variable": "GRAFANA_SERVICE_ACCOUNT_TOKEN",
       "required": false,
-      "hint": "Grafana \u2192 Administration \u2192 Service accounts. Viewer role is enough for read-only tools."
+      "hint": "Grafana → Administration → Service accounts. Viewer role is enough for read-only tools."
     },
     {
       "type": "random",
@@ -86,15 +86,15 @@
       "default": "read",
       "options": [
         {
-          "label": "read \u2014 query only",
+          "label": "read — query only",
           "value": "read"
         },
         {
-          "label": "write \u2014 modify devices, routes, ACLs",
+          "label": "write — modify devices, routes, ACLs",
           "value": "write"
         },
         {
-          "label": "admin \u2014 delete, deauthorize, exit-node control",
+          "label": "admin — delete, deauthorize, exit-node control",
           "value": "admin"
         }
       ],
@@ -114,7 +114,7 @@
       "label": "Grist API key",
       "env_variable": "GRIST_API_KEY",
       "required": false,
-      "hint": "Only a secret \u2014 the Grist endpoint itself goes in config.yaml, which has a commented example. Grist \u2192 Profile Settings \u2192 API key."
+      "hint": "Only a secret — the Grist endpoint itself goes in config.yaml, which has a commented example. Grist → Profile Settings → API key."
     },
     {
       "type": "text",
@@ -122,7 +122,7 @@
       "env_variable": "AGW_EXTRA_HOST",
       "required": false,
       "default": "localhost:127.0.0.1",
-      "hint": "One <hostname>:<ip> entry added to the gateway's /etc/hosts. Use <domain>:host-gateway to reach another app on this host by its public domain \u2014 needed for servers that route on Host, like Grist. Left empty it falls back to a no-op mapping."
+      "hint": "One <hostname>:<ip> entry added to the gateway's /etc/hosts. Use <domain>:host-gateway to reach another app on this host by its public domain — needed for servers that route on Host, like Grist. Left empty it falls back to a no-op mapping."
     }
   ]
 }
