@@ -10,8 +10,8 @@
     "network"
   ],
   "description": "agentgateway is an agentic proxy that fronts any number of MCP servers and exposes them to clients as a single streamable-HTTP endpoint at /mcp, with a management UI at /ui. Two MCP servers ship with it as loopback-only sidecars that can be switched on or off individually — Grafana (dashboards, datasources, Prometheus/Loki queries, alerting) and Tailscale (devices, routes, ACLs) — alongside the public Cloudflare documentation server. The install form carries only secrets and sidecar settings; targets themselves are defined in config.yaml, which is seeded on first start and editable from the UI.",
-  "tipi_version": 7,
-  "version": "1.2.0",
+  "tipi_version": 8,
+  "version": "v1.5.0",
   "source": "https://github.com/agentgateway/agentgateway",
   "website": "https://agentgateway.dev",
   "exposable": true,
@@ -20,7 +20,7 @@
     "amd64"
   ],
   "created_at": 1786895650408,
-  "updated_at": 1787712880271,
+  "updated_at": 1787923517161,
   "dynamic_config": true,
   "form_fields": [
     {
