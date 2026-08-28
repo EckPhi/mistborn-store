@@ -4,7 +4,7 @@
   "services": [
     {
       "name": "diyhue",
-      "image": "diyhue/core:1062",
+      "image": "diyhue/core:1063",
       "isMain": true,
       "internalPort": 80,
       "networkMode": "host",
