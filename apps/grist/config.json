@@ -11,8 +11,8 @@
     "ai"
   ],
   "description": "Grist is a modern relational spreadsheet: the flexibility of a spreadsheet with the robustness of a database. This build exposes the environment variables the official Runtipi app hides, so the built-in MCP server and Grist's OAuth/OIDC server can be switched on and AI assistants such as Claude and ChatGPT can read and edit documents at https://<your-grist-host>/api/mcp.",
-  "tipi_version": 2,
-  "version": "1.7.17",
+  "tipi_version": 3,
+  "version": "1.7.18",
   "source": "https://github.com/gristlabs/grist-core",
   "website": "https://www.getgrist.com/",
   "exposable": true,
@@ -21,7 +21,7 @@
     "amd64"
   ],
   "created_at": 1786800000000,
-  "updated_at": 1786950000000,
+  "updated_at": 1787991600238,
   "dynamic_config": true,
   "form_fields": [
     {
