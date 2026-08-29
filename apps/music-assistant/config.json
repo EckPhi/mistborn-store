@@ -10,8 +10,8 @@
     "media"
   ],
   "description": "Music Assistant is a free, open-source media library manager that connects your streaming services and local media to a wide range of supported players. It enables multi-room audio and integrates tightly with Home Assistant.",
-  "tipi_version": 15,
-  "version": "2.10.0",
+  "tipi_version": 16,
+  "version": "2.10.1",
   "source": "https://github.com/music-assistant/server",
   "website": "https://www.music-assistant.io",
   "exposable": false,
@@ -20,7 +20,7 @@
     "amd64"
   ],
   "created_at": 1781308800000,
-  "updated_at": 1787832217393,
+  "updated_at": 1787991587606,
   "dynamic_config": true,
   "form_fields": []
 }
