@@ -4,7 +4,7 @@
   "services": [
     {
       "name": "victoriametrics",
-      "image": "victoriametrics/victoria-metrics:v1.150.0",
+      "image": "victoriametrics/victoria-metrics:v1.151.0",
       "isMain": true,
       "internalPort": 8428,
       "command": [
