@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 2,
+  "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json",
+  "services": [
+    {
+      "name": "erpnext-db",
+      "image": "mariadb:11.8.9",
+      "command": [
+        "--character-set-server=utf8mb4",
+        "--collation-server=utf8mb4_unicode_ci",
+        "--skip-character-set-client-handshake"
+      ],
+      "environment": [
+        { "key": "MYSQL_ROOT_PASSWORD", "value": "${ERPNEXT_DB_ROOT_PASSWORD}" },
+        { "key": "MARIADB_AUTO_UPGRADE", "value": "1" },
+        { "key": "TZ", "value": "${TZ}" }
+      ],
+      "volumes": [
+        { "hostPath": "${APP_DATA_DIR}/db", "containerPath": "/var/lib/mysql", "readOnly": false, "shared": false, "private": false }
+      ],
+      "healthCheck": {
+        "test": "healthcheck.sh --connect --innodb_initialized || exit 1",
+        "interval": "10s",
+        "timeout": "5s",
+        "startPeriod": "30s",
+        "retries": 10
+      }
+    },
+    {
+      "name": "erpnext-redis-cache",
+      "image": "redis:6.2.24-alpine",
+      "healthCheck": {
+        "test": "redis-cli ping || exit 1",
+        "interval": "10s",
+        "timeout": "5s",
+        "startPeriod": "10s",
+        "retries": 5
+      }
+    },
+    {
+      "name": "erpnext-redis-queue",
+      "image": "redis:6.2.24-alpine",
+      "volumes": [
+        { "hostPath": "${APP_DATA_DIR}/redis-queue", "containerPath": "/data", "readOnly": false, "shared": false, "private": false }
+      ],
+      "healthCheck": {
+        "test": "redis-cli ping || exit 1",
+        "interval": "10s",
+        "timeout": "5s",
+        "startPeriod": "10s",
+        "retries": 5
+      }
+    },
+    {
+      "name": "erpnext-sites-seed",
+      "image": "frappe/erpnext:v16.33.0",
+      "user": "0:0",
+      "entrypoint": [
+        "/bin/bash",
+        "-c",
+        "set -e; if [ ! -f /seed/apps.txt ]; then cp -a /home/frappe/frappe-bench/sites/. /seed/; fi; chown -R 1000:1000 /seed; touch /tmp/ready; while :; do sleep 3600; done"
+      ],
+      "volumes": [
+        { "hostPath": "${APP_DATA_DIR}/sites", "containerPath": "/seed", "readOnly": false, "shared": false, "private": false }
+      ],
+      "healthCheck": {
+        "test": "test -f /tmp/ready || exit 1",
+        "interval": "5s",
+        "timeout": "3s",
+        "startPeriod": "10s",
+        "retries": 12
+      }
+    },
+    {
+      "name": "erpnext-configurator",
+      "image": "frappe/erpnext:v16.33.0",
+      "entrypoint": [
+        "/bin/bash",
+        "-c",
+        "set -e; ls -1 apps > sites/apps.txt; bench set-config -g db_host erpnext-db; bench set-config -gp db_port 3306; bench set-config -g redis_cache redis://erpnext-redis-cache:6379; bench set-config -g redis_queue redis://erpnext-redis-queue:6379; bench set-config -g redis_socketio redis://erpnext-redis-queue:6379; bench set-config -gp socketio_port 9000; bench set-config -g chromium_path /usr/bin/chromium-headless-shell; touch /tmp/ready; while :; do sleep 3600; done"
+      ],
+      "volumes": [
+        { "hostPath": "${APP_DATA_DIR}/sites", "containerPath": "/home/frappe/frappe-bench/sites", "readOnly": false, "shared": false, "private": false }
+      ],
+      "dependsOn": {
+        "erpnext-db": { "condition": "service_healthy" },
+        "erpnext-redis-cache": { "condition": "service_healthy" },
+        "erpnext-redis-queue": { "condition": "service_healthy" },
+        "erpnext-sites-seed": { "condition": "service_healthy" }
+      },
+      "healthCheck": {
+        "test": "test -f /tmp/ready || exit 1",
+        "interval": "5s",
+        "timeout": "3s",
+        "startPeriod": "10s",
+        "retries": 24
+      }
+    },
+    {
+      "name": "erpnext-create-site",
+      "image": "frappe/erpnext:v16.33.0",
+      "entrypoint": [
+        "/bin/bash",
+        "-c",
+        "set -e; if [ ! -d sites/frontend ]; then bench new-site --mariadb-user-host-login-scope='%' --db-root-username=root --db-root-password=\"$${ERPNEXT_DB_ROOT_PASSWORD}\" --admin-password=\"$${ERPNEXT_ADMIN_PASSWORD}\" --install-app erpnext --set-default frontend; fi; touch /tmp/ready; while :; do sleep 3600; done"
+      ],
+      "environment": [
+        { "key": "ERPNEXT_DB_ROOT_PASSWORD", "value": "${ERPNEXT_DB_ROOT_PASSWORD}" },
+        { "key": "ERPNEXT_ADMIN_PASSWORD", "value": "${ERPNEXT_ADMIN_PASSWORD}" }
+      ],
+      "volumes": [
+        { "hostPath": "${APP_DATA_DIR}/sites", "containerPath": "/home/frappe/frappe-bench/sites", "readOnly": false, "shared": false, "private": false }
+      ],
+      "dependsOn": {
+        "erpnext-configurator": { "condition": "service_healthy" }
+      },
+      "healthCheck": {
+        "test": "test -f /tmp/ready || exit 1",
+        "interval": "10s",
+        "timeout": "3s",
+        "startPeriod": "60s",
+        "retries": 60
+      }
+    },
+    {
+      "name": "erpnext-backend",
+      "image": "frappe/erpnext:v16.33.0",
+      "environment": [
+        { "key": "GUNICORN_THREADS", "value": "4" },
+        { "key": "GUNICORN_WORKERS", "value": "2" },
+        { "key": "GUNICORN_TIMEOUT", "value": "120" }
+      ],
+      "volumes": [
+        { "hostPath": "${APP_DATA_DIR}/sites", "containerPath": "/home/frappe/frappe-bench/sites", "readOnly": false, "shared": false, "private": false }
+      ],
+      "dependsOn": {
+        "erpnext-create-site": { "condition": "service_healthy" }
+      }
+    },
+    {
+      "name": "erpnext-websocket",
+      "image": "frappe/erpnext:v16.33.0",
+      "command": [
+        "node",
+        "/home/frappe/frappe-bench/apps/frappe/socketio.js"
+      ],
+      "environment": [
+        { "key": "FRAPPE_REDIS_CACHE", "value": "redis://erpnext-redis-cache:6379" },
+        { "key": "FRAPPE_REDIS_QUEUE", "value": "redis://erpnext-redis-queue:6379" }
+      ],
+      "volumes": [
+        { "hostPath": "${APP_DATA_DIR}/sites", "containerPath": "/home/frappe/frappe-bench/sites", "readOnly": false, "shared": false, "private": false }
+      ],
+      "dependsOn": {
+        "erpnext-create-site": { "condition": "service_healthy" }
+      }
+    },
+    {
+      "name": "erpnext-queue-short",
+      "image": "frappe/erpnext:v16.33.0",
+      "command": ["bench", "worker", "--queue", "short,default"],
+      "environment": [
+        { "key": "FRAPPE_REDIS_CACHE", "value": "redis://erpnext-redis-cache:6379" },
+        { "key": "FRAPPE_REDIS_QUEUE", "value": "redis://erpnext-redis-queue:6379" }
+      ],
+      "volumes": [
+        { "hostPath": "${APP_DATA_DIR}/sites", "containerPath": "/home/frappe/frappe-bench/sites", "readOnly": false, "shared": false, "private": false }
+      ],
+      "dependsOn": {
+        "erpnext-create-site": { "condition": "service_healthy" }
+      }
+    },
+    {
+      "name": "erpnext-queue-long",
+      "image": "frappe/erpnext:v16.33.0",
+      "command": ["bench", "worker", "--queue", "long,default,short"],
+      "environment": [
+        { "key": "FRAPPE_REDIS_CACHE", "value": "redis://erpnext-redis-cache:6379" },
+        { "key": "FRAPPE_REDIS_QUEUE", "value": "redis://erpnext-redis-queue:6379" }
+      ],
+      "volumes": [
+        { "hostPath": "${APP_DATA_DIR}/sites", "containerPath": "/home/frappe/frappe-bench/sites", "readOnly": false, "shared": false, "private": false }
+      ],
+      "dependsOn": {
+        "erpnext-create-site": { "condition": "service_healthy" }
+      }
+    },
+    {
+      "name": "erpnext-scheduler",
+      "image": "frappe/erpnext:v16.33.0",
+      "command": ["bench", "schedule"],
+      "volumes": [
+        { "hostPath": "${APP_DATA_DIR}/sites", "containerPath": "/home/frappe/frappe-bench/sites", "readOnly": false, "shared": false, "private": false }
+      ],
+      "dependsOn": {
+        "erpnext-create-site": { "condition": "service_healthy" }
+      }
+    },
+    {
+      "name": "erpnext",
+      "image": "frappe/erpnext:v16.33.0",
+      "isMain": true,
+      "internalPort": 8080,
+      "command": ["nginx-entrypoint.sh"],
+      "environment": [
+        { "key": "BACKEND", "value": "erpnext-backend:8000" },
+        { "key": "SOCKETIO", "value": "erpnext-websocket:9000" },
+        { "key": "FRAPPE_SITE_NAME_HEADER", "value": "frontend" },
+        { "key": "UPSTREAM_REAL_IP_ADDRESS", "value": "127.0.0.1" },
+        { "key": "UPSTREAM_REAL_IP_HEADER", "value": "X-Forwarded-For" },
+        { "key": "UPSTREAM_REAL_IP_RECURSIVE", "value": "off" },
+        { "key": "PROXY_READ_TIMEOUT", "value": "120" },
+        { "key": "CLIENT_MAX_BODY_SIZE", "value": "50m" }
+      ],
+      "volumes": [
+        { "hostPath": "${APP_DATA_DIR}/sites", "containerPath": "/home/frappe/frappe-bench/sites", "readOnly": false, "shared": false, "private": false }
+      ],
+      "dependsOn": {
+        "erpnext-backend": { "condition": "service_started" },
+        "erpnext-websocket": { "condition": "service_started" }
+      }
+    }
+  ]
+}

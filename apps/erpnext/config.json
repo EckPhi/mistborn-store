@@ -1,0 +1,43 @@
+{
+  "name": "ERPNext",
+  "id": "erpnext",
+  "available": true,
+  "short_desc": "Open-source ERP for accounting, inventory, CRM, HR and more",
+  "author": "Frappe Technologies",
+  "port": 8103,
+  "categories": [
+    "finance",
+    "utilities"
+  ],
+  "description": "ERPNext is a full-featured open-source enterprise resource planning system. It brings accounting, invoicing, inventory, manufacturing, sales, purchasing, CRM, projects, assets, point of sale and human resources into one integrated application. This package includes MariaDB and Redis and creates the first ERPNext site automatically.",
+  "tipi_version": 1,
+  "version": "v16.33.0",
+  "source": "https://github.com/frappe/erpnext",
+  "website": "https://erpnext.com",
+  "exposable": true,
+  "supported_architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "created_at": 1788192000000,
+  "updated_at": 1788192000000,
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "password",
+      "label": "Administrator password",
+      "env_variable": "ERPNEXT_ADMIN_PASSWORD",
+      "required": true,
+      "min": 8,
+      "hint": "Password for the built-in Administrator account. It is used only when the site is first created; change it later from ERPNext."
+    },
+    {
+      "type": "random",
+      "label": "Database root password",
+      "env_variable": "ERPNEXT_DB_ROOT_PASSWORD",
+      "required": false,
+      "min": 32,
+      "hint": "Auto-generated MariaDB root password. Do not change it after first start; keep it with your app-data backup."
+    }
+  ]
+}

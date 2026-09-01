@@ -25,6 +25,7 @@ See the [Runtipi custom app store guide](https://runtipi.io/docs/guides/create-y
 | <img src="apps/appdaemon/metadata/logo.jpg" width="32"> | [AppDaemon](https://github.com/AppDaemon/appdaemon) | Python apps and HADashboard for Home Assistant |
 | <img src="apps/bambuddy/metadata/logo.jpg" width="32"> | [Bambuddy](https://github.com/maziggy/bambuddy) | Self-hosted command center for Bambu Lab 3D printers |
 | <img src="apps/diyhue/metadata/logo.jpg" width="32"> | [diyHue](https://github.com/diyhue/diyHue) | Open-source Philips Hue bridge emulator |
+| <img src="apps/erpnext/metadata/logo.jpg" width="32"> | [ERPNext](https://github.com/frappe/erpnext) | Open-source ERP for accounting, inventory, CRM, HR and more |
 | <img src="apps/eufy-security-ws/metadata/logo.jpg" width="32"> | [Eufy Security WS](https://github.com/bropat/eufy-security-ws) | WebSocket server for Eufy Security devices |
 | <img src="apps/garage/metadata/logo.jpg" width="32"> | [Garage](https://git.deuxfleurs.fr/Deuxfleurs/garage) | S3-compatible object storage for self-hosting |
 | <img src="apps/go2rtc/metadata/logo.jpg" width="32"> | [go2rtc](https://github.com/AlexxIT/go2rtc) | Ultimate camera streaming (RTSP, WebRTC, HomeKit) |
