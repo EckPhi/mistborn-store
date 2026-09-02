@@ -9,18 +9,17 @@
     "finance",
     "utilities"
   ],
-  "description": "ERPNext is a full-featured open-source enterprise resource planning system. It brings accounting, invoicing, inventory, manufacturing, sales, purchasing, CRM, projects, assets, point of sale and human resources into one integrated application. This package includes MariaDB and Redis and creates the first ERPNext site automatically.",
-  "tipi_version": 1,
-  "version": "v16.33.0",
+  "description": "ERPNext 16.33.0 with the IEF Bookkeeping Frappe app and local German/English OCR runtime. This package includes MariaDB and Redis and creates the first ERPNext site automatically.",
+  "tipi_version": 2,
+  "version": "v0.1.0",
   "source": "https://github.com/frappe/erpnext",
   "website": "https://erpnext.com",
   "exposable": true,
   "supported_architectures": [
-    "amd64",
-    "arm64"
+    "amd64"
   ],
   "created_at": 1788192000000,
-  "updated_at": 1788192000000,
+  "updated_at": 1788348508000,
   "dynamic_config": true,
   "form_fields": [
     {

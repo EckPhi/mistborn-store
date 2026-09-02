@@ -2,9 +2,21 @@
 
 ERPNext is an open-source enterprise resource planning suite built on the Frappe Framework. It combines accounting, invoicing, inventory, manufacturing, purchasing, sales, CRM, projects, assets, point of sale and human resources in one system.
 
+This package uses the IEF Bookkeeping `v0.1.0` image. It extends ERPNext 16.33.0
+with the `ief_bookkeeping` Frappe app, Poppler, and fully local German/English
+Tesseract OCR. The image is currently published for amd64 only.
+
+The GHCR package is private. Authenticate Docker on the Runtipi host with a
+read-only package token before installing or updating this app; keep that token
+outside the app store and app environment.
+
 ## First start
 
 The first start creates the database configuration and a site named `frontend`, then installs ERPNext. This can take several minutes; the web interface becomes available after site creation finishes.
+
+The image makes `ief_bookkeeping` available to Bench but does not install it on a
+site automatically. Install it only on the separately approved test site after
+the stack is healthy. Do not install it on a production site.
 
 Sign in with the username **Administrator** and the administrator password entered during installation. The initial setup wizard will guide you through company, currency, locale and fiscal-year settings.
 
