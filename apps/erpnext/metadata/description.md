@@ -2,7 +2,7 @@
 
 ERPNext is an open-source enterprise resource planning suite built on the Frappe Framework. It combines accounting, invoicing, inventory, manufacturing, purchasing, sales, CRM, projects, assets, point of sale and human resources in one system.
 
-This package uses the IEF Bookkeeping `v0.1.0` image. It extends ERPNext 16.33.0
+This package uses the IEF Bookkeeping `v0.2.0` image. It extends ERPNext 16.33.0
 with the `ief_bookkeeping` Frappe app, Poppler, and fully local German/English
 Tesseract OCR. The image is currently published for amd64 only.
 
