@@ -6,9 +6,8 @@ This package uses the IEF Bookkeeping `v0.1.0` image. It extends ERPNext 16.33.0
 with the `ief_bookkeeping` Frappe app, Poppler, and fully local German/English
 Tesseract OCR. The image is currently published for amd64 only.
 
-The GHCR package is private. Authenticate Docker on the Runtipi host with a
-read-only package token before installing or updating this app; keep that token
-outside the app store and app environment.
+The custom image is pulled from its public Docker Hub repository. Installing and
+updating this Runtipi app does not require registry credentials.
 
 ## First start
 
