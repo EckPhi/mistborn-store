@@ -19,7 +19,7 @@
         { "hostPath": "${APP_DATA_DIR}/db", "containerPath": "/var/lib/mysql", "readOnly": false, "shared": false, "private": false }
       ],
       "healthCheck": {
-        "test": "healthcheck.sh --connect --innodb_initialized || exit 1",
+        "test": "MYSQL_PWD=\"$${MYSQL_ROOT_PASSWORD}\" mariadb-admin ping --host=127.0.0.1 --user=root --silent || exit 1",
         "interval": "10s",
         "timeout": "5s",
         "startPeriod": "30s",
