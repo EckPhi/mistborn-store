@@ -198,7 +198,7 @@
     },
     {
       "name": "erpnext",
-      "image": "frappe/erpnext:v16.33.0",
+      "image": "frappe/erpnext:v16.34.1",
       "isMain": true,
       "internalPort": 8080,
       "command": ["nginx-entrypoint.sh"],
