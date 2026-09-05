@@ -53,7 +53,7 @@
     },
     {
       "name": "erpnext-sites-seed",
-      "image": "eckphi/ief-bookkeeping:v0.4.0",
+      "image": "eckphi/ief-bookkeeping:v0.5.0",
       "user": "0:0",
       "entrypoint": [
         "/bin/bash",
@@ -73,7 +73,7 @@
     },
     {
       "name": "erpnext-configurator",
-      "image": "eckphi/ief-bookkeeping:v0.4.0",
+      "image": "eckphi/ief-bookkeeping:v0.5.0",
       "entrypoint": [
         "/bin/bash",
         "-c",
@@ -98,7 +98,7 @@
     },
     {
       "name": "erpnext-create-site",
-      "image": "eckphi/ief-bookkeeping:v0.4.0",
+      "image": "eckphi/ief-bookkeeping:v0.5.0",
       "entrypoint": [
         "/bin/bash",
         "-c",
@@ -124,7 +124,7 @@
     },
     {
       "name": "erpnext-backend",
-      "image": "eckphi/ief-bookkeeping:v0.4.0",
+      "image": "eckphi/ief-bookkeeping:v0.5.0",
       "environment": [
         { "key": "GUNICORN_THREADS", "value": "4" },
         { "key": "GUNICORN_WORKERS", "value": "2" },
@@ -139,7 +139,7 @@
     },
     {
       "name": "erpnext-websocket",
-      "image": "eckphi/ief-bookkeeping:v0.4.0",
+      "image": "eckphi/ief-bookkeeping:v0.5.0",
       "command": [
         "node",
         "/home/frappe/frappe-bench/apps/frappe/socketio.js"
@@ -157,7 +157,7 @@
     },
     {
       "name": "erpnext-queue-short",
-      "image": "eckphi/ief-bookkeeping:v0.4.0",
+      "image": "eckphi/ief-bookkeeping:v0.5.0",
       "command": ["bench", "worker", "--queue", "short,default"],
       "environment": [
         { "key": "FRAPPE_REDIS_CACHE", "value": "redis://erpnext-redis-cache:6379" },
@@ -172,7 +172,7 @@
     },
     {
       "name": "erpnext-queue-long",
-      "image": "eckphi/ief-bookkeeping:v0.4.0",
+      "image": "eckphi/ief-bookkeeping:v0.5.0",
       "command": ["bench", "worker", "--queue", "long,default,short"],
       "environment": [
         { "key": "FRAPPE_REDIS_CACHE", "value": "redis://erpnext-redis-cache:6379" },
@@ -187,7 +187,7 @@
     },
     {
       "name": "erpnext-scheduler",
-      "image": "eckphi/ief-bookkeeping:v0.4.0",
+      "image": "eckphi/ief-bookkeeping:v0.5.0",
       "command": ["bench", "schedule"],
       "volumes": [
         { "hostPath": "${APP_DATA_DIR}/sites", "containerPath": "/home/frappe/frappe-bench/sites", "readOnly": false, "shared": false, "private": false }
@@ -198,7 +198,7 @@
     },
     {
       "name": "erpnext",
-      "image": "eckphi/ief-bookkeeping:v0.4.0",
+      "image": "eckphi/ief-bookkeeping:v0.5.0",
       "isMain": true,
       "internalPort": 8080,
       "command": ["nginx-entrypoint.sh"],
