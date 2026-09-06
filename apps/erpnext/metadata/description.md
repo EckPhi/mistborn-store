@@ -11,7 +11,7 @@ updating this Runtipi app does not require registry credentials.
 
 ## First start
 
-The first start creates the database configuration and a site named `frontend`, then installs ERPNext. This can take several minutes; the web interface becomes available after site creation finishes.
+The first start creates the database configuration and a site named `frontend`, then installs ERPNext. On every start, including an upgrade, the startup gate migrates that site before the application services are allowed to start. This can take several minutes; the web interface becomes available after site creation and migration finish successfully.
 
 The image makes `ief_bookkeeping` available to Bench but does not install it on a
 site automatically. Install it only on the separately approved test site after
@@ -29,7 +29,7 @@ Persistent data is stored below the app-data directory:
 
 Back up both `sites` and `db` together. Keep the generated database root password with the backup and do not change it in the app settings after the first start.
 
-For a consistent application-level backup, use the Frappe Bench backup command from the backend container. ERPNext upgrades may also run database migrations, so make a backup before updating.
+Runtipi creates its upgrade backup before replacing the containers. Keep that backup until the automatically migrated site and retained records have been verified. An image rollback does not reverse a database migration; restore the matching pre-upgrade database and site files when schema rollback is required.
 
 ## Networking
 

@@ -102,7 +102,7 @@
       "entrypoint": [
         "/bin/bash",
         "-c",
-        "set -e; if [ ! -d sites/frontend ]; then bench new-site --mariadb-user-host-login-scope='%' --db-root-username=root --db-root-password=\"$${ERPNEXT_DB_ROOT_PASSWORD}\" --admin-password=\"$${ERPNEXT_ADMIN_PASSWORD}\" --install-app erpnext --set-default frontend; fi; touch /tmp/ready; while :; do sleep 3600; done"
+        "set -e; if [ ! -d sites/frontend ]; then bench new-site --mariadb-user-host-login-scope='%' --db-root-username=root --db-root-password=\"$${ERPNEXT_DB_ROOT_PASSWORD}\" --admin-password=\"$${ERPNEXT_ADMIN_PASSWORD}\" --install-app erpnext --set-default frontend; fi; bench --site frontend migrate; touch /tmp/ready; while :; do sleep 3600; done"
       ],
       "environment": [
         { "key": "ERPNEXT_DB_ROOT_PASSWORD", "value": "${ERPNEXT_DB_ROOT_PASSWORD}" },
