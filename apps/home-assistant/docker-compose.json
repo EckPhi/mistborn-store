@@ -4,7 +4,7 @@
   "services": [
     {
       "name": "home-assistant",
-      "image": "homeassistant/home-assistant:2026.9.0",
+      "image": "homeassistant/home-assistant:2026.9.1",
       "networkMode": "host",
       "environment": [
         {
