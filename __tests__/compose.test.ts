@@ -67,8 +67,11 @@ test("ERPNext images, assets mounts and startup gates stay aligned", () => {
 
 test("Renovate discovers every native YAML image", () => {
   const config = JSON.parse(fs.readFileSync("renovate.json", "utf8"));
-  const manager = config.customManagers.find((item: { fileMatch: string[] }) =>
-    item.fileMatch.some((pattern) => new RegExp(pattern).test("apps/erpnext/docker-compose.yml")),
+  const manager = config.customManagers.find((item: { managerFilePatterns: string[] }) =>
+    item.managerFilePatterns.some((pattern) => {
+      const expression = pattern.startsWith("/") && pattern.endsWith("/") ? pattern.slice(1, -1) : pattern;
+      return new RegExp(expression).test("apps/erpnext/docker-compose.yml");
+    }),
   );
   expect(manager).toBeDefined();
   const source = fs.readFileSync("apps/erpnext/docker-compose.yml", "utf8");
