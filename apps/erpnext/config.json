@@ -10,8 +10,8 @@
     "utilities"
   ],
   "description": "ERPNext 16.33.0 with the IEF Bookkeeping Frappe app and local German/English OCR runtime. This package includes MariaDB and Redis and creates the first ERPNext site automatically.",
-  "tipi_version": 36,
-  "version": "v0.8.0",
+  "tipi_version": 37,
+  "version": "v0.8.1",
   "source": "https://github.com/frappe/erpnext",
   "website": "https://erpnext.com",
   "exposable": true,
@@ -19,7 +19,7 @@
     "amd64"
   ],
   "created_at": 1788192000000,
-  "updated_at": 1788739573444,
+  "updated_at": 1788998331045,
   "dynamic_config": true,
   "form_fields": [
     {
@@ -38,5 +38,6 @@
       "min": 32,
       "hint": "Auto-generated MariaDB root password. Do not change it after first start; keep it with your app-data backup."
     }
-  ]
+  ],
+  "min_tipi_version": "4.10.1"
 }

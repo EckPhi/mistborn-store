@@ -9,7 +9,7 @@ Guide for humans and AI agents adding/maintaining apps in this Runtipi app store
 - Dynamic compose guide: https://runtipi.io/docs/guides/dynamic-compose-guide
 - Creating apps: https://runtipi.io/docs/developers/creating-apps
 
-The authoritative schemas are the Zod schemas in `@runtipi/common` (`appInfoSchema`, `dynamicComposeSchema`). The CI test in `__tests__/apps.test.ts` validates every app against them — that test is the source of truth, not the prose docs.
+CI uses the vendored JSON schemas through Ajv. Legacy JSON retains `apps/dynamic-compose-schema.json`; modern YAML uses `apps/compose-yaml-schema.json`, generated from Runtipi 4.10.1. See `docs/compose-yaml-validation.md` and `scripts/compose.ts`. Tests are the source of truth, not prose examples.
 
 ## Per-app file layout
 
@@ -18,13 +18,13 @@ Every app lives in `apps/<app-id>/`. `<app-id>` is kebab-case and **must equal**
 ```
 apps/<app-id>/
   config.json            # required — app metadata
-  docker-compose.json    # required — service definitions
+  docker-compose.json    # legacy service definitions, OR docker-compose.yml
   metadata/
     description.md        # required — long markdown description
     logo.jpg             # required — must be a .jpg
 ```
 
-All four files are required; CI fails if any is missing.
+The metadata files and exactly one Compose source (JSON or YAML) are required. CI rejects missing or ambiguous Compose sources.
 
 ## config.json
 
@@ -73,6 +73,17 @@ Field `type` is one of: `text, password, email, number, fqdn, ip, fqdnip, random
 - `options` (for dropdowns): array of `{ "label": "<shown>", "value": "<env value>" }`.
 - For `type: random`: `min` sets the generated string length (default 32); `encoding` is `"base64"` or `"hex"`. CI enforces `required: false` on every `random` field.
 - The `env_variable` is what you reference as `${VAR}` in `docker-compose.json`. Prefix app-specific vars to avoid collisions with upstream image vars (e.g. form `EUFY_USERNAME` → compose `"USERNAME": "${EUFY_USERNAME}"`).
+
+## Modern docker-compose.yml
+
+Use native Compose keys with top-level `x-runtipi: { schema_version: 2 }`.
+Mark one service with `x-runtipi: { is_main: true, internal_port: 8080 }`.
+`tmpfs`, native environment maps, `depends_on`, and `healthcheck` are supported.
+Declare `min_tipi_version` for the verified runtime; ERPNext requires 4.10.1.
+Keep exactly one source file; do not leave an old JSON definition beside YAML.
+Renovate discovers unquoted YAML `image: repository:tag` lines as well as legacy
+JSON image entries. Verify the resolved Compose with the supported Runtipi generator
+and Docker Compose when changing deployment behavior.
 
 ## docker-compose.json
 

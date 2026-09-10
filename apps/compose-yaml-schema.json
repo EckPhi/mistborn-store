@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "services": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "image": {
+            "type": "string"
+          },
+          "labels": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "boolean"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "networks": {
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": {}
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          },
+          "ports": {
+            "type": "array"
+          },
+          "x-runtipi": {
+            "type": "object",
+            "properties": {
+              "add_to_main_network": {
+                "type": "boolean"
+              },
+              "internal_port": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "is_main": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "required": [
+          "image"
+        ],
+        "additionalProperties": {}
+      }
+    },
+    "x-runtipi": {
+      "type": "object",
+      "properties": {
+        "schema_version": {
+          "enum": [
+            1,
+            2
+          ]
+        },
+        "overrides": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "architecture": {
+                "enum": [
+                  "amd64",
+                  "arm64"
+                ]
+              },
+              "services": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "image": {
+                      "type": "string"
+                    },
+                    "labels": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "additionalProperties": {
+                            "anyOf": [
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "boolean"
+                              }
+                            ]
+                          }
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      ]
+                    },
+                    "networks": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "additionalProperties": {}
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      ]
+                    },
+                    "ports": {
+                      "type": "array"
+                    },
+                    "x-runtipi": {
+                      "type": "object",
+                      "properties": {
+                        "add_to_main_network": {
+                          "type": "boolean"
+                        },
+                        "internal_port": {
+                          "anyOf": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "string"
+                            }
+                          ]
+                        },
+                        "is_main": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "image"
+                  ],
+                  "additionalProperties": {}
+                }
+              }
+            },
+            "required": [
+              "architecture",
+              "services"
+            ]
+          }
+        }
+      },
+      "required": [
+        "schema_version"
+      ]
+    },
+    "networks": {
+      "type": "object",
+      "additionalProperties": {}
+    }
+  },
+  "required": [
+    "services",
+    "x-runtipi"
+  ],
+  "additionalProperties": {},
+  "$comment": "Generated from Runtipi v4.10.1 commit 5734817389df55aafb9afd571e42e12ab7e647e0 packages/common/src/schemas/compose-yaml.ts using arktype 2.1.29. Upstream MIT license; see docs/compose-yaml-validation.md."
+}

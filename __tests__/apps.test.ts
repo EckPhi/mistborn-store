@@ -4,11 +4,10 @@ import path from "node:path";
 import Ajv from "ajv";
 
 import appInfoSchema from "../apps/app-info-schema.json";
-import dynamicComposeSchema from "../apps/dynamic-compose-schema.json";
+import { readCompose } from "../scripts/compose";
 
 const ajv = new Ajv({ allErrors: true, allowUnionTypes: true });
 const validateConfig = ajv.compile(appInfoSchema);
-const validateCompose = ajv.compile(dynamicComposeSchema);
 
 const appsRoot = path.join(process.cwd(), "apps");
 
@@ -35,7 +34,7 @@ describe("appstore should contain apps", () => {
 });
 
 describe("each app should have the required files", () => {
-  const required = ["config.json", "docker-compose.json", "metadata/logo.jpg", "metadata/description.md"];
+  const required = ["config.json", "metadata/logo.jpg", "metadata/description.md"];
 
   for (const app of apps) {
     for (const file of required) {
@@ -59,15 +58,10 @@ describe("each app should have a valid config.json", () => {
   }
 });
 
-describe("each app should have a valid docker-compose.json", () => {
+describe("each app should have exactly one valid Compose source", () => {
   for (const app of apps) {
     test(app, () => {
-      const compose = JSON.parse(readFile(app, "docker-compose.json") ?? "{}");
-      const valid = validateCompose(compose);
-      if (!valid) {
-        console.error(`docker-compose.json invalid for ${app}: ${formatErrors(validateCompose.errors)}`);
-      }
-      expect(valid).toBe(true);
+      expect(() => readCompose(path.join(appsRoot, app))).not.toThrow();
     });
   }
 });

@@ -1,0 +1,217 @@
+# Requires the documented one-time assets conversion on existing installations.
+x-runtipi:
+  schema_version: 2
+services:
+  erpnext-db:
+    image: mariadb:11.8.9
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --skip-character-set-client-handshake
+    volumes:
+      - ${APP_DATA_DIR}/db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${ERPNEXT_DB_ROOT_PASSWORD}
+      - MARIADB_AUTO_UPGRADE=1
+      - TZ=${TZ}
+    healthcheck:
+      test: MYSQL_PWD="$${MYSQL_ROOT_PASSWORD}" mariadb-admin ping --host=127.0.0.1 --user=root --silent || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+  erpnext-redis-cache:
+    image: redis:6.2.24-alpine
+    healthcheck:
+      test: redis-cli ping || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+  erpnext-redis-queue:
+    image: redis:6.2.24-alpine
+    volumes:
+      - ${APP_DATA_DIR}/redis-queue:/data
+    healthcheck:
+      test: redis-cli ping || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+  erpnext-sites-seed:
+    image: eckphi/ief-bookkeeping:v0.8.1
+    entrypoint:
+      - /bin/bash
+      - -c
+      - set -e; python3 /usr/local/bin/ief-runtime-assets.py seed; chown -R 1000:1000 /seed; touch /tmp/ready; while :; do sleep 3600; done
+    user: 0:0
+    volumes:
+      - ${APP_DATA_DIR}/sites:/seed
+    healthcheck:
+      test: test -f /tmp/ready || exit 1
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 10s
+  erpnext-configurator:
+    image: eckphi/ief-bookkeeping:v0.8.1
+    entrypoint:
+      - python3
+      - /usr/local/bin/ief-runtime-assets.py
+      - run
+      - /bin/bash
+      - -c
+      - set -e; ls -1 apps > sites/apps.txt; bench set-config -g db_host erpnext-db; bench set-config -gp db_port 3306; bench set-config -g redis_cache redis://erpnext-redis-cache:6379; bench set-config -g redis_queue redis://erpnext-redis-queue:6379; bench set-config -g redis_socketio redis://erpnext-redis-queue:6379; bench set-config -gp socketio_port 9000; bench set-config -g chromium_path /usr/bin/chromium-headless-shell; touch /tmp/ready; while :; do sleep 3600; done
+    volumes:
+      - ${APP_DATA_DIR}/sites:/home/frappe/frappe-bench/sites
+    depends_on:
+      erpnext-db:
+        condition: service_healthy
+      erpnext-redis-cache:
+        condition: service_healthy
+      erpnext-redis-queue:
+        condition: service_healthy
+      erpnext-sites-seed:
+        condition: service_healthy
+    healthcheck:
+      test: test -f /tmp/ready || exit 1
+      interval: 5s
+      timeout: 3s
+      retries: 24
+      start_period: 10s
+    tmpfs:
+      - /home/frappe/frappe-bench/sites/assets:rw,nosuid,nodev,noexec,size=1m,uid=1000,gid=1000,mode=0755
+    environment:
+      IEF_RUNTIME_ASSETS: "1"
+  erpnext-create-site:
+    image: eckphi/ief-bookkeeping:v0.8.1
+    entrypoint:
+      - python3
+      - /usr/local/bin/ief-runtime-assets.py
+      - run
+      - /bin/bash
+      - -c
+      - set -e; if [ ! -d sites/frontend ]; then bench new-site --mariadb-user-host-login-scope='%' --db-root-username=root --db-root-password="$${ERPNEXT_DB_ROOT_PASSWORD}" --admin-password="$${ERPNEXT_ADMIN_PASSWORD}" --install-app erpnext --set-default frontend; fi; bench --site frontend migrate; touch /tmp/ready; while :; do sleep 3600; done
+    volumes:
+      - ${APP_DATA_DIR}/sites:/home/frappe/frappe-bench/sites
+    environment:
+      ERPNEXT_DB_ROOT_PASSWORD: ${ERPNEXT_DB_ROOT_PASSWORD}
+      ERPNEXT_ADMIN_PASSWORD: ${ERPNEXT_ADMIN_PASSWORD}
+      IEF_RUNTIME_ASSETS: "1"
+    depends_on:
+      erpnext-configurator:
+        condition: service_healthy
+    healthcheck:
+      test: test -f /tmp/ready || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 60
+      start_period: 60s
+    tmpfs:
+      - /home/frappe/frappe-bench/sites/assets:rw,nosuid,nodev,noexec,size=1m,uid=1000,gid=1000,mode=0755
+  erpnext-backend:
+    image: eckphi/ief-bookkeeping:v0.8.1
+    volumes:
+      - ${APP_DATA_DIR}/sites:/home/frappe/frappe-bench/sites
+    environment:
+      GUNICORN_THREADS: "4"
+      GUNICORN_WORKERS: "2"
+      GUNICORN_TIMEOUT: "120"
+      IEF_RUNTIME_ASSETS: "1"
+    depends_on:
+      erpnext-create-site:
+        condition: service_healthy
+    tmpfs:
+      - /home/frappe/frappe-bench/sites/assets:rw,nosuid,nodev,noexec,size=1m,uid=1000,gid=1000,mode=0755
+  erpnext-websocket:
+    image: eckphi/ief-bookkeeping:v0.8.1
+    command:
+      - node
+      - /home/frappe/frappe-bench/apps/frappe/socketio.js
+    volumes:
+      - ${APP_DATA_DIR}/sites:/home/frappe/frappe-bench/sites
+    environment:
+      FRAPPE_REDIS_CACHE: redis://erpnext-redis-cache:6379
+      FRAPPE_REDIS_QUEUE: redis://erpnext-redis-queue:6379
+      IEF_RUNTIME_ASSETS: "1"
+    depends_on:
+      erpnext-create-site:
+        condition: service_healthy
+    tmpfs:
+      - /home/frappe/frappe-bench/sites/assets:rw,nosuid,nodev,noexec,size=1m,uid=1000,gid=1000,mode=0755
+  erpnext-queue-short:
+    image: eckphi/ief-bookkeeping:v0.8.1
+    command:
+      - bench
+      - worker
+      - --queue
+      - short,default
+    volumes:
+      - ${APP_DATA_DIR}/sites:/home/frappe/frappe-bench/sites
+    environment:
+      FRAPPE_REDIS_CACHE: redis://erpnext-redis-cache:6379
+      FRAPPE_REDIS_QUEUE: redis://erpnext-redis-queue:6379
+      IEF_RUNTIME_ASSETS: "1"
+    depends_on:
+      erpnext-create-site:
+        condition: service_healthy
+    tmpfs:
+      - /home/frappe/frappe-bench/sites/assets:rw,nosuid,nodev,noexec,size=1m,uid=1000,gid=1000,mode=0755
+  erpnext-queue-long:
+    image: eckphi/ief-bookkeeping:v0.8.1
+    command:
+      - bench
+      - worker
+      - --queue
+      - long,default,short
+    volumes:
+      - ${APP_DATA_DIR}/sites:/home/frappe/frappe-bench/sites
+    environment:
+      FRAPPE_REDIS_CACHE: redis://erpnext-redis-cache:6379
+      FRAPPE_REDIS_QUEUE: redis://erpnext-redis-queue:6379
+      IEF_RUNTIME_ASSETS: "1"
+    depends_on:
+      erpnext-create-site:
+        condition: service_healthy
+    tmpfs:
+      - /home/frappe/frappe-bench/sites/assets:rw,nosuid,nodev,noexec,size=1m,uid=1000,gid=1000,mode=0755
+  erpnext-scheduler:
+    image: eckphi/ief-bookkeeping:v0.8.1
+    command:
+      - bench
+      - schedule
+    volumes:
+      - ${APP_DATA_DIR}/sites:/home/frappe/frappe-bench/sites
+    depends_on:
+      erpnext-create-site:
+        condition: service_healthy
+    tmpfs:
+      - /home/frappe/frappe-bench/sites/assets:rw,nosuid,nodev,noexec,size=1m,uid=1000,gid=1000,mode=0755
+    environment:
+      IEF_RUNTIME_ASSETS: "1"
+  erpnext:
+    image: eckphi/ief-bookkeeping:v0.8.1
+    command:
+      - nginx-entrypoint.sh
+    volumes:
+      - ${APP_DATA_DIR}/sites:/home/frappe/frappe-bench/sites
+    environment:
+      BACKEND: erpnext-backend:8000
+      SOCKETIO: erpnext-websocket:9000
+      FRAPPE_SITE_NAME_HEADER: frontend
+      UPSTREAM_REAL_IP_ADDRESS: 127.0.0.1
+      UPSTREAM_REAL_IP_HEADER: X-Forwarded-For
+      UPSTREAM_REAL_IP_RECURSIVE: off
+      PROXY_READ_TIMEOUT: "120"
+      CLIENT_MAX_BODY_SIZE: 50m
+      IEF_RUNTIME_ASSETS: "1"
+    depends_on:
+      erpnext-backend:
+        condition: service_started
+      erpnext-websocket:
+        condition: service_started
+    x-runtipi:
+      internal_port: 8080
+      is_main: true
+    tmpfs:
+      - /home/frappe/frappe-bench/sites/assets:rw,nosuid,nodev,noexec,size=1m,uid=1000,gid=1000,mode=0755
