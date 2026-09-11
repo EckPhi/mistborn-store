@@ -1,0 +1,35 @@
+x-runtipi:
+  schema_version: 2
+services:
+  ief-bookkeeping-permissions:
+    image: eckphi/ief-bookkeeping-service:v0.9.0
+    user: "0:0"
+    restart: "no"
+    entrypoint:
+      - python
+      - -c
+      - |
+        import os
+        from pathlib import Path
+        root = Path('/data')
+        root.mkdir(parents=True, exist_ok=True)
+        os.chown(root, 1000, 1000)
+        for directory, children, files in os.walk(root, followlinks=False):
+            for name in children + files:
+                os.chown(Path(directory) / name, 1000, 1000, follow_symlinks=False)
+    volumes:
+      - ${APP_DATA_DIR}/data:/data
+  ief-bookkeeping:
+    image: eckphi/ief-bookkeeping-service:v0.9.0
+    user: "1000:1000"
+    environment:
+      IEF_DATABASE: /data/workflow.sqlite3
+      IEF_PUBLIC_ORIGIN: ${IEF_PUBLIC_ORIGIN}
+    volumes:
+      - ${APP_DATA_DIR}/data:/data
+    depends_on:
+      ief-bookkeeping-permissions:
+        condition: service_completed_successfully
+    x-runtipi:
+      is_main: true
+      internal_port: 8080

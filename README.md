@@ -34,6 +34,7 @@ See the [Runtipi custom app store guide](https://runtipi.io/docs/guides/create-y
 | <img src="apps/home-assistant-matter-hub/metadata/logo.jpg" width="32"> | [Home Assistant Matter Hub](https://github.com/RiDDiX/home-assistant-matter-hub) | Bridge Home Assistant entities to Matter controllers |
 | <img src="apps/homeway/metadata/logo.jpg" width="32"> | [Homeway](https://homeway.io) | Free, secure remote access for Home Assistant |
 | <img src="apps/homey/metadata/logo.jpg" width="32"> | [Homey Pro](https://homey.app) | Run the Homey Self-Hosted smart-home hub |
+| <img src="apps/ief-bookkeeping/metadata/logo.jpg" width="32"> | [IEF Bookkeeping](https://github.com/EckPhi/ief-bookkeeping) | Independent bookkeeping workflow with synthetic receipt review |
 | <img src="apps/influxdb/metadata/logo.jpg" width="32"> | [InfluxDB](https://github.com/influxdata/influxdb) | Time-series database for metrics and events |
 | <img src="apps/invoice-collector/metadata/logo.jpg" width="32"> | [Invoice Collector](https://github.com/invoice-collector/invoice-collector) | Collect your invoices in seconds |
 | <img src="apps/invoiceshelf/metadata/logo.jpg" width="32"> | [InvoiceShelf](https://github.com/InvoiceShelf/InvoiceShelf) | Self-hosted invoicing for freelancers and small businesses |

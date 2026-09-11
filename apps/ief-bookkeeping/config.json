@@ -1,0 +1,30 @@
+{
+  "name": "IEF Bookkeeping",
+  "id": "ief-bookkeeping",
+  "available": true,
+  "short_desc": "Independent bookkeeping workflow with synthetic receipt review",
+  "author": "EckPhi",
+  "port": 8104,
+  "categories": ["finance"],
+  "description": "Self-hosted workflow settings, synthetic bank movements, receipt allocation review and offline exports. Accounting destinations remain disconnected.",
+  "tipi_version": 1,
+  "version": "v0.9.0",
+  "source": "https://github.com/EckPhi/ief-bookkeeping",
+  "website": "https://github.com/EckPhi/ief-bookkeeping",
+  "exposable": true,
+  "supported_architectures": ["amd64"],
+  "dynamic_config": true,
+  "min_tipi_version": "4.10.1",
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Canonical application origin",
+      "env_variable": "IEF_PUBLIC_ORIGIN",
+      "required": true,
+      "hint": "Exact browser origin including scheme and optional port, with no trailing slash. Use https://bookkeeping.example.com for domain access or http://HOST:8104 for private LAN access. Access control is configured externally.",
+      "placeholder": "https://bookkeeping.example.com",
+      "regex": "^https?://[^/?#@\\s]+$",
+      "pattern_error": "Enter an http:// or https:// origin without a path, trailing slash, query or credentials."
+    }
+  ]
+}
