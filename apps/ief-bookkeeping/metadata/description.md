@@ -23,11 +23,12 @@ mapping rather than relying only on the absence of a Compose `ports` entry.
 
 The application requires its own login for UI, API and PDF routes; future Traefik
 OAuth is an additional layer. On the first authenticated-runtime startup it creates
-the `admin` operator and writes a random initial password to
-`/data/initial-admin-password` inside the container with mode 0600. Open the
-Runtipi container terminal, save that password in a password manager, and sign in
-as `admin`; the file is removed after the first successful login. It is never
-written to logs or app environment. Forwarded identity headers are ignored.
+the `admin` operator and prints a random initial password once in the container
+startup log. A restart-safe copy remains at `/data/initial-admin-password` inside
+the container with mode 0600 until replacement. Save the password in a password
+manager and sign in as `admin`; the application requires a new password before it
+allows workspace or API access and then removes the bootstrap files. Forwarded
+identity headers are ignored.
 
 Browser login supports standard password-manager autocomplete. Signed-in users
 can generate revocable read or operate API keys; plaintext is shown once and only

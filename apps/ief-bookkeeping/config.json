@@ -9,8 +9,8 @@
     "finance"
   ],
   "description": "Self-hosted workflow settings, synthetic bank movements, receipt allocation review and offline exports. Accounting destinations remain disconnected.",
-  "tipi_version": 7,
-  "version": "v0.9.4",
+  "tipi_version": 8,
+  "version": "v0.9.5",
   "source": "https://github.com/EckPhi/ief-bookkeeping",
   "website": "https://github.com/EckPhi/ief-bookkeeping",
   "exposable": true,
@@ -31,5 +31,5 @@
       "pattern_error": "Enter an http:// or https:// origin without a path, trailing slash, query or credentials."
     }
   ],
-  "updated_at": 1789212594806
+  "updated_at": 1789256094418
 }
