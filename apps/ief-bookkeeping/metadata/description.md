@@ -16,15 +16,23 @@ origin** to the exact browser origin, without a trailing slash. Examples:
 - Private LAN: `http://HOST:8104`, replacing HOST with the server hostname or IP
 
 Use this one origin consistently. Change the setting when changing domain or port.
-Runtipi generates the domain route and optional host port 8104; the container
-listens on 8080. No additional port mapping is needed.
+Runtipi generates the domain route and maps host port 8104 for the main service;
+the container listens on 8080. No additional port mapping is needed. If direct
+host-port access must be unavailable, verify or override that generated Runtipi
+mapping rather than relying only on the absence of a Compose `ports` entry.
 
-Authentication and TLS are owned by the deployment's external access layer.
-The application provides no passwords or sign-in screen. Configure that layer
-before exposing the app to untrusted users, covering UI, API and PDF routes, and
-disable direct port access when using the authenticated domain. Every user who
-can reach the app shares the same workflow permissions and workspace; there is
-no individual user attribution. Forwarded identity headers are not a user system.
+The application requires its own login for UI, API and PDF routes; future Traefik
+OAuth is an additional layer. On the first authenticated-runtime startup it creates
+the `admin` operator and writes a random initial password to
+`/data/initial-admin-password` inside the container with mode 0600. Open the
+Runtipi container terminal, save that password in a password manager, and sign in
+as `admin`; the file is removed after the first successful login. It is never
+written to logs or app environment. Forwarded identity headers are ignored.
+
+Browser login supports standard password-manager autocomplete. Signed-in users
+can generate revocable read or operate API keys; plaintext is shown once and only
+the hash is stored. Every application user currently shares the same operator
+role and workspace. Only the loopback container health probe bypasses login.
 
 ## Persistent state and recovery
 

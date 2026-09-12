@@ -9,8 +9,8 @@
     "finance"
   ],
   "description": "Self-hosted workflow settings, synthetic bank movements, receipt allocation review and offline exports. Accounting destinations remain disconnected.",
-  "tipi_version": 6,
-  "version": "v0.9.2",
+  "tipi_version": 7,
+  "version": "v0.9.4",
   "source": "https://github.com/EckPhi/ief-bookkeeping",
   "website": "https://github.com/EckPhi/ief-bookkeeping",
   "exposable": true,
@@ -25,11 +25,11 @@
       "label": "Canonical application origin",
       "env_variable": "IEF_PUBLIC_ORIGIN",
       "required": true,
-      "hint": "Exact browser origin including scheme and optional port, with no trailing slash. Use https://bookkeeping.example.com for domain access or http://HOST:8104 for private LAN access. Access control is configured externally.",
+      "hint": "Exact browser origin including scheme and optional port, with no trailing slash. Use the HTTPS Traefik domain when available. The application provides its own login.",
       "placeholder": "https://bookkeeping.example.com",
       "regex": "^https?://[^/?#@\\s]+$",
       "pattern_error": "Enter an http:// or https:// origin without a path, trailing slash, query or credentials."
     }
   ],
-  "updated_at": 1789211995289
+  "updated_at": 1789212594806
 }
