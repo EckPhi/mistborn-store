@@ -8,14 +8,14 @@
     "renovate"
   ],
   "enabledManagers": [
-    "regex"
+    "custom.regex"
   ],
   "automergeStrategy": "rebase",
   "customManagers": [
     {
       "customType": "regex",
-      "fileMatch": [
-        "^.*docker-compose\\.json$"
+      "managerFilePatterns": [
+        "/^.*docker-compose\\.json$/"
       ],
       "matchStrings": [
         "\"image\": \"(?<depName>.*?):(?<currentValue>.*?)\","
@@ -24,8 +24,8 @@
     },
     {
       "customType": "regex",
-      "fileMatch": [
-        "^apps/[^/]+/docker-compose\\.yml$"
+      "managerFilePatterns": [
+        "/^apps/[^/]+/docker-compose\\.yml$/"
       ],
       "matchStrings": [
         "(?:^|\\n)[ \\t]+image:[ \\t]+(?<depName>[^ \\t\\r\\n]+):(?<currentValue>[^ \\t\\r\\n]+)[ \\t]*(?:\\r?\\n|$)"
