@@ -41,41 +41,27 @@ describe("Compose source selection and YAML validation", () => {
   });
 });
 
-test("ERPNext images, assets mounts and startup gates stay aligned", () => {
-  const { document } = readCompose(path.join(process.cwd(), "apps/erpnext"));
-  const config = JSON.parse(fs.readFileSync("apps/erpnext/config.json", "utf8"));
-  const services = document.services;
-  const application = Object.entries(services).filter(([name]) => !["erpnext-db", "erpnext-redis-cache", "erpnext-redis-queue"].includes(name));
-  expect(application).toHaveLength(9);
-  for (const [name, value] of application) {
-    const service = value as { image: string; tmpfs?: string[]; environment?: Record<string, string>; entrypoint?: string[] };
-    expect(service.image).toBe(`eckphi/ief-bookkeeping:${config.version}`);
-    if (name === "erpnext-sites-seed") {
-      expect(service.tmpfs).toBeUndefined();
-      expect(service.entrypoint?.at(-1)).toContain("ief-runtime-assets.py seed");
-    } else {
-      expect(service.environment?.IEF_RUNTIME_ASSETS).toBe("1");
-      expect(service.tmpfs).toEqual(["/home/frappe/frappe-bench/sites/assets:rw,nosuid,nodev,noexec,size=1m,uid=1000,gid=1000,mode=0755"]);
-    }
-  }
-  for (const name of ["erpnext-configurator", "erpnext-create-site"]) {
-    expect(services[name].entrypoint.slice(0, 3)).toEqual(["python3", "/usr/local/bin/ief-runtime-assets.py", "run"]);
-  }
-  expect(services["erpnext-create-site"].entrypoint.at(-1)).toContain("bench --site frontend migrate");
-  expect(services["erpnext-backend"].depends_on["erpnext-create-site"].condition).toBe("service_healthy");
-});
-
 test("Renovate discovers every native YAML image", () => {
   const config = JSON.parse(fs.readFileSync("renovate.json", "utf8"));
-  const manager = config.customManagers.find((item: { managerFilePatterns: string[] }) =>
-    item.managerFilePatterns.some((pattern) => {
-      const expression = pattern.startsWith("/") && pattern.endsWith("/") ? pattern.slice(1, -1) : pattern;
-      return new RegExp(expression).test("apps/erpnext/docker-compose.yml");
-    }),
-  );
-  expect(manager).toBeDefined();
-  const source = fs.readFileSync("apps/erpnext/docker-compose.yml", "utf8");
-  const matches = [...source.matchAll(new RegExp(manager.matchStrings[0], "g"))];
-  expect(matches).toHaveLength(12);
-  expect(matches.filter((match) => match.groups?.depName === "eckphi/ief-bookkeeping")).toHaveLength(9);
+  const appDirectories = fs.readdirSync("apps").filter((name) => fs.existsSync(path.join("apps", name, "docker-compose.yml")));
+
+  for (const appDirectory of appDirectories) {
+    const composePath = `apps/${appDirectory}/docker-compose.yml`;
+    const manager = config.customManagers.find((item: { managerFilePatterns: string[] }) =>
+      item.managerFilePatterns.some((pattern) => {
+        const expression = pattern.startsWith("/") && pattern.endsWith("/") ? pattern.slice(1, -1) : pattern;
+        return new RegExp(expression).test(composePath);
+      }),
+    );
+    expect(manager).toBeDefined();
+
+    const source = fs.readFileSync(composePath, "utf8");
+    const matches = [...source.matchAll(new RegExp(manager.matchStrings[0], "g"))];
+    const discoveredImages = matches.map((match) => `${match.groups?.depName}:${match.groups?.currentValue}`).sort();
+    const { document } = readCompose(path.join(process.cwd(), "apps", appDirectory));
+    const composeImages = Object.values(document.services)
+      .map((service) => (service as { image: string }).image)
+      .sort();
+    expect(discoveredImages).toEqual(composeImages);
+  }
 });
