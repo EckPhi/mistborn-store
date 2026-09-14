@@ -77,8 +77,8 @@ while IFS=$'\t' read -r package_file dep_name current_value new_value update_typ
 
   bun -e '
     const [file, name, from, to] = process.argv.slice(1);
-    const oldImage = `"image": "${name}:${from}"`;
-    const newImage = `"image": "${name}:${to}"`;
+    const oldImage = `${name}:${from}`;
+    const newImage = `${name}:${to}`;
     const contents = await Bun.file(file).text();
     if (!contents.includes(oldImage)) throw new Error(`Image not found: ${name}:${from}`);
     await Bun.write(file, contents.replaceAll(oldImage, newImage));
