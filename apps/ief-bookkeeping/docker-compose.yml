@@ -33,6 +33,7 @@ services:
     user: "1000:1000"
     environment:
       IEF_DATABASE: /data/workflow.sqlite3
+      IEF_GISA_API_KEY: ${IEF_GISA_API_KEY}
       IEF_PUBLIC_ORIGIN: ${IEF_PUBLIC_ORIGIN}
     volumes:
       - ${APP_DATA_DIR}/data:/data

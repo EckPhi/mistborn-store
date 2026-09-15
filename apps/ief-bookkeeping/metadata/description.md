@@ -35,6 +35,13 @@ can generate revocable read or operate API keys; plaintext is shown once and onl
 the hash is stored. Every application user currently shares the same operator
 role and workspace. Only the loopback container health probe bypasses login.
 
+The optional **GISA API key** enables Austrian company-name and Firmenbuch-number
+lookups in the customer and vendor forms. GISA issues this key for its public v2
+service and renews it annually. The key is passed only through the service
+environment and is not stored in the application database or logs. Leaving it
+blank disables GISA searches without affecting saved parties. EU VAT ID validation
+uses the public VIES service and does not require a key.
+
 ## Persistent state and recovery
 
 `${APP_DATA_DIR}/data` contains `workflow.sqlite3`, its SQLite journal files when
