@@ -35,6 +35,16 @@
   ],
   "packageRules": [
     {
+      "description": "diyHue publishes monotonically increasing build numbers; treat them as patch updates so they remain eligible for auto-merge",
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "diyhue/core"
+      ],
+      "versioning": "regex:^(?<patch>\\d+)$"
+    },
+    {
       "description": "Bambuddy slicer sidecars are tagged bambuddy-<semver>; strip the prefix so Renovate can compare them and bump them in lockstep with the main image",
       "matchPackageNames": [
         "ghcr.io/maziggy/bambuddy",
