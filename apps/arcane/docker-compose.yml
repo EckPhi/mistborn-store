@@ -1,0 +1,27 @@
+x-runtipi:
+  schema_version: 2
+services:
+  arcane:
+    image: ghcr.io/getarcaneapp/manager:v2.12.0
+    cgroup: host
+    environment:
+      APP_URL: ${ARCANE_APP_URL}
+      ENCRYPTION_KEY: ${ARCANE_ENCRYPTION_KEY}
+      PUID: "1000"
+      PGID: "1000"
+      TZ: ${TZ}
+      PROJECTS_DIRECTORY: ${APP_DATA_DIR}/data/projects
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${APP_DATA_DIR}/data:/app/data
+      # Matching host/container paths allow projects to use relative bind mounts.
+      - ${APP_DATA_DIR}/data/projects:${APP_DATA_DIR}/data/projects
+    healthcheck:
+      test: ["CMD", "./arcane", "health", "--timeout", "2s"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 15s
+    x-runtipi:
+      is_main: true
+      internal_port: 3552

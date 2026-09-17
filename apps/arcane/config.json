@@ -1,0 +1,47 @@
+{
+  "name": "Arcane",
+  "id": "arcane",
+  "available": true,
+  "short_desc": "Modern Docker container and Compose project management",
+  "author": "getarcaneapp",
+  "port": 3552,
+  "categories": [
+    "development",
+    "utilities"
+  ],
+  "description": "Arcane provides a web interface for managing Docker containers, Compose projects, images, volumes and networks, with logs, terminals and resource monitoring.",
+  "tipi_version": 1,
+  "version": "v2.12.0",
+  "source": "https://github.com/getarcaneapp/arcane",
+  "website": "https://getarcane.app",
+  "exposable": true,
+  "supported_architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "dynamic_config": true,
+  "min_tipi_version": "4.10.1",
+  "created_at": 1789512428000,
+  "updated_at": 1789512428000,
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Application URL",
+      "env_variable": "ARCANE_APP_URL",
+      "required": false,
+      "default": "http://localhost:3552",
+      "hint": "Exact browser origin, including scheme and port: http://192.168.1.10:3552 for LAN access or https://arcane.example.com for a domain.",
+      "regex": "^https?://[^/?#@\\s]+$",
+      "pattern_error": "Enter an HTTP or HTTPS origin without a path or trailing slash."
+    },
+    {
+      "type": "random",
+      "label": "Encryption key",
+      "env_variable": "ARCANE_ENCRYPTION_KEY",
+      "required": false,
+      "min": 32,
+      "encoding": "hex",
+      "hint": "Keep this generated key and back it up with app-data. Changing it makes existing encrypted credentials unreadable."
+    }
+  ]
+}
