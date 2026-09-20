@@ -2,7 +2,7 @@ x-runtipi:
   schema_version: 2
 services:
   arcane:
-    image: ghcr.io/getarcaneapp/manager:v2.12.0
+    image: ghcr.io/getarcaneapp/manager:v2.13.0
     cgroup: host
     environment:
       APP_URL: ${ARCANE_APP_URL}
