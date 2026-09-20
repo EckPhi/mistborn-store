@@ -9,8 +9,8 @@
     "finance"
   ],
   "description": "Self-hosted workflow settings, synthetic bank movements, receipt allocation review and offline exports. Accounting destinations remain disconnected.",
-  "tipi_version": 29,
-  "version": "v0.9.21",
+  "tipi_version": 31,
+  "version": "v0.9.22",
   "source": "https://github.com/EckPhi/ief-bookkeeping",
   "website": "https://github.com/EckPhi/ief-bookkeeping",
   "exposable": true,
@@ -39,5 +39,5 @@
       "hint": "Optional annually renewed key for Austrian GISA company-name and Firmenbuch-number lookups. VAT ID validation through EU VIES does not require it."
     }
   ],
-  "updated_at": 1789512428000
+  "updated_at": 1789888097233
 }
