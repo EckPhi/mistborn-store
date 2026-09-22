@@ -1,0 +1,33 @@
+x-runtipi:
+  schema_version: 2
+
+services:
+  runtipi-companion:
+    image: ghcr.io/eckphi/runtipi-companion:v1.7.0
+    environment:
+      PORT: "8080"
+      TZ: ${TZ}
+      RUNTIPI_PATH: /runtipi
+      BACKUP_HOST_LABEL: ${COMPANION_HOST_LABEL}
+      BACKUP_HOUR: ${COMPANION_BACKUP_HOUR}
+      BACKUP_DAILY_RETENTION: ${COMPANION_LOCAL_DAILY_RETENTION}
+      BACKUP_WEEKLY_RETENTION: ${COMPANION_LOCAL_WEEKLY_RETENTION}
+      BACKUP_MONTHLY_RETENTION: ${COMPANION_LOCAL_MONTHLY_RETENTION}
+      BACKUP_YEARLY_RETENTION: ${COMPANION_LOCAL_YEARLY_RETENTION}
+      REMOTE_DAILY_RETENTION: ${COMPANION_REMOTE_DAILY_RETENTION}
+      REMOTE_WEEKLY_RETENTION: ${COMPANION_REMOTE_WEEKLY_RETENTION}
+      REMOTE_MONTHLY_RETENTION: ${COMPANION_REMOTE_MONTHLY_RETENTION}
+      REMOTE_YEARLY_RETENTION: ${COMPANION_REMOTE_YEARLY_RETENTION}
+      RCLONE_API_URL: http://rclone:5533
+      RCLONE_API_USERNAME: ${COMPANION_RCLONE_USERNAME}
+      RCLONE_API_PASSWORD: ${COMPANION_RCLONE_PASSWORD}
+      RCLONE_REMOTE: ${COMPANION_RCLONE_REMOTE}
+    volumes:
+      - ${APP_DATA_DIR}/config:/config
+      - ${COMPANION_RUNTIPI_PATH}:/runtipi
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      runtipi-companion.backup.keep-running: "true"
+    x-runtipi:
+      is_main: true
+      internal_port: 8080

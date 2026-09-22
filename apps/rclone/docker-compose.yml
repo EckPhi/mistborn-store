@@ -25,6 +25,7 @@ services:
           --cache-dir /cache \
           --addr 0.0.0.0:5522 \
           --api-addr 0.0.0.0:5533 \
+          --rc-serve \
           --user "$$RCLONE_GUI_USERNAME" \
           --pass "$$RCLONE_GUI_PASSWORD" \
           --no-open-browser &

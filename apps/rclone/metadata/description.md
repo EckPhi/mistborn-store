@@ -47,6 +47,10 @@ Rclone configuration persists in `${APP_DATA_DIR}/config`; VFS data persists in 
 
 The container requires `/dev/fuse`, `SYS_ADMIN`, `--allow-other`, an unconfined AppArmor profile, and shared bind propagation. These privileges are substantial: treat the app and its web credentials as administrative infrastructure. Runtipi exposes only the proxy on port `5572`; it routes `/api/` to rclone's separately authenticated RC service without publishing the raw API port on the host. Decypharr can use `http://rclone:5533` with the generated GUI credentials over Runtipi's Docker network for external-rclone cache refreshes.
 
+The authenticated RC service also enables file serving for Runtipi Companion
+restore downloads. Authentication remains mandatory; internal consumers
+should use `http://rclone:5533` rather than exposing the API publicly.
+
 Back up `rclone.conf` and the crypt passwords outside the server. Losing the crypt passwords permanently prevents decryption. Before restoring or moving the app, stop media consumers, stop rclone, restore the configuration, start rclone, confirm `/cloud` contents, and then restart Plex and other consumers.
 
 [rclone-web](https://github.com/rclone/rclone-web) · [GUI documentation](https://rclone.org/gui/) · [Mount documentation](https://rclone.org/commands/rclone_mount/) · [Docker and mount propagation](https://rclone.org/docker/) · [Source code](https://github.com/rclone/rclone)
