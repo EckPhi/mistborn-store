@@ -65,3 +65,12 @@ test("Renovate discovers every native YAML image", () => {
     expect(discoveredImages).toEqual(composeImages);
   }
 });
+
+test("native Compose files avoid runtime variables omitted from generated app.env files", () => {
+  const appDirectories = fs.readdirSync("apps").filter((name) => fs.existsSync(path.join("apps", name, "docker-compose.yml")));
+
+  for (const appDirectory of appDirectories) {
+    const source = fs.readFileSync(path.join("apps", appDirectory, "docker-compose.yml"), "utf8");
+    expect(source).not.toMatch(/\$\{(?:RUNTIPI_MEDIA_DIR|UID|GID)\}/);
+  }
+});

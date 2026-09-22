@@ -9,7 +9,7 @@
     "media"
   ],
   "description": "Weaver is a Usenet downloader with NZBGet-compatible integration, repair, extraction and a web interface.",
-  "tipi_version": 1,
+  "tipi_version": 2,
   "version": "v0.13.3",
   "source": "https://github.com/scryer-media/weaver",
   "website": "https://www.scryer.media/weaver/",
@@ -21,7 +21,7 @@
   "dynamic_config": true,
   "min_tipi_version": "4.10.1",
   "created_at": 1789944417048,
-  "updated_at": 1789944417048,
+  "updated_at": 1790120787576,
   "form_fields": [
     {
       "type": "text",

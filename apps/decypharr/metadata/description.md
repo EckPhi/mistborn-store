@@ -14,7 +14,7 @@ Use these settings:
 - Default download action: `download`
 - Download folder: `/data/downloads/decypharr`
 
-Runtipi's shared media directory is mounted at `/data`. Downloaded files therefore persist under `${RUNTIPI_MEDIA_DIR}/downloads/decypharr` on the host.
+Runtipi's shared media directory is mounted at `/data`. Downloaded files therefore persist under `${ROOT_FOLDER_HOST}/media/downloads/decypharr` on the host.
 
 The `download` action transfers complete files from the configured Debrid or Usenet provider to local storage. It uses local disk space and bandwidth; it does not create symlinks or stream files from a virtual mount.
 
@@ -42,6 +42,6 @@ The standalone rclone app is independent and not required by this downloader-onl
 
 ## Backups
 
-Configuration, authentication state and provider credentials persist in `${APP_DATA_DIR}/config`. Back up this directory. Downloaded files persist beneath `${RUNTIPI_MEDIA_DIR}/downloads/decypharr` and should follow your normal media backup policy.
+Configuration, authentication state and provider credentials persist in `${APP_DATA_DIR}/config`. Back up this directory. Downloaded files persist beneath `${ROOT_FOLDER_HOST}/media/downloads/decypharr` and should follow your normal media backup policy.
 
 [Documentation](https://decypharr.com/) · [Source code](https://github.com/sirrobot01/decypharr)

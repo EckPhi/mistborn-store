@@ -9,7 +9,7 @@
     "media"
   ],
   "description": "Decypharr connects media managers to Debrid and Usenet providers through qBittorrent- and SABnzbd-compatible APIs and downloads files to shared local storage.",
-  "tipi_version": 1,
+  "tipi_version": 2,
   "version": "v2.5",
   "source": "https://github.com/sirrobot01/decypharr",
   "website": "https://decypharr.com/",
@@ -21,5 +21,5 @@
   "dynamic_config": true,
   "min_tipi_version": "4.10.1",
   "created_at": 1789944417048,
-  "updated_at": 1789944417048
+  "updated_at": 1790120787576
 }

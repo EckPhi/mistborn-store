@@ -82,8 +82,8 @@ services:
       RCLONE_GUI_PASSWORD: ${RCLONE_GUI_PASSWORD}
       RCLONE_MOUNT_REMOTE: ${RCLONE_MOUNT_REMOTE}
       RCLONE_VFS_CACHE_SIZE: ${RCLONE_VFS_CACHE_SIZE}
-      RCLONE_MOUNT_UID: ${UID}
-      RCLONE_MOUNT_GID: ${GID}
+      RCLONE_MOUNT_UID: ${UID:-0}
+      RCLONE_MOUNT_GID: ${GID:-0}
       TZ: ${TZ}
     devices:
       - /dev/fuse:/dev/fuse
@@ -95,7 +95,7 @@ services:
       - ${APP_DATA_DIR}/config:/config
       - ${APP_DATA_DIR}/cache:/cache
       - type: bind
-        source: ${RUNTIPI_MEDIA_DIR}
+        source: ${ROOT_FOLDER_HOST}/media
         target: /data
         bind:
           propagation: rshared

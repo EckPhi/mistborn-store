@@ -5,15 +5,15 @@ services:
   scryer:
     image: ghcr.io/scryer-media/scryer:0.21.7
     environment:
-      PUID: ${UID}
-      PGID: ${GID}
+      PUID: ${UID:-0}
+      PGID: ${GID:-0}
       TZ: ${TZ}
       SCRYER_PUBLIC_URL: ${APP_PROTOCOL}://${APP_DOMAIN}
       SCRYER_METADATA_GATEWAY_GRAPHQL_URL: https://smg.scryer.media/graphql
     volumes:
       - ${APP_DATA_DIR}/config:/config
       - type: bind
-        source: ${RUNTIPI_MEDIA_DIR}
+        source: ${ROOT_FOLDER_HOST}/media
         target: /data
         bind:
           propagation: rslave

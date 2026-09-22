@@ -5,13 +5,13 @@ services:
   decypharr:
     image: cy01/blackhole:v2.5
     environment:
-      PUID: ${UID}
-      PGID: ${GID}
+      PUID: ${UID:-0}
+      PGID: ${GID:-0}
       UMASK: "002"
       TZ: ${TZ}
     volumes:
       - ${APP_DATA_DIR}/config:/app
-      - ${RUNTIPI_MEDIA_DIR}:/data
+      - ${ROOT_FOLDER_HOST}/media:/data
     x-runtipi:
       is_main: true
       internal_port: 8282

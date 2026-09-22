@@ -19,9 +19,9 @@ Weaver sees Runtipi's shared media directory as `/data` and initially uses:
 
 The sibling `/data/downloads/torrents` directory is reserved for torrent clients. Final media libraries can live at `/data/movies`, `/data/series` and `/data/anime`.
 
-Install the standalone Scryer app with the same Runtipi UID and GID. In Scryer, configure `/data/downloads/usenet/complete` as Weaver's completed path. Because both applications mount `${RUNTIPI_MEDIA_DIR}` once at `/data`, completed downloads and final libraries remain within one filesystem and can be hard-linked when the underlying storage supports it.
+Install the standalone Scryer app with the same Runtipi UID and GID. In Scryer, configure `/data/downloads/usenet/complete` as Weaver's completed path. Because both applications mount `${ROOT_FOLDER_HOST}/media` once at `/data`, completed downloads and final libraries remain within one filesystem and can be hard-linked when the underlying storage supports it.
 
-Do not add another `${RUNTIPI_MEDIA_DIR}/data` mount. `${RUNTIPI_MEDIA_DIR}` already points to Runtipi's shared media data directory; appending `/data` creates an unintended nested directory. Multiple overlapping mounts also obscure files and introduce extra mount boundaries.
+Do not add another `${ROOT_FOLDER_HOST}/media/data` mount. `${ROOT_FOLDER_HOST}/media` already points to Runtipi's shared media data directory; appending `/data` creates an unintended nested directory. Multiple overlapping mounts also obscure files and introduce extra mount boundaries.
 
 ## Connecting clients
 

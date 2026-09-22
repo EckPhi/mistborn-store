@@ -5,8 +5,8 @@ services:
   weaver:
     image: ghcr.io/scryer-media/weaver:0.13.3
     environment:
-      PUID: ${UID}
-      PGID: ${GID}
+      PUID: ${UID:-0}
+      PGID: ${GID:-0}
       TZ: ${TZ}
       WEAVER_BOOTSTRAP_LOGIN_USERNAME: ${WEAVER_ADMIN_USERNAME}
       WEAVER_BOOTSTRAP_LOGIN_PASSWORD: ${WEAVER_ADMIN_PASSWORD}
@@ -17,7 +17,7 @@ services:
     volumes:
       - ${APP_DATA_DIR}/config:/config
       - type: bind
-        source: ${RUNTIPI_MEDIA_DIR}
+        source: ${ROOT_FOLDER_HOST}/media
         target: /data
         bind:
           propagation: rslave

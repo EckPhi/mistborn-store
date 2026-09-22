@@ -4,7 +4,7 @@ Rclone connects to cloud-storage providers, encrypts remote content with a `cryp
 
 ## Host prerequisite: shared mount propagation
 
-This is an advanced app. A FUSE mount created inside a container is invisible to the host and other containers unless the Runtipi media directory is a shared mount. Before installing, find the host path represented by `${RUNTIPI_MEDIA_DIR}`, ensure its `cloud` child exists, bind the directory onto itself, and mark it recursively shared:
+This is an advanced app. A FUSE mount created inside a container is invisible to the host and other containers unless the Runtipi media directory is a shared mount. Before installing, use `${ROOT_FOLDER_HOST}/media` as the host path, ensure its `cloud` child exists, bind the directory onto itself, and mark it recursively shared:
 
 ```bash
 sudo mkdir -p /path/to/runtipi/media/data/cloud
@@ -29,13 +29,13 @@ On the first start the configured `encrypted:` remote does not exist, so only th
 4. Test browsing the `encrypted` remote in the GUI.
 5. Restart the Rclone Mount app.
 
-After restart, the decrypted view is mounted at `${RUNTIPI_MEDIA_DIR}/cloud` on the host, `/data/cloud` in the Scryer and Weaver apps, and `/media/cloud` in the official Plex app. Cloud-provider objects remain encrypted; applications using the mount see decrypted names and contents.
+After restart, the decrypted view is mounted at `${ROOT_FOLDER_HOST}/media/cloud` on the host, `/data/cloud` in the Scryer and Weaver apps, and `/media/cloud` in the official Plex app. Cloud-provider objects remain encrypted; applications using the mount see decrypted names and contents.
 
 If you choose another remote name or mount a subdirectory, update **Mounted remote** in the Runtipi app settings and restart. Editing `rclone.conf` or changing the remote in the GUI does not live-reload an active mount.
 
 ## Consumption by other apps
 
-Scryer and Weaver use slave propagation on their `${RUNTIPI_MEDIA_DIR}` mounts, so they receive rclone remounts without acquiring permission to propagate mounts back to the host.
+Scryer and Weaver use slave propagation on their `${ROOT_FOLDER_HOST}/media` mounts, so they receive rclone remounts without acquiring permission to propagate mounts back to the host.
 
 The official Plex app currently uses a normal private bind mount. Start or restart Plex after Rclone Mount is healthy so Docker captures the existing `/media/cloud` submount. If rclone is restarted or remounted later, restart Plex again. An advanced Plex user override can change its media bind propagation to `rslave` instead.
 
