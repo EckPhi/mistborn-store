@@ -1,0 +1,44 @@
+{
+  "name": "Weaver",
+  "id": "weaver",
+  "available": true,
+  "short_desc": "Efficient Usenet downloader for media automation",
+  "author": "Scryer Media",
+  "port": 9090,
+  "categories": [
+    "media"
+  ],
+  "description": "Weaver is a Usenet downloader with NZBGet-compatible integration, repair, extraction and a web interface.",
+  "tipi_version": 1,
+  "version": "v0.13.3",
+  "source": "https://github.com/scryer-media/weaver",
+  "website": "https://www.scryer.media/weaver/",
+  "exposable": true,
+  "supported_architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "dynamic_config": true,
+  "min_tipi_version": "4.10.1",
+  "created_at": 1789944417048,
+  "updated_at": 1789944417048,
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Admin username",
+      "env_variable": "WEAVER_ADMIN_USERNAME",
+      "required": true,
+      "placeholder": "admin",
+      "hint": "Creates the administrator on Weaver's first start. Later username changes must be made in Weaver."
+    },
+    {
+      "type": "random",
+      "label": "Admin password",
+      "env_variable": "WEAVER_ADMIN_PASSWORD",
+      "required": false,
+      "min": 24,
+      "encoding": "base64",
+      "hint": "Generated bootstrap password. Save it before installing; later password changes must be made in Weaver."
+    }
+  ]
+}

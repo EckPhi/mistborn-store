@@ -1,0 +1,63 @@
+{
+  "name": "Rclone Mount",
+  "id": "rclone",
+  "available": true,
+  "short_desc": "Encrypted cloud storage mounted into Runtipi media",
+  "author": "rclone",
+  "port": 5572,
+  "categories": [
+    "utilities",
+    "media"
+  ],
+  "description": "Rclone provides a protected web interface for configuring cloud remotes and mounts one configured remote at the shared Runtipi media path /cloud.",
+  "tipi_version": 1,
+  "version": "v1.75.1",
+  "source": "https://github.com/rclone/rclone",
+  "website": "https://rclone.org",
+  "exposable": true,
+  "supported_architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "dynamic_config": true,
+  "min_tipi_version": "4.10.1",
+  "created_at": 1789944417048,
+  "updated_at": 1789944417048,
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "GUI username",
+      "env_variable": "RCLONE_GUI_USERNAME",
+      "required": true,
+      "placeholder": "rclone-admin",
+      "hint": "Username protecting both the web interface and the internal remote-control endpoint."
+    },
+    {
+      "type": "random",
+      "label": "GUI password",
+      "env_variable": "RCLONE_GUI_PASSWORD",
+      "required": false,
+      "min": 32,
+      "encoding": "base64",
+      "hint": "Generated password protecting both the web interface and the internal remote-control endpoint."
+    },
+    {
+      "type": "text",
+      "label": "Mounted remote",
+      "env_variable": "RCLONE_MOUNT_REMOTE",
+      "required": false,
+      "default": "encrypted:",
+      "hint": "Remote and optional path to mount at /cloud, for example encrypted: or encrypted:media. Create this remote in the GUI, then restart the app."
+    },
+    {
+      "type": "text",
+      "label": "VFS cache size",
+      "env_variable": "RCLONE_VFS_CACHE_SIZE",
+      "required": false,
+      "default": "100G",
+      "regex": "^[1-9][0-9]*(K|M|G|T|Ki|Mi|Gi|Ti)$",
+      "pattern_error": "Enter a positive size such as 50G, 500Gi or 1T.",
+      "hint": "Maximum local disk space used to cache cloud reads and writes. Open files can temporarily exceed this limit."
+    }
+  ]
+}

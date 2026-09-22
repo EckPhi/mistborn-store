@@ -1,0 +1,25 @@
+{
+  "name": "Scryer",
+  "id": "scryer",
+  "available": true,
+  "short_desc": "Media management for movies, series and anime",
+  "author": "Scryer Media",
+  "port": 8686,
+  "categories": [
+    "media"
+  ],
+  "description": "Scryer manages movie, series and anime libraries, release acquisition, imports, subtitles and media-server updates.",
+  "tipi_version": 1,
+  "version": "v0.21.7",
+  "source": "https://github.com/scryer-media/scryer",
+  "website": "https://www.scryer.media/scryer/",
+  "exposable": true,
+  "supported_architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "dynamic_config": true,
+  "min_tipi_version": "4.10.1",
+  "created_at": 1789944417048,
+  "updated_at": 1789944417048
+}

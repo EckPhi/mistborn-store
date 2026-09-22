@@ -44,12 +44,15 @@ See the [Runtipi custom app store guide](https://runtipi.io/docs/guides/create-y
 | <img src="apps/openthread-border-router/metadata/logo.jpg" width="32"> | [OpenThread Border Router](https://github.com/bnutzer/docker-otbr-tcp) | Thread mesh network border router (network RCP) |
 | <img src="apps/power-price-collector/metadata/logo.jpg" width="32"> | [Power Price Collector](https://github.com/EckPhi/power-price-collector) | European power prices into QuestDB, MQTT, Grist and more |
 | <img src="apps/questdb/metadata/logo.jpg" width="32"> | [QuestDB](https://github.com/questdb/questdb) | High-performance time-series database with SQL |
+| <img src="apps/rclone/metadata/logo.jpg" width="32"> | [Rclone Mount](https://github.com/rclone/rclone) | Encrypted cloud storage mounted into Runtipi media |
 | <img src="apps/receipt-wrangler/metadata/logo.jpg" width="32"> | [Receipt Wrangler](https://github.com/Receipt-Wrangler/receipt-wrangler) | Self-hosted receipt manager with OCR and AI scanning |
 | <img src="apps/scrape-dojo/metadata/logo.jpg" width="32"> | [Scrape Dojo](https://github.com/disane87/scrape-dojo) | Self-hosted, config-driven web scraping platform |
+| <img src="apps/scryer/metadata/logo.jpg" width="32"> | [Scryer](https://github.com/scryer-media/scryer) | Media management for movies, series and anime |
 | <img src="apps/seamtec-scraper/metadata/logo.jpg" width="32"> | [Seamtec Scraper](https://github.com/EckPhi/seamtec-scraper) | Scraper for the Seamtec SCADA web UI |
 | <img src="apps/telegraf/metadata/logo.jpg" width="32"> | [Telegraf](https://github.com/influxdata/telegraf) | Plugin-driven agent for collecting and sending metrics |
 | <img src="apps/victoriametrics/metadata/logo.jpg" width="32"> | [VictoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics) | Fast, cost-effective time-series database |
 | <img src="apps/wealthfolio/metadata/logo.jpg" width="32"> | [Wealthfolio](https://github.com/wealthfolio/wealthfolio) | Private investment, net worth and portfolio tracker |
+| <img src="apps/weaver/metadata/logo.jpg" width="32"> | [Weaver](https://github.com/scryer-media/weaver) | Efficient Usenet downloader for media automation |
 | <img src="apps/youtrack/metadata/logo.jpg" width="32"> | [YouTrack](https://github.com/JetBrains) | Project management and issue tracker by JetBrains |
 | <img src="apps/zigbee2mqtt/metadata/logo.jpg" width="32"> | [Zigbee2MQTT](https://github.com/Koenkk/zigbee2mqtt) | Zigbee to MQTT bridge (network or USB adapter) |
 <!-- APPS:END -->

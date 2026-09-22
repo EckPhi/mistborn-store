@@ -1,0 +1,102 @@
+x-runtipi:
+  schema_version: 2
+
+services:
+  rclone-proxy:
+    image: nginx:1.30.5-alpine
+    depends_on:
+      rclone:
+        condition: service_started
+    volumes:
+      - ${APP_DATA_DIR}/data/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    x-runtipi:
+      is_main: true
+      internal_port: 5572
+
+  rclone:
+    image: rclone/rclone:1.75.1
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -eu
+
+        rclone gui \
+          --config /config/rclone/rclone.conf \
+          --cache-dir /cache \
+          --addr 0.0.0.0:5522 \
+          --api-addr 0.0.0.0:5533 \
+          --user "$$RCLONE_GUI_USERNAME" \
+          --pass "$$RCLONE_GUI_PASSWORD" \
+          --no-open-browser &
+        rcd_pid=$$!
+
+        shutdown() {
+          kill "$$rcd_pid" 2>/dev/null || true
+          wait 2>/dev/null || true
+        }
+        trap shutdown EXIT TERM INT
+
+        attempt=0
+        until rclone rc \
+          --url http://127.0.0.1:5533 \
+          --user "$$RCLONE_GUI_USERNAME" \
+          --pass "$$RCLONE_GUI_PASSWORD" \
+          --no-output core/pid; do
+          attempt=$$((attempt + 1))
+          if [ "$$attempt" -ge 60 ]; then
+            echo "rclone remote control did not become ready" >&2
+            exit 1
+          fi
+          sleep 1
+        done
+
+        remote_name=$${RCLONE_MOUNT_REMOTE%%:*}
+        if [ -n "$$remote_name" ] && rclone listremotes --config /config/rclone/rclone.conf | grep -Fxq "$$remote_name:"; then
+          mkdir -p /data/cloud
+          rclone rc \
+            --url http://127.0.0.1:5533 \
+            --user "$$RCLONE_GUI_USERNAME" \
+            --pass "$$RCLONE_GUI_PASSWORD" \
+            --no-output mount/mount \
+            fs="$$RCLONE_MOUNT_REMOTE" \
+            mountPoint=/data/cloud \
+            mountType=mount \
+            allow_other=true \
+            uid="$$RCLONE_MOUNT_UID" \
+            gid="$$RCLONE_MOUNT_GID" \
+            umask=002 \
+            vfs_cache_mode=full \
+            vfs_cache_max_size="$$RCLONE_VFS_CACHE_SIZE" \
+            vfs_cache_max_age=168h \
+            dir_cache_time=24h \
+            poll_interval=1m \
+            buffer_size=32M
+        else
+          echo "Configured remote '$$RCLONE_MOUNT_REMOTE' does not exist yet; create it in the web interface, then restart the app."
+        fi
+
+        wait "$$rcd_pid"
+    environment:
+      RCLONE_GUI_USERNAME: ${RCLONE_GUI_USERNAME}
+      RCLONE_GUI_PASSWORD: ${RCLONE_GUI_PASSWORD}
+      RCLONE_MOUNT_REMOTE: ${RCLONE_MOUNT_REMOTE}
+      RCLONE_VFS_CACHE_SIZE: ${RCLONE_VFS_CACHE_SIZE}
+      RCLONE_MOUNT_UID: ${UID}
+      RCLONE_MOUNT_GID: ${GID}
+      TZ: ${TZ}
+    devices:
+      - /dev/fuse:/dev/fuse
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - ${APP_DATA_DIR}/config:/config
+      - ${APP_DATA_DIR}/cache:/cache
+      - type: bind
+        source: ${RUNTIPI_MEDIA_DIR}
+        target: /data
+        bind:
+          propagation: rshared
+    x-runtipi:
+      add_to_main_network: true
