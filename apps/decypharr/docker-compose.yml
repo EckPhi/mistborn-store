@@ -1,0 +1,17 @@
+x-runtipi:
+  schema_version: 2
+
+services:
+  decypharr:
+    image: cy01/blackhole:v2.5
+    environment:
+      PUID: ${UID}
+      PGID: ${GID}
+      UMASK: "002"
+      TZ: ${TZ}
+    volumes:
+      - ${APP_DATA_DIR}/config:/app
+      - ${RUNTIPI_MEDIA_DIR}:/data
+    x-runtipi:
+      is_main: true
+      internal_port: 8282

@@ -1,0 +1,25 @@
+{
+  "name": "Decypharr",
+  "id": "decypharr",
+  "available": true,
+  "short_desc": "Debrid and Usenet downloader for media automation",
+  "author": "sirrobot01",
+  "port": 8282,
+  "categories": [
+    "media"
+  ],
+  "description": "Decypharr connects media managers to Debrid and Usenet providers through qBittorrent- and SABnzbd-compatible APIs and downloads files to shared local storage.",
+  "tipi_version": 1,
+  "version": "v2.5",
+  "source": "https://github.com/sirrobot01/decypharr",
+  "website": "https://decypharr.com/",
+  "exposable": true,
+  "supported_architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "dynamic_config": true,
+  "min_tipi_version": "4.10.1",
+  "created_at": 1789944417048,
+  "updated_at": 1789944417048
+}
