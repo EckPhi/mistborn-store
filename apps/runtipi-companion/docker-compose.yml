@@ -3,10 +3,12 @@ x-runtipi:
 
 services:
   runtipi-companion:
-    image: ghcr.io/eckphi/runtipi-companion:v1.7.0
+    image: ghcr.io/eckphi/runtipi-companion:v2.1.1
     environment:
       PORT: "8080"
       TZ: ${TZ}
+      UI_USERNAME: ${COMPANION_UI_USERNAME}
+      UI_PASSWORD: ${COMPANION_UI_PASSWORD}
       RUNTIPI_PATH: /runtipi
       BACKUP_HOST_LABEL: ${COMPANION_HOST_LABEL}
       BACKUP_HOUR: ${COMPANION_BACKUP_HOUR}

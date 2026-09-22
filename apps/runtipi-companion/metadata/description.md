@@ -9,6 +9,11 @@ Install and configure **Rclone Mount** first, then copy its GUI username and
 generated password into this app's install form. The selected target, for
 example `encrypted:runtipi-backups`, must exist in rclone.
 
+The authenticated dashboard shows the current scheduler state, configured
+remote, last run, and recent local archives. It can also start daily, weekly,
+monthly, or yearly backups immediately. Only one backup can run at a time.
+Restore remains a Companion CLI operation because it replaces live app data.
+
 The container mounts the Runtipi installation and Docker socket so it can
 archive app data and stop/restart applications consistently. Docker socket
 access is effectively root access to the host. Host security hardening and
@@ -20,5 +25,6 @@ created and fully verified locally before upload. The uploaded object size is
 also checked before retention pruning. Rclone and Companion remain running so
 the pipeline cannot stop itself.
 
-The app page is a health endpoint, not a management UI. Configuration is
-rendered from the Runtipi install form whenever the container starts.
+Configuration is rendered from the Runtipi install form whenever the container
+starts. The dashboard has its own generated password even when access through a
+Runtipi domain is also protected separately.
