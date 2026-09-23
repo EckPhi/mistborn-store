@@ -4,7 +4,7 @@ Weaver is an efficient Usenet downloader with an NZBGet-compatible API, repair a
 
 ## First start
 
-Requires Runtipi 4.10.1 or newer. Open Weaver at `http://<host-ip>:9090`, or expose it through a Runtipi domain. Sign in with the **Admin username** and generated **Admin password** supplied during installation.
+Requires Runtipi 4.10.1 or newer. Open Weaver at `http://<host-ip>:9090`, or expose it through a Runtipi domain. Sign in with the **Admin username** and **Admin password** chosen during installation.
 
 The bootstrap credentials create the first login only. Later changes must be made in Weaver under Settings → Security. Create a separate Integration-scoped API key there for each media manager instead of reusing the administrator password.
 
