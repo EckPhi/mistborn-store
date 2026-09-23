@@ -19,7 +19,7 @@ This requirement cannot safely be applied by an ordinary Runtipi app: changing h
 
 ## First start and encrypted remote
 
-Open the app at `http://<host-ip>:5572`, or through its Runtipi domain. The bundled proxy initializes rclone-web with the matching same-origin API address; sign in with the generated GUI credentials. The interface is embedded in the pinned rclone image and requires no UI download at startup.
+Open the app at `http://<host-ip>:5572`, or through its Runtipi domain. The bundled proxy initializes rclone-web with the matching same-origin API address; sign in with the GUI credentials chosen during installation. The interface is embedded in the pinned rclone image and requires no UI download at startup.
 
 On the first start the configured `encrypted:` remote does not exist, so only the GUI runs:
 
@@ -45,7 +45,7 @@ Do not use the cloud mount for Weaver's incomplete or completed downloads. Keep 
 
 Rclone configuration persists in `${APP_DATA_DIR}/config`; VFS data persists in `${APP_DATA_DIR}/cache`. The mount uses full VFS caching for compatibility, with a configurable size limit and a seven-day maximum cache age. Open files can temporarily exceed the configured size.
 
-The container requires `/dev/fuse`, `SYS_ADMIN`, `--allow-other`, an unconfined AppArmor profile, and shared bind propagation. These privileges are substantial: treat the app and its web credentials as administrative infrastructure. Runtipi exposes only the proxy on port `5572`; it routes `/api/` to rclone's separately authenticated RC service without publishing the raw API port on the host. Decypharr can use `http://rclone:5533` with the generated GUI credentials over Runtipi's Docker network for external-rclone cache refreshes.
+The container requires `/dev/fuse`, `SYS_ADMIN`, `--allow-other`, an unconfined AppArmor profile, and shared bind propagation. These privileges are substantial: treat the app and its web credentials as administrative infrastructure. Runtipi exposes only the proxy on port `5572`; it routes `/api/` to rclone's separately authenticated RC service without publishing the raw API port on the host. Decypharr can use `http://rclone:5533` with the configured GUI credentials over Runtipi's Docker network for external-rclone cache refreshes.
 
 The authenticated RC service also enables file serving for Runtipi Companion
 restore downloads. Authentication remains mandatory; internal consumers
