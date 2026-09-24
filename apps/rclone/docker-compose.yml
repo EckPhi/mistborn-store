@@ -24,19 +24,7 @@ services:
             absolute_redirect off;
 
             location = / {
-                return 302 /login?url=$$rclone_public_scheme://$$http_host/api/;
-            }
-
-            location = /login {
-                if ($$arg_url = "") {
-                    return 302 /login?url=$$rclone_public_scheme://$$http_host/api/;
-                }
-
-                proxy_pass http://rclone:5522;
-                proxy_http_version 1.1;
-                proxy_set_header Host $$host;
-                proxy_set_header X-Forwarded-For $$proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto $$rclone_public_scheme;
+                return 302 /login;
             }
 
             location /api/ {
@@ -52,9 +40,13 @@ services:
             location / {
                 proxy_pass http://rclone:5522;
                 proxy_http_version 1.1;
+                proxy_set_header Accept-Encoding "";
                 proxy_set_header Host $$host;
                 proxy_set_header X-Forwarded-For $$proxy_add_x_forwarded_for;
                 proxy_set_header X-Forwarded-Proto $$rclone_public_scheme;
+                sub_filter_once on;
+                sub_filter_types text/html;
+                sub_filter '</head>' '<script>(()=>{const key="lite-auth-store";let value={};try{value=JSON.parse(localStorage.getItem(key)||"{}")||{}}catch{}const state=value.state&&typeof value.state==="object"?value.state:{};state.url=location.origin+"/api/";state.user=state.user||"";state.pass=state.pass||"";state.bannerDismissed=Boolean(state.bannerDismissed);value.state=state;value.version=Number.isInteger(value.version)?value.version:0;localStorage.setItem(key,JSON.stringify(value))})()</script></head>';
             }
         }
         NGINX_CONFIG
