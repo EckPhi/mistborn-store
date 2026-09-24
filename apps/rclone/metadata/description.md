@@ -21,6 +21,8 @@ This requirement cannot safely be applied by an ordinary Runtipi app: changing h
 
 Open the app at `http://<host-ip>:5572`, or through its Runtipi domain. The bundled proxy initializes rclone-web with the matching same-origin API address; sign in with the GUI credentials chosen during installation. The interface is embedded in the pinned rclone image and requires no UI download at startup.
 
+Rclone's normal GUI startup notice contains its full login URL, including the password. This package suppresses notice-level rclone output and supplies the credentials through rclone's environment options so they are not exposed in container logs or process arguments. Errors are still logged.
+
 On the first start the configured `encrypted:` remote does not exist, so only the GUI runs:
 
 1. Create the underlying provider remote, such as `cloud-provider`.

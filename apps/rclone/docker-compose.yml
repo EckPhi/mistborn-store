@@ -26,8 +26,6 @@ services:
           --addr 0.0.0.0:5522 \
           --api-addr 0.0.0.0:5533 \
           --rc-serve \
-          --user "$$RCLONE_GUI_USERNAME" \
-          --pass "$$RCLONE_GUI_PASSWORD" \
           --no-open-browser &
         rcd_pid=$$!
 
@@ -40,8 +38,6 @@ services:
         attempt=0
         until rclone rc \
           --url http://127.0.0.1:5533 \
-          --user "$$RCLONE_GUI_USERNAME" \
-          --pass "$$RCLONE_GUI_PASSWORD" \
           --no-output core/pid; do
           attempt=$$((attempt + 1))
           if [ "$$attempt" -ge 60 ]; then
@@ -56,8 +52,6 @@ services:
           mkdir -p /data/cloud
           rclone rc \
             --url http://127.0.0.1:5533 \
-            --user "$$RCLONE_GUI_USERNAME" \
-            --pass "$$RCLONE_GUI_PASSWORD" \
             --no-output mount/mount \
             fs="$$RCLONE_MOUNT_REMOTE" \
             mountPoint=/data/cloud \
@@ -78,8 +72,9 @@ services:
 
         wait "$$rcd_pid"
     environment:
-      RCLONE_GUI_USERNAME: ${RCLONE_GUI_USERNAME}
-      RCLONE_GUI_PASSWORD: ${RCLONE_GUI_PASSWORD}
+      RCLONE_RC_USER: ${RCLONE_GUI_USERNAME}
+      RCLONE_RC_PASS: ${RCLONE_GUI_PASSWORD}
+      RCLONE_LOG_LEVEL: ERROR
       RCLONE_MOUNT_REMOTE: ${RCLONE_MOUNT_REMOTE}
       RCLONE_VFS_CACHE_SIZE: ${RCLONE_VFS_CACHE_SIZE}
       RCLONE_MOUNT_UID: ${UID:-0}
