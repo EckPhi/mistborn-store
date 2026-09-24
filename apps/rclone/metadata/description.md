@@ -23,6 +23,8 @@ Open the app at `http://<host-ip>:5572`, or through its Runtipi domain. The bund
 
 Rclone's normal GUI startup notice contains its full login URL, including the password. This package suppresses notice-level rclone output and supplies the credentials through rclone's environment options so they are not exposed in container logs or process arguments. Errors are still logged.
 
+The public proxy removes rclone's HTTP Basic authentication challenge so browsers use the rclone-web login form instead of opening a separate native credentials dialog.
+
 On the first start the configured `encrypted:` remote does not exist, so only the GUI runs:
 
 1. Create the underlying provider remote, such as `cloud-provider`.
