@@ -25,6 +25,8 @@ Rclone's normal GUI startup notice contains its full login URL, including the pa
 
 The public proxy removes rclone's HTTP Basic authentication challenge so browsers use the rclone-web login form instead of opening a separate native credentials dialog.
 
+The proxy configuration is recreated from the app definition whenever its container starts; it is not stored in app data. Only rclone's configuration and VFS cache are persistent.
+
 On the first start the configured `encrypted:` remote does not exist, so only the GUI runs:
 
 1. Create the underlying provider remote, such as `cloud-provider`.
