@@ -9,7 +9,7 @@ Install and configure **Rclone Mount** first, then copy its GUI username and
 generated password into this app's install form. The selected target, for
 example `encrypted:runtipi-backups`, must exist in rclone.
 
-The authenticated dashboard shows the current scheduler state, configured
+The dashboard shows the current scheduler state, configured
 remote, last run, and recent local archives. It can also start daily, weekly,
 monthly, or yearly backups immediately. Only one backup can run at a time.
 Restore remains a Companion CLI operation because it replaces live app data.
@@ -26,5 +26,4 @@ also checked before retention pruning. Rclone and Companion remain running so
 the pipeline cannot stop itself.
 
 Configuration is rendered from the Runtipi install form whenever the container
-starts. The dashboard has its own generated password even when access through a
-Runtipi domain is also protected separately.
+starts. Dashboard access control is handled by Runtipi.
