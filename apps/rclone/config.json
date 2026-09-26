@@ -1,16 +1,16 @@
 {
-  "name": "Rclone Mount",
+  "name": "Rclone",
   "id": "rclone",
   "available": true,
-  "short_desc": "Encrypted cloud storage mounted into Runtipi media",
+  "short_desc": "Web interface for a host-installed rclone service",
   "author": "rclone",
   "port": 5572,
   "categories": [
     "utilities",
     "media"
   ],
-  "description": "Rclone provides a protected web interface for configuring cloud remotes and mounts one configured remote at the shared Runtipi media path /cloud.",
-  "tipi_version": 8,
+  "description": "Rclone provides a protected web interface for configuring the rclone service running on the host. Mount remotes on the host directly without Docker FUSE mount propagation.",
+  "tipi_version": 10,
   "version": "v1.75.1",
   "source": "https://github.com/rclone/rclone",
   "website": "https://rclone.org",
@@ -22,41 +22,5 @@
   "dynamic_config": true,
   "min_tipi_version": "4.10.1",
   "created_at": 1789944417048,
-  "updated_at": 1790265541917,
-  "form_fields": [
-    {
-      "type": "text",
-      "label": "GUI username",
-      "env_variable": "RCLONE_GUI_USERNAME",
-      "required": true,
-      "placeholder": "rclone-admin",
-      "hint": "Username protecting both the web interface and the internal remote-control endpoint."
-    },
-    {
-      "type": "password",
-      "label": "GUI password",
-      "env_variable": "RCLONE_GUI_PASSWORD",
-      "required": true,
-      "placeholder": "Enter a strong password",
-      "hint": "Password protecting both the web interface and the internal remote-control endpoint."
-    },
-    {
-      "type": "text",
-      "label": "Mounted remote",
-      "env_variable": "RCLONE_MOUNT_REMOTE",
-      "required": false,
-      "default": "encrypted:",
-      "hint": "Remote and optional path to mount at /cloud, for example encrypted: or encrypted:media. Create this remote in the GUI, then restart the app."
-    },
-    {
-      "type": "text",
-      "label": "VFS cache size",
-      "env_variable": "RCLONE_VFS_CACHE_SIZE",
-      "required": false,
-      "default": "100G",
-      "regex": "^[1-9][0-9]*(K|M|G|T|Ki|Mi|Gi|Ti)$",
-      "pattern_error": "Enter a positive size such as 50G, 500Gi or 1T.",
-      "hint": "Maximum local disk space used to cache cloud reads and writes. Open files can temporarily exceed this limit."
-    }
-  ]
+  "updated_at": 1790450000000
 }

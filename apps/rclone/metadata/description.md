@@ -1,64 +1,31 @@
-# Rclone Mount
+# Rclone
 
-Rclone connects to cloud-storage providers, encrypts remote content with a `crypt` remote, and exposes the decrypted view under Runtipi's shared media directory. This package includes the modern [rclone-web](https://github.com/rclone/rclone-web) interface embedded in rclone and automatically mounts one configured remote at `/data/cloud` inside the container, corresponding to `cloud/` in Runtipi media.
+This app serves rclone's bundled web interface from a container and forwards its API requests to an rclone service running on the host. The host owns the rclone config and any mounts. The API connection uses a Unix socket; the app does not expose a host API port, mount media, or run FUSE.
 
-## Host prerequisite: shared mount propagation
+## Host service
 
-This is an advanced app. A FUSE mount created inside a container is invisible to the host and other containers unless the Runtipi media directory is a shared mount. Before installing, use `${ROOT_FOLDER_HOST}/media` as the host path, ensure its `cloud` child exists, bind the directory onto itself, and mark it recursively shared:
+Install rclone on the host, configure its remotes, and install a systemd service that runs only the remote-control API (`rclone rcd`). For example:
 
-```bash
-sudo mkdir -p /path/to/runtipi/media/data/cloud
-sudo mount --bind /path/to/runtipi/media/data /path/to/runtipi/media/data
-sudo mount --make-rshared /path/to/runtipi/media/data
-findmnt -o TARGET,PROPAGATION /path/to/runtipi/media/data
+```ini
+[Service]
+User=rclone
+Group=rclone
+RuntimeDirectory=rclone
+RuntimeDirectoryMode=0750
+UMask=0007
+EnvironmentFile=/etc/rclone/rc.env
+ExecStart=/usr/bin/rclone rcd --config=/home/rclone/.config/rclone/rclone.conf --rc-addr=/run/rclone/rc.sock
+Restart=on-failure
 ```
 
-The final command must report `shared` for that path. The bind and propagation settings must be recreated after reboot, normally with systemd mount units or equivalent host configuration. Installation fails with `path is mounted ... but it is not a shared mount` when this prerequisite is missing.
+Put `RCLONE_RC_USER` and `RCLONE_RC_PASS` in `/etc/rclone/rc.env` and restrict that file to root (`chmod 600`). Adjust the binary and config paths for the host. `RuntimeDirectory` makes `/run/rclone` at service start, and rclone creates `/run/rclone/rc.sock`. Start this service before installing or starting the Runtipi app so Docker can bind-mount the socket directory. Sign in to the web interface with the credentials from `rc.env`.
 
-This requirement cannot safely be applied by an ordinary Runtipi app: changing host mount propagation requires host-level administration and depends on where Runtipi is installed.
+The proxy container connects to the socket as root so it can access the service-owned socket and directory. The socket is mounted read-only and only into the proxy container. Keep the host service under a dedicated unprivileged account and retain RC authentication: the API can run commands and access files as that account. If Docker uses user-namespace remapping, configure host socket ownership and permissions for the remapped container root as well.
 
-## First start and encrypted remote
+The container runs the web UI only for practical purposes; it also starts a local, unauthenticated RC listener on its loopback interface because rclone's bundled GUI launcher starts both servers together. That local API is not published or used by the proxy. All browser `/api/` requests go to the authenticated host socket.
 
-Open the app at `http://<host-ip>:5572`, or through its Runtipi domain. The bundled proxy initializes rclone-web with the matching same-origin API address; sign in with the GUI credentials chosen during installation. The interface is embedded in the pinned rclone image and requires no UI download at startup.
+## Host mounts
 
-Rclone's normal GUI startup notice contains its full login URL, including the password. This package suppresses notice-level rclone output and supplies the credentials through rclone's environment options so they are not exposed in container logs or process arguments. Errors are still logged.
+Create cloud mounts on the host through your systemd mount service or the rclone API. To make cloud files visible to Runtipi apps, use a host mountpoint under `${ROOT_FOLDER_HOST}/media`, such as `${ROOT_FOLDER_HOST}/media/cloud`. Configure VFS cache and other mount options in the host service. Other apps see the ordinary mounted directory through their media mounts.
 
-The public proxy removes rclone's HTTP Basic authentication challenge so browsers use the rclone-web login form instead of opening a separate native credentials dialog.
-
-The proxy also initializes rclone-web's same-origin API URL in browser storage before the bundled interface starts. This avoids an upstream login-state race without modifying either official container image or placing credentials in a URL.
-
-The proxy configuration is recreated from the app definition whenever its container starts; it is not stored in app data. Only rclone's configuration and VFS cache are persistent.
-
-On the first start the configured `encrypted:` remote does not exist, so only the GUI runs:
-
-1. Create the underlying provider remote, such as `cloud-provider`.
-2. Create a `crypt` remote named `encrypted` whose target is the provider path, such as `cloud-provider:media`.
-3. Choose encryption for filenames and directory names and keep the generated crypt passwords in a separate password manager.
-4. Test browsing the `encrypted` remote in the GUI.
-5. Restart the Rclone Mount app.
-
-After restart, the decrypted view is mounted at `${ROOT_FOLDER_HOST}/media/cloud` on the host, `/data/cloud` in the Scryer and Weaver apps, and `/media/cloud` in the official Plex app. Cloud-provider objects remain encrypted; applications using the mount see decrypted names and contents.
-
-If you choose another remote name or mount a subdirectory, update **Mounted remote** in the Runtipi app settings and restart. Editing `rclone.conf` or changing the remote in the GUI does not live-reload an active mount.
-
-## Consumption by other apps
-
-Scryer and Weaver use slave propagation on their `${ROOT_FOLDER_HOST}/media` mounts, so they receive rclone remounts without acquiring permission to propagate mounts back to the host.
-
-The official Plex app currently uses a normal private bind mount. Start or restart Plex after Rclone Mount is healthy so Docker captures the existing `/media/cloud` submount. If rclone is restarted or remounted later, restart Plex again. An advanced Plex user override can change its media bind propagation to `rslave` instead.
-
-Do not use the cloud mount for Weaver's incomplete or completed downloads. Keep `/data/downloads` local and use `/data/cloud` as a distinct cloud-backed library or destination. Hard links cannot cross between local storage and the FUSE filesystem.
-
-## Cache, privileges and recovery
-
-Rclone configuration persists in `${APP_DATA_DIR}/config`; VFS data persists in `${APP_DATA_DIR}/cache`. The mount uses full VFS caching for compatibility, with a configurable size limit and a seven-day maximum cache age. Open files can temporarily exceed the configured size.
-
-The container requires `/dev/fuse`, `SYS_ADMIN`, `--allow-other`, an unconfined AppArmor profile, and shared bind propagation. These privileges are substantial: treat the app and its web credentials as administrative infrastructure. Runtipi exposes only the proxy on port `5572`; it routes `/api/` to rclone's separately authenticated RC service without publishing the raw API port on the host. Decypharr can use `http://rclone:5533` with the configured GUI credentials over Runtipi's Docker network for external-rclone cache refreshes.
-
-The authenticated RC service also enables file serving for Runtipi Companion
-restore downloads. Authentication remains mandatory; internal consumers
-should use `http://rclone:5533` rather than exposing the API publicly.
-
-Back up `rclone.conf` and the crypt passwords outside the server. Losing the crypt passwords permanently prevents decryption. Before restoring or moving the app, stop media consumers, stop rclone, restore the configuration, start rclone, confirm `/cloud` contents, and then restart Plex and other consumers.
-
-[rclone-web](https://github.com/rclone/rclone-web) · [GUI documentation](https://rclone.org/gui/) · [Mount documentation](https://rclone.org/commands/rclone_mount/) · [Docker and mount propagation](https://rclone.org/docker/) · [Source code](https://github.com/rclone/rclone)
+[rclone GUI documentation](https://rclone.org/gui/) · [rclone `rcd` documentation](https://rclone.org/commands/rclone_rcd/) · [rclone mount documentation](https://rclone.org/commands/rclone_mount/)

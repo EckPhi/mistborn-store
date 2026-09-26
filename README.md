@@ -45,7 +45,7 @@ See the [Runtipi custom app store guide](https://runtipi.io/docs/guides/create-y
 | <img src="apps/openthread-border-router/metadata/logo.jpg" width="32"> | [OpenThread Border Router](https://github.com/bnutzer/docker-otbr-tcp) | Thread mesh network border router (network RCP) |
 | <img src="apps/power-price-collector/metadata/logo.jpg" width="32"> | [Power Price Collector](https://github.com/EckPhi/power-price-collector) | European power prices into QuestDB, MQTT, Grist and more |
 | <img src="apps/questdb/metadata/logo.jpg" width="32"> | [QuestDB](https://github.com/questdb/questdb) | High-performance time-series database with SQL |
-| <img src="apps/rclone/metadata/logo.jpg" width="32"> | [Rclone Mount](https://github.com/rclone/rclone) | Encrypted cloud storage mounted into Runtipi media |
+| <img src="apps/rclone/metadata/logo.jpg" width="32"> | [Rclone](https://github.com/rclone/rclone) | Web interface for a host-installed rclone service |
 | <img src="apps/receipt-wrangler/metadata/logo.jpg" width="32"> | [Receipt Wrangler](https://github.com/Receipt-Wrangler/receipt-wrangler) | Self-hosted receipt manager with OCR and AI scanning |
 | <img src="apps/runtipi-companion/metadata/logo.jpg" width="32"> | [Runtipi Companion](https://github.com/EckPhi/runtipi-companion) | Verified Runtipi backups through an existing rclone service |
 | <img src="apps/scrape-dojo/metadata/logo.jpg" width="32"> | [Scrape Dojo](https://github.com/disane87/scrape-dojo) | Self-hosted, config-driven web scraping platform |
