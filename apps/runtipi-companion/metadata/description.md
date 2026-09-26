@@ -9,10 +9,12 @@ Install and configure **Rclone Mount** first, then copy its GUI username and
 generated password into this app's install form. The selected target, for
 example `encrypted:runtipi-backups`, must exist in rclone.
 
-The dashboard shows the current scheduler state, configured
-remote, last run, and recent local archives. It can also start daily, weekly,
-monthly, or yearly backups immediately. Only one backup can run at a time.
-Restore remains a Companion CLI operation because it replaces live app data.
+The dashboard shows the current scheduler state, live per-app progress, a
+bounded diagnostic event trail, the configured remote, last run, and recent
+local archives. It refreshes while a backup is active and can also start daily,
+weekly, monthly, or yearly backups immediately. Only one backup can run at a
+time. Restore remains a Companion CLI operation because it replaces live app
+data.
 
 The container mounts the Runtipi installation and Docker socket so it can
 archive app data and stop/restart applications consistently. Docker socket
