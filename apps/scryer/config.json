@@ -9,8 +9,8 @@
     "media"
   ],
   "description": "Scryer manages movie, series and anime libraries, release acquisition, imports, subtitles and media-server updates.",
-  "tipi_version": 3,
-  "version": "0.21.9",
+  "tipi_version": 4,
+  "version": "0.21.10",
   "source": "https://github.com/scryer-media/scryer",
   "website": "https://www.scryer.media/scryer/",
   "exposable": true,
@@ -21,5 +21,5 @@
   "dynamic_config": true,
   "min_tipi_version": "4.10.1",
   "created_at": 1789944417048,
-  "updated_at": 1790146158894
+  "updated_at": 1790404988348
 }
