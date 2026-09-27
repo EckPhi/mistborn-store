@@ -1,0 +1,58 @@
+x-runtipi:
+  schema_version: 2
+
+services:
+  dashboard-proxy:
+    image: nginx:1.30.5-alpine
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -eu
+
+        wget -q -O /tmp/dashboard.zip https://github.com/outlook84/yet-another-rclone-dashboard/releases/download/v0.4.4/yet-another-rclone-dashboard-v0.4.4.zip
+        echo 'ddeb867c901b73283e305ecbdf802bfd46ae7d02684e8d63230e8204ea765c85  /tmp/dashboard.zip' | sha256sum -c -
+        mkdir -p /tmp/dashboard
+        unzip -q /tmp/dashboard.zip -d /tmp/dashboard
+        dashboard_index=$$(find /tmp/dashboard -name index.html -type f | head -n 1)
+        test -n "$$dashboard_index"
+        cp -a "$$(dirname "$$dashboard_index")"/. /usr/share/nginx/html/
+
+        cat > /etc/nginx/conf.d/default.conf <<'NGINX_CONFIG'
+        server {
+            listen 5573;
+            server_name _;
+            client_max_body_size 0;
+
+            location /api/ {
+                proxy_pass http://unix:/run/rclone/rc.sock:/;
+                proxy_http_version 1.1;
+                proxy_read_timeout 3600s;
+                proxy_request_buffering off;
+                proxy_hide_header WWW-Authenticate;
+                proxy_set_header Host $$host;
+                proxy_set_header Authorization $$http_authorization;
+            }
+
+            location / {
+                root /usr/share/nginx/html;
+                try_files $$uri $$uri/ /index.html;
+            }
+        }
+        NGINX_CONFIG
+
+        socket_gid=$$(stat -c '%g' /run/rclone/rc.sock)
+        socket_group=$$(awk -F: -v gid="$$socket_gid" '$$3 == gid { print $$1; exit }' /etc/group)
+        if [ -z "$$socket_group" ]; then
+          socket_group=rclone-socket
+          printf 'rclone-socket:x:%s:nginx\n' "$$socket_gid" >> /etc/group
+        fi
+        sed -i "s/^user nginx;.*/user nginx $$socket_group;/" /etc/nginx/nginx.conf
+        exec nginx -g 'daemon off;'
+    volumes:
+      - type: bind
+        source: /run/rclone
+        target: /run/rclone
+        read_only: true
+    x-runtipi:
+      is_main: true
+      internal_port: 5573

@@ -35,6 +35,16 @@
   ],
   "packageRules": [
     {
+      "description": "The dashboard version is the verified release zip; update its checksum and Nginx image together by hand",
+      "matchFileNames": [
+        "apps/yet-another-rclone-dashboard/docker-compose.yml"
+      ],
+      "matchPackageNames": [
+        "nginx"
+      ],
+      "enabled": false
+    },
+    {
       "description": "diyHue publishes monotonically increasing build numbers; treat them as patch updates so they remain eligible for auto-merge",
       "matchDatasources": [
         "docker"

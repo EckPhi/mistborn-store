@@ -1,0 +1,24 @@
+{
+  "name": "Yet Another Rclone Dashboard",
+  "id": "yet-another-rclone-dashboard",
+  "available": true,
+  "short_desc": "Alternative web dashboard for a host-installed rclone service",
+  "author": "outlook84",
+  "port": 5573,
+  "categories": [
+    "utilities",
+    "media"
+  ],
+  "description": "A modern dashboard for browsing remotes and monitoring transfers through the authenticated rclone service on the host.",
+  "tipi_version": 1,
+  "version": "v0.4.4",
+  "source": "https://github.com/outlook84/yet-another-rclone-dashboard",
+  "website": "https://github.com/outlook84/yet-another-rclone-dashboard",
+  "exposable": true,
+  "supported_architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "dynamic_config": true,
+  "min_tipi_version": "4.10.1"
+}

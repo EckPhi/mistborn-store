@@ -56,6 +56,7 @@ See the [Runtipi custom app store guide](https://runtipi.io/docs/guides/create-y
 | <img src="apps/victoriametrics/metadata/logo.jpg" width="32"> | [VictoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics) | Fast, cost-effective time-series database |
 | <img src="apps/wealthfolio/metadata/logo.jpg" width="32"> | [Wealthfolio](https://github.com/wealthfolio/wealthfolio) | Private investment, net worth and portfolio tracker |
 | <img src="apps/weaver/metadata/logo.jpg" width="32"> | [Weaver](https://github.com/scryer-media/weaver) | Efficient Usenet downloader for media automation |
+| <img src="apps/yet-another-rclone-dashboard/metadata/logo.jpg" width="32"> | [Yet Another Rclone Dashboard](https://github.com/outlook84/yet-another-rclone-dashboard) | Alternative web dashboard for a host-installed rclone service |
 | <img src="apps/youtrack/metadata/logo.jpg" width="32"> | [YouTrack](https://github.com/JetBrains) | Project management and issue tracker by JetBrains |
 | <img src="apps/zigbee2mqtt/metadata/logo.jpg" width="32"> | [Zigbee2MQTT](https://github.com/Koenkk/zigbee2mqtt) | Zigbee to MQTT bridge (network or USB adapter) |
 <!-- APPS:END -->
