@@ -3,7 +3,7 @@ x-runtipi:
 
 services:
   unmanic:
-    image: josh5/unmanic:0.4.0
+    image: josh5/unmanic:0.4.1
     environment:
       PUID: ${UID:-0}
       PGID: ${GID:-0}
