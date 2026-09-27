@@ -3,7 +3,7 @@ x-runtipi:
 
 services:
   runtipi-companion:
-    image: ghcr.io/eckphi/runtipi-companion:3.2.1
+    image: ghcr.io/eckphi/runtipi-companion:3.3.0
     environment:
       PORT: "8080"
       TZ: ${TZ}
@@ -18,7 +18,7 @@ services:
       REMOTE_WEEKLY_RETENTION: ${COMPANION_REMOTE_WEEKLY_RETENTION}
       REMOTE_MONTHLY_RETENTION: ${COMPANION_REMOTE_MONTHLY_RETENTION}
       REMOTE_YEARLY_RETENTION: ${COMPANION_REMOTE_YEARLY_RETENTION}
-      RCLONE_API_URL: http://rclone:5533
+      RCLONE_API_URL: ${COMPANION_RCLONE_API_URL}
       RCLONE_API_USERNAME: ${COMPANION_RCLONE_USERNAME}
       RCLONE_API_PASSWORD: ${COMPANION_RCLONE_PASSWORD}
       RCLONE_REMOTE: ${COMPANION_RCLONE_REMOTE}
@@ -26,6 +26,7 @@ services:
       - ${APP_DATA_DIR}/config:/config
       - ${COMPANION_RUNTIPI_PATH}:/runtipi
       - /var/run/docker.sock:/var/run/docker.sock
+      - /run/rclone:/run/rclone:ro
     labels:
       runtipi-companion.backup.keep-running: "true"
     x-runtipi:
