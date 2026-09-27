@@ -52,6 +52,7 @@ See the [Runtipi custom app store guide](https://runtipi.io/docs/guides/create-y
 | <img src="apps/scryer/metadata/logo.jpg" width="32"> | [Scryer](https://github.com/scryer-media/scryer) | Media management for movies, series and anime |
 | <img src="apps/seamtec-scraper/metadata/logo.jpg" width="32"> | [Seamtec Scraper](https://github.com/EckPhi/seamtec-scraper) | Scraper for the Seamtec SCADA web UI |
 | <img src="apps/telegraf/metadata/logo.jpg" width="32"> | [Telegraf](https://github.com/influxdata/telegraf) | Plugin-driven agent for collecting and sending metrics |
+| <img src="apps/unmanic/metadata/logo.jpg" width="32"> | [Unmanic](https://github.com/Unmanic/unmanic) | Automated media library processing and transcoding |
 | <img src="apps/victoriametrics/metadata/logo.jpg" width="32"> | [VictoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics) | Fast, cost-effective time-series database |
 | <img src="apps/wealthfolio/metadata/logo.jpg" width="32"> | [Wealthfolio](https://github.com/wealthfolio/wealthfolio) | Private investment, net worth and portfolio tracker |
 | <img src="apps/weaver/metadata/logo.jpg" width="32"> | [Weaver](https://github.com/scryer-media/weaver) | Efficient Usenet downloader for media automation |

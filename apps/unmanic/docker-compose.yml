@@ -1,0 +1,17 @@
+x-runtipi:
+  schema_version: 2
+
+services:
+  unmanic:
+    image: josh5/unmanic:0.4.0
+    environment:
+      PUID: ${UID:-0}
+      PGID: ${GID:-0}
+      TZ: ${TZ}
+    volumes:
+      - ${APP_DATA_DIR}/config:/config
+      - ${APP_DATA_DIR}/cache:/tmp/unmanic
+      - ${ROOT_FOLDER_HOST}/media:/library
+    x-runtipi:
+      is_main: true
+      internal_port: 8888
