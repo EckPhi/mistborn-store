@@ -24,21 +24,14 @@ At startup, the proxy reads the socket's group ID and runs its Nginx worker with
 
 ### Allowing the host service to create FUSE mounts
 
-When the host `rclone rcd` service creates mounts through the RC API, systemd must allow it to access the mountpoint and let `fusermount3` perform its setuid operation. For a service hardened with `ProtectSystem=strict`, add a drop-in (replace the path with the parent directory of your mountpoints):
+Mistborn Bootstrap's mount-capable RC service creates FUSE mounts visible on the host without a systemd override. Existing installs must update and reapply the confirmed `rclone_service/service` task to receive the revised unit. Remove any obsolete local drop-in after verifying the managed unit, then restart the service and recreate the mount.
 
-```ini
-# sudo systemctl edit mistborn-rclone.service
-[Service]
-ReadWritePaths=/opt/runtipi/media
-NoNewPrivileges=no
-```
-
-Use the **parent directory** in `ReadWritePaths`, not the mountpoint itself. Systemd can make an explicitly writable path appear as a bind mount inside the service's mount namespace; FUSE then rejects that path as already mounted. `NoNewPrivileges=no` is needed because `fusermount3` relies on its setuid bit. Keep the service running as a dedicated, unprivileged user and grant write access only to the directory tree containing the intended mountpoints. Apply changes with `sudo systemctl daemon-reload`, then restart the host service.
+Keep the service running as the dedicated, unprivileged `mistborn-rclone` user and give that user write access to each mountpoint. `fusermount3` needs its setuid operation, so `NoNewPrivileges` must be disabled. A custom unit with filesystem isolation such as `ProtectSystem`, `PrivateTmp`, `ProtectHome`, `ProtectKernelTunables`, or `ProtectControlGroups` can create a mount visible only inside the service. Check host visibility with `findmnt -M /opt/runtipi/media/cloud`; if that is empty while the service sees the mount, inspect the unit's mount namespace settings.
 
 The container runs the web UI only for practical purposes; it also starts a local, unauthenticated RC listener on its loopback interface because rclone's bundled GUI launcher starts both servers together. That local API is not published or used by the proxy. All browser `/api/` requests go to the authenticated host socket.
 
 ## Host mounts
 
-Create cloud mounts on the host through your systemd mount service or the rclone API. To make cloud files visible to Runtipi apps, use a host mountpoint under `${ROOT_FOLDER_HOST}/media`, such as `${ROOT_FOLDER_HOST}/media/cloud`. Configure VFS cache and other mount options in the host service. Other apps see the ordinary mounted directory through their media mounts.
+Create cloud mounts on the host through your systemd mount service or the rclone API. To make cloud files visible to Runtipi apps, use a host mountpoint under `${ROOT_FOLDER_HOST}/media`, such as `${ROOT_FOLDER_HOST}/media/cloud`. Configure VFS cache and other mount options in the host service. If an app container bind-mounts the media directory before the cloud mount exists, Docker's default `rprivate` bind propagation can leave the container seeing the empty underlying directory. Start the host mount before that container, or configure host-to-container mount propagation for the media bind.
 
 [rclone GUI documentation](https://rclone.org/gui/) · [rclone `rcd` documentation](https://rclone.org/commands/rclone_rcd/) · [rclone mount documentation](https://rclone.org/commands/rclone_mount/)

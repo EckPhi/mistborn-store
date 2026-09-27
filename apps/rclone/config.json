@@ -10,7 +10,7 @@
     "media"
   ],
   "description": "Rclone provides a protected web interface for configuring the rclone service running on the host. Mount remotes on the host directly without Docker FUSE mount propagation.",
-  "tipi_version": 12,
+  "tipi_version": 13,
   "version": "v1.75.1",
   "source": "https://github.com/rclone/rclone",
   "website": "https://rclone.org",
@@ -22,5 +22,5 @@
   "dynamic_config": true,
   "min_tipi_version": "4.10.1",
   "created_at": 1789944417048,
-  "updated_at": 1790468923000
+  "updated_at": 1790505266963
 }
