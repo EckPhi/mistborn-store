@@ -234,6 +234,11 @@ cross-host restoration have not been certified by this implementation.
 - **Workspace stuck connecting:** check the access URL, container DNS, routing,
   TLS trust and Coder agent logs. A browser-only working URL is insufficient.
   Private certificate authorities need to be trusted in the workspace and CLI.
+- **Access URL, DERP or WebSocket health check times out:** Coder must reach its
+  own access URL. For a RunTipi HTTPS domain, startup tests the local Traefik
+  route and uses it inside the Coder server container when available; workspace
+  agents still use public DNS. If the check persists, test DNS and HTTPS from
+  inside the Coder container and inspect reverse-proxy upgrade handling.
 - **Wrong URL / Tailscale:** use the installer override, keep the host in the
   tailnet, and ensure Docker bridge traffic can reach that tailnet address. No
   Tailscale container is bundled; Coder does not need public Internet ingress.
