@@ -1,0 +1,89 @@
+{
+  "name": "Coder Development Environment",
+  "id": "coder-dev",
+  "available": true,
+  "short_desc": "Persistent remote development workspaces with automatic Coder setup",
+  "author": "Coder",
+  "port": 8096,
+  "categories": [
+    "development",
+    "utilities"
+  ],
+  "description": "Coder with PostgreSQL, an automatically initialized administrator, a general development template and a persistent default workspace.",
+  "tipi_version": 1,
+  "version": "v2.36.6",
+  "source": "https://github.com/coder/coder",
+  "website": "https://coder.com",
+  "exposable": true,
+  "dynamic_config": true,
+  "min_tipi_version": "4.10.1",
+  "supported_architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Administrator username",
+      "env_variable": "CODER_DEV_ADMIN_USERNAME",
+      "required": true,
+      "regex": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,31}$"
+    },
+    {
+      "type": "email",
+      "label": "Administrator email",
+      "env_variable": "CODER_DEV_ADMIN_EMAIL",
+      "required": true
+    },
+    {
+      "type": "password",
+      "label": "Administrator password",
+      "env_variable": "CODER_DEV_ADMIN_PASSWORD",
+      "required": true,
+      "regex": "^[^$\\r\\n]{12,}$",
+      "hint": "At least 12 characters; avoid dollar signs (RunTipi Compose interpolation). Used only for bootstrap; changing this field never resets an existing password."
+    },
+    {
+      "type": "random",
+      "label": "PostgreSQL password",
+      "env_variable": "CODER_DEV_DB_PASSWORD",
+      "required": false,
+      "min": 64,
+      "encoding": "hex",
+      "hint": "Generated on installation. Do not change after PostgreSQL initializes."
+    },
+    {
+      "type": "text",
+      "label": "Default workspace name",
+      "env_variable": "CODER_DEV_WORKSPACE_NAME",
+      "required": false,
+      "default": "dev",
+      "regex": "^[a-zA-Z0-9][a-zA-Z0-9-]{0,31}$",
+      "hint": "First installation only. Existing workspaces are never renamed."
+    },
+    {
+      "type": "text",
+      "label": "Git display name",
+      "env_variable": "CODER_DEV_GIT_NAME",
+      "required": false,
+      "default": ""
+    },
+    {
+      "type": "text",
+      "label": "Git email",
+      "env_variable": "CODER_DEV_GIT_EMAIL",
+      "required": false,
+      "default": ""
+    },
+    {
+      "type": "text",
+      "label": "Coder access URL override",
+      "env_variable": "CODER_DEV_ACCESS_URL_OVERRIDE",
+      "required": false,
+      "default": "",
+      "hint": "Normally derived from RunTipi. Override only for a different reachable LAN/domain/Tailscale HTTP(S) URL, including port. Never localhost."
+    }
+  ],
+  "created_at": 1790472900000,
+  "updated_at": 1790472900000
+}

@@ -1,0 +1,4 @@
+template/.terraform/
+template/*.tfstate*
+__pycache__/
+bootstrap/__pycache__/

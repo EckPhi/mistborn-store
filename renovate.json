@@ -31,6 +31,16 @@
         "(?:^|\\n)[ \\t]+image:[ \\t]+(?<depName>[^ \\t\\r\\n]+):(?<currentValue>[^ \\t\\r\\n]+)[ \\t]*(?:\\r?\\n|$)"
       ],
       "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^apps/coder-dev/template/image/Dockerfile$/"
+      ],
+      "matchStrings": [
+        "(?:^|\\n)FROM (?<depName>[^ :\\r\\n]+):(?<currentValue>[^ \\r\\n]+)"
+      ],
+      "datasourceTemplate": "docker"
     }
   ],
   "packageRules": [
@@ -108,6 +118,21 @@
         "redis"
       ],
       "enabled": false
+    },
+    {
+      "description": "Coder deployment and workspace images require reviewed upgrades; generated runtime is repackaged by the app updater",
+      "matchFileNames": [
+        "apps/coder-dev/**",
+        "scripts/coder-dev/**"
+      ],
+      "automerge": false,
+      "addLabels": [
+        "coder-dev-review"
+      ],
+      "removeLabels": [
+        "automerge"
+      ],
+      "groupName": "coder-dev"
     }
   ],
   "postUpgradeTasks": {
