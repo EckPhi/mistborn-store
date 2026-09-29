@@ -63,3 +63,23 @@ The stale Git commit graph was rebuilt, remote main was fast-forwarded without
 stashing or discarding the staged app work, and `git fsck --full --no-dangling`
 then passed. iCloud can reintroduce placeholder metadata; this repair does not
 move the checkout out of the synchronized Documents directory.
+
+The user's first manual installation reached Coder template planning, which
+failed because the unlimited CPU default resolved to `cpu_quota = -1`.
+The pinned Docker provider 3.6.2 requires a nonnegative quota. App revision 2
+uses `0` for unlimited CPU and retains the cores-to-microseconds conversion
+for limits. The embedded template archive was regenerated.
+
+A new regression plans the maintained CPU/memory expressions with the actual
+locked Docker provider against a local HTTP ping stub. It checks unlimited
+CPU/memory, half a CPU with 512 MiB, and two CPUs with 2048 MiB, including the
+planned values. It creates no containers and does not exercise Coder's API or
+workspace image builds. The prior `-1` setting reproduced the reported error
+with the real provider; `terraform validate` alone had missed it. CI now
+installs Terraform so this regression runs rather than skips. All 20 Python
+scenarios passed locally, as did the repository suite and lint.
+
+Existing installations should refresh the app store and update the app. The
+new template fingerprint retries setup using the existing administrator and
+database; reinstalling or deleting app data is unnecessary. Live workspace
+provisioning remains pending the user's next manual installation attempt.

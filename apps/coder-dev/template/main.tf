@@ -74,7 +74,7 @@ resource "docker_container" "workspace" {
   command    = ["bash", "-c", coder_agent.main.init_script]
   env        = ["CODER_AGENT_TOKEN=${coder_agent.main.token}"]
   memory     = tonumber(data.coder_parameter.memory.value)
-  cpu_quota  = tonumber(data.coder_parameter.cpu.value) == 0 ? -1 : tonumber(data.coder_parameter.cpu.value) * 100000
+  cpu_quota  = tonumber(data.coder_parameter.cpu.value) * 100000
   cpu_period = 100000
   restart    = "unless-stopped"
   volumes {

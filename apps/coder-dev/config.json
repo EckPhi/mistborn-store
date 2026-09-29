@@ -10,7 +10,7 @@
     "utilities"
   ],
   "description": "Coder with PostgreSQL, an automatically initialized administrator, a general development template and a persistent default workspace.",
-  "tipi_version": 1,
+  "tipi_version": 2,
   "version": "v2.36.6",
   "source": "https://github.com/coder/coder",
   "website": "https://coder.com",
@@ -85,5 +85,5 @@
     }
   ],
   "created_at": 1790472900000,
-  "updated_at": 1790472900000
+  "updated_at": 1790683700316
 }

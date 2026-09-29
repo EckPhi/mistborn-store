@@ -15,14 +15,14 @@ describe("Coder development deployment", () => {
     expect(result.status).toBe(0);
     expect(result.stdout).toBe(fs.readFileSync(`${root}/docker-compose.yml`, "utf8"));
   });
-  test("runs bootstrap restart/upgrade/failure scenarios", () => {
+  test("runs bootstrap, lifecycle and provider-plan regression scenarios", () => {
     const result = spawnSync("python3", ["-m", "unittest", "discover", "-s", "tests/coder-dev"], {
       encoding: "utf8",
       env: { ...process.env, PYTHONDONTWRITEBYTECODE: "1" },
     });
     if (result.status !== 0) console.error(result.stderr);
     expect(result.status).toBe(0);
-  });
+  }, 180000);
   test("routes only Coder and gates startup on readiness", () => {
     expect(services["coder-dev"]["x-runtipi"]).toEqual({ is_main: true, internal_port: 7080 });
     expect(services["coder-dev"].depends_on["coder-dev-postgres"].condition).toBe("service_healthy");
