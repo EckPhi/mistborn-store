@@ -44,6 +44,7 @@ See the [Runtipi custom app store guide](https://runtipi.io/docs/guides/create-y
 | <img src="apps/music-assistant/metadata/logo.jpg" width="32"> | [Music Assistant](https://github.com/music-assistant/server) | Music library manager and multi-room streaming |
 | <img src="apps/openthread-border-router/metadata/logo.jpg" width="32"> | [OpenThread Border Router](https://github.com/bnutzer/docker-otbr-tcp) | Thread mesh network border router (network RCP) |
 | <img src="apps/power-price-collector/metadata/logo.jpg" width="32"> | [Power Price Collector](https://github.com/EckPhi/power-price-collector) | European power prices into QuestDB, MQTT, Grist and more |
+| <img src="apps/pyload-ng/metadata/logo.jpg" width="32"> | [pyLoad-ng](https://github.com/pyload/pyload) | Lightweight web download manager with hoster plugins |
 | <img src="apps/questdb/metadata/logo.jpg" width="32"> | [QuestDB](https://github.com/questdb/questdb) | High-performance time-series database with SQL |
 | <img src="apps/rclone/metadata/logo.jpg" width="32"> | [Rclone](https://github.com/rclone/rclone) | Web interface for a host-installed rclone service |
 | <img src="apps/receipt-wrangler/metadata/logo.jpg" width="32"> | [Receipt Wrangler](https://github.com/Receipt-Wrangler/receipt-wrangler) | Self-hosted receipt manager with OCR and AI scanning |

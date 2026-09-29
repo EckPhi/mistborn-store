@@ -1,0 +1,16 @@
+x-runtipi:
+  schema_version: 2
+
+services:
+  pyload-ng:
+    image: linuxserver/pyload-ng:0.5.0b3.dev101-ls255
+    environment:
+      PUID: ${UID:-0}
+      PGID: ${GID:-0}
+      TZ: ${TZ}
+    volumes:
+      - ${APP_DATA_DIR}/config:/config
+      - ${ROOT_FOLDER_HOST}/media/downloads/pyload:/downloads
+    x-runtipi:
+      is_main: true
+      internal_port: 8000
