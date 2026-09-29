@@ -6,8 +6,8 @@ if [ ! -e /home/coder/.coder-home-initialized ]; then
   touch /home/coder/.coder-home-initialized
   chown coder:coder /home/coder/.coder-home-initialized
 fi
-mkdir -p /cache/{ccache,conan,pip,uv,npm,pnpm} /workspaces /home/coder/.ssh /home/coder/.config /home/coder/.local
-chown coder:coder /home/coder /home/coder/.ssh /home/coder/.config /home/coder/.local /workspaces /cache /cache/*
+mkdir -p /cache/{ccache,conan,pip,uv,uv-python,npm,pnpm,pub,cargo-target,playwright} /workspaces /home/coder/.ssh /home/coder/.config /home/coder/.local /home/coder/.cargo
+chown coder:coder /home/coder /home/coder/.ssh /home/coder/.config /home/coder/.local /home/coder/.cargo /workspaces /cache /cache/*
 chmod 700 /home/coder/.ssh
 if [ -S /var/run/docker.sock ]; then
   gid=$(stat -c '%g' /var/run/docker.sock)

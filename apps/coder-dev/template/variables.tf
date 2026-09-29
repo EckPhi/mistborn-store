@@ -14,3 +14,12 @@ variable "git_email" {
   type    = string
   default = ""
 }
+variable "development_stack" {
+  type        = string
+  default     = "general"
+  description = "Workspace image target, selected by the published template."
+  validation {
+    condition     = contains(["general", "python", "rust", "flutter"], var.development_stack)
+    error_message = "Select general, python, rust or flutter."
+  }
+}

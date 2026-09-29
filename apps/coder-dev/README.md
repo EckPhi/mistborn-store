@@ -1,11 +1,12 @@
 # Coder Development Environment
 
 A RunTipi 4.10.1+ app for trusted developers. It installs Coder, a private
-PostgreSQL service, the `general-development` template and a running `dev`
+PostgreSQL service, general/Python/Rust/Flutter templates and a running `dev`
 workspace. Workspace containers run beside Coder on the host Docker daemon.
 
 **Validation status:** schemas, bootstrap recovery scenarios and Terraform are
-checked locally. A clean Linux RunTipi installation, real image build, IDE
+checked locally; language images and sample Python/Rust/Flutter builds were
+checked on an existing AMD64 deployment. A clean Linux RunTipi installation, IDE
 connections, reboot persistence, vulnerability scan and backup/restore still
 require the [manual acceptance run](../../tests/coder-dev/ACCEPTANCE.md).
 Do not interpret the unit tests as a production deployment certification.
@@ -71,6 +72,19 @@ Coder carries SSH through its normal connectivity; no public workspace SSH port
 or workspace sshd is required. Shell sessions start in `/workspaces`.
 
 ## Develop and add workspaces
+
+Choose `python-development`, `rust-development`, `flutter-development` or
+`general-development` when creating a workspace. Python includes Python 3.13,
+uv, Poetry and Chromium runtime dependencies for Playwright. Rust includes
+Rust 1.97.1, rustfmt, Clippy, rust-analyzer, the WASI target and native build
+dependencies. Flutter includes Flutter 3.47.3/Dart, web/Linux tooling and JDK 17.
+Flutter is published only on AMD64 hosts; Android SDK/licenses and iOS/macOS
+builds are not included. Rust and Python also support ARM64. Node, pnpm and Bun
+are available across all templates. New language workspaces are created on
+demand; only the existing generic `dev` workspace is created automatically.
+
+See [moving existing projects into Coder](MIGRATION.md) for project selection,
+Git history, uncommitted files, secrets and rebuilding Linux dependencies.
 
 ```sh
 cd /workspaces

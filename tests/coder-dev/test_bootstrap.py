@@ -20,13 +20,16 @@ class Coder:
         self.user = None
         self.password = None
         self.template = None
+        self.templates = {}
         self.workspace = None
         self.commands = []
         self.admin_creations = 0
         self.login_count = 0
         self.fail_push = False
+        self.fail_template = None
         self.fail_create = False
         self.fail_login = False
+        self.fail_startup = False
         self.valid_token = "test-session"
         self.versions = {}
 
@@ -44,15 +47,18 @@ class Coder:
         if self.token != self.valid_token: return 401, None
         if path == "/api/v2/users/me": return 200, self.user
         if path == "/api/v2/users/me/organizations": return 200, [{"id": "org-id"}]
-        if path.endswith("/templates/general-development"):
-            return (200, self.template) if self.template else (404, None)
-        if path.startswith("/api/v2/templates/template-id/versions/"):
-            version = self.versions.get(path.rsplit('/', 1)[1])
+        if path.startswith("/api/v2/organizations/org-id/templates/"):
+            name = path.rsplit('/', 1)[1]
+            template = self.template if name == 'general-development' else self.templates.get(name)
+            return (200, template) if template else (404, None)
+        if path.startswith("/api/v2/templates/") and '/versions/' in path:
+            version = self.versions.get((path.split('/')[4], path.rsplit('/', 1)[1]))
             return (200, version) if version else (404, None)
-        if path == "/api/v2/templates/template-id/versions" and method == "PATCH": return 200, self.template
-        if path == "/api/v2/templates/template-id" and method == "PATCH":
-            self.template.update(body)
-            return 200, self.template
+        if path.startswith("/api/v2/templates/") and method == "PATCH":
+            identifier = path.split('/')[4]
+            template = self.template if identifier == 'template-id' else self.templates[identifier.removesuffix('-id')]
+            if not path.endswith('/versions'): template.update(body)
+            return 200, template
         if "/workspace/" in path:
             return (200, self.workspace) if self.workspace else (404, None)
         raise AssertionError((method, path))
@@ -60,13 +66,17 @@ class Coder:
     def cli(self, api, *args):
         self.commands.append(args)
         if args[0] == "templates":
-            if self.fail_push: raise b.BootstrapError("template failure")
-            self.template = {"id": "template-id"}
+            name = args[2]
+            if self.fail_push or self.fail_template == name: raise b.BootstrapError("template failure")
+            identifier = 'template-id' if name == 'general-development' else name + '-id'
+            template = {"id": identifier}
+            if name == 'general-development': self.template = template
+            else: self.templates[name] = template
             if '--name' in args:
-                self.versions[args[args.index('--name') + 1]] = {'id': 'version-id', 'job': {'status': 'succeeded'}}
+                self.versions[(identifier, args[args.index('--name') + 1])] = {'id': 'version-id', 'job': {'status': 'succeeded'}}
         if args[0] == "create":
             if self.fail_create: raise b.BootstrapError("workspace failure")
-            self.workspace = {"id": "workspace-id", "latest_build": {"status": "running", "resources": [{"agents": [{"status": "connected"}]}]}}
+            self.workspace = {"id": "workspace-id", "latest_build": {"status": "running", "resources": [{"agents": [{"status": "connected", "lifecycle_state": "start_error" if self.fail_startup else "ready"}]}]}}
         if args[0] == "start":
             self.workspace["latest_build"]["status"] = "running"
 
@@ -82,11 +92,12 @@ class BootstrapTests(unittest.TestCase):
         self.env = dict(CODER_DEV_ADMIN_USERNAME="testadmin", CODER_DEV_ADMIN_EMAIL="test@example.test",
                         CODER_DEV_ADMIN_PASSWORD="fictional-test-password", CODER_DEV_DATA_ROOT="/test/app-data", CODER_DEV_WORKSPACE_NAME="dev")
         self.coder = Coder()
+        self.templates = {"general-development": "general"}
         self.logs = io.StringIO()
 
     def run_bootstrap(self):
         with contextlib.redirect_stdout(self.logs):
-            b.run(self.coder, self.path, self.template, self.env, self.coder.cli)
+            b.run(self.coder, self.path, self.template, self.env, self.coder.cli, self.templates)
 
     def test_fresh_install_repeated_restarts_and_secret_safe_state(self):
         self.run_bootstrap()
@@ -136,11 +147,56 @@ class BootstrapTests(unittest.TestCase):
         self.assertEqual(sum(c[0] == 'start' for c in self.coder.commands), 1)
         self.assertEqual(sum(c[0] == 'create' for c in self.coder.commands), 1)
 
+    def test_connected_agent_startup_error_does_not_complete_bootstrap(self):
+        self.coder.fail_startup = True
+        with self.assertRaisesRegex(b.BootstrapError, 'startup script failed'):
+            self.run_bootstrap()
+        self.assertFalse(json.loads(self.path.read_text()).get('workspace_ready', False))
+
     def test_completed_push_before_state_write_is_reused(self):
         self.run_bootstrap()
-        state = json.loads(self.path.read_text()); state.pop('template_fingerprint'); b.save(self.path, state)
+        state = json.loads(self.path.read_text()); state['template_fingerprints'].pop('general-development'); b.save(self.path, state)
         self.run_bootstrap()
         self.assertEqual(sum(c[0] == 'templates' for c in self.coder.commands), 1)
+
+    def test_publishes_each_stack_once_without_extra_workspaces(self):
+        self.templates = b.development_templates('amd64')
+        self.run_bootstrap()
+        self.run_bootstrap()
+        pushes = [c for c in self.coder.commands if c[0] == 'templates']
+        self.assertEqual(len(pushes), 4)
+        for command in pushes:
+            self.assertIn('development_stack=' + self.templates[command[2]], command)
+        self.assertEqual(sum(c[0] == 'create' for c in self.coder.commands), 1)
+        self.assertEqual(len(json.loads(self.path.read_text())['template_fingerprints']), 4)
+
+    def test_partial_profile_publication_resumes_without_duplicate_general(self):
+        self.templates = b.development_templates('amd64')
+        self.coder.fail_template = 'python-development'
+        with self.assertRaises(b.BootstrapError): self.run_bootstrap()
+        self.coder.fail_template = None
+        self.run_bootstrap()
+        self.assertEqual(sum(c[0] == 'templates' and c[2] == 'general-development' for c in self.coder.commands), 1)
+        self.assertEqual(sum(c[0] == 'create' for c in self.coder.commands), 1)
+        self.assertEqual(self.coder.admin_creations, 1)
+
+    def test_failed_named_version_retry_keeps_stack_and_all_variables(self):
+        self.run_bootstrap()
+        state = json.loads(self.path.read_text())
+        fingerprint = state['template_fingerprints'].pop('general-development')
+        self.coder.versions[('template-id', 'bundle-' + fingerprint[:16])]['job']['status'] = 'failed'
+        b.save(self.path, state)
+        self.run_bootstrap()
+        command = self.coder.commands[-1]
+        self.assertNotIn('--name', command)
+        self.assertIn('development_stack=general', command)
+        self.assertIn('data_root=/test/app-data', command)
+        self.assertIn('git_name=', command)
+        self.assertIn('git_email=', command)
+
+    def test_arm64_skips_only_flutter(self):
+        with contextlib.redirect_stdout(self.logs):
+            self.assertEqual(set(b.development_templates('aarch64').values()), {'general', 'python', 'rust'})
 
     def test_user_deleted_workspace_is_not_recreated(self):
         self.run_bootstrap()

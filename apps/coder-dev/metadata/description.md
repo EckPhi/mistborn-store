@@ -1,7 +1,9 @@
 # Coder Development Environment
 
 A remote development appliance for trusted users: Coder, PostgreSQL, a default
-`general-development` template and an automatically created `dev` workspace.
+general, Python, Rust and Flutter templates and an automatically created `dev`
+workspace. Flutter web/Linux development requires an AMD64 host; Android SDK
+setup is separate, and iOS/macOS builds require a Mac.
 Enter administrator username, email and password during installation. The
 initial workspace image builds on first setup, so allow several minutes for
 package downloads. Clean-host acceptance is pending manual installation.
@@ -10,6 +12,11 @@ Connect VS Code, Cursor, JetBrains or `coder ssh dev`; open `/workspaces`, clone
 repository, build and test remotely. Git/LFS, GCC/Clang, CMake/Ninja, debuggers,
 Python/uv, Node/npm/pnpm, Conan, Docker CLI/Compose and ccache are included.
 Sources, home/configuration and caches survive workspace recreation.
+
+Create additional workspaces from `python-development` (Python 3.13, uv,
+Poetry), `rust-development` (Rust 1.97.1, Clippy, rust-analyzer, WASI), or
+`flutter-development` (Flutter 3.47.3/Dart, web/Linux tooling). Only `dev` is
+created automatically. See the [project migration guide](https://github.com/EckPhi/mistborn-store/blob/main/apps/coder-dev/MIGRATION.md).
 
 **Docker socket access gives approximately administrative control over the host.**
 Coder needs it to provision workspaces. Ordinary workspaces do not receive it

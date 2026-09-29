@@ -1,4 +1,4 @@
-# general-development
+# Development templates
 
 Pinned Coder and Docker Terraform providers create a sibling Docker container
 using a Debian Bookworm/Node LTS image built by the host Docker engine. The
@@ -21,8 +21,23 @@ runs the agent as `coder` (UID 1000). Bash lands in `/workspaces`.
 
 The agent configures ccache (10 GB), persistent pnpm storage and optional Git
 identity. IDE backends live in persistent home; their indexing and builds run
-remotely. Use Coder forwarding for development web ports. Additional language
-images/templates can reuse this storage and bootstrap structure later.
+remotely. Use Coder forwarding for development web ports.
+
+Bootstrap publishes this shared definition under `general-development`,
+`python-development`, `rust-development` and (AMD64 only)
+`flutter-development`. It selects the corresponding Docker build target using
+the `development_stack` variable. Profiles have distinct image names and share
+cached base-image layers, but each workspace has independent source/home/cache
+directories. Image resources exist only while the workspace is started;
+stopping removes Terraform image ownership while retaining the local image.
+
+Python adds Python 3.13/Poetry and Chromium runtime dependencies. Rust adds
+Rust 1.97.1, Clippy, rust-analyzer, WASI and native libraries. Flutter adds a
+verified Flutter 3.47.3 source commit, Dart, Linux/web tooling and JDK 17.
+Flutter's build-time tool cache lives in the SDK, while project packages use
+the persistent `/cache/pub` bind mount at runtime. Android SDK setup is separate.
+When changing Flutter, update both the tag and verified commit in the Dockerfile.
+See [project migration](../MIGRATION.md) for legacy Dart projects and Mac builds.
 
 For manual validation, run `terraform init -backend=false` and
 `terraform validate` in this directory. `.terraform.lock.hcl` includes AMD64

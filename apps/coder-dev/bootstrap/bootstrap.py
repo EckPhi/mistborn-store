@@ -83,7 +83,59 @@ def template_fingerprint(directory, variables):
     return digest.hexdigest()
 
 
-def run(api, state_path, template_dir, environment, invoke=cli):
+def development_templates(architecture=None):
+    import platform
+    architecture = architecture or platform.machine()
+    templates = {"general-development": "general", "python-development": "python", "rust-development": "rust"}
+    if architecture in ("x86_64", "amd64"):
+        templates["flutter-development"] = "flutter"
+    else:
+        print("Flutter template omitted: packaged SDK requires AMD64 Linux", flush=True)
+    return templates
+
+
+def publish_template(api, state, state_path, template_dir, variables, organization, name, invoke):
+    fingerprints = state.setdefault("template_fingerprints", {})
+    if name == "general-development" and name not in fingerprints and state.get("template_fingerprint"):
+        fingerprints[name] = state["template_fingerprint"]
+    fingerprint = template_fingerprint(template_dir, variables)
+    template_path = f"/api/v2/organizations/{quote(organization, safe='')}/templates/{name}"
+    status, template = api.request("GET", template_path)
+    require(status, (200, 404), "Template lookup")
+    new_template = status == 404
+    if new_template or fingerprints.get(name) != fingerprint:
+        args = ["templates", "push", name, "--yes", "--directory", str(template_dir), "--org", organization, "--name", "bundle-" + fingerprint[:16]]
+        for key, value in variables.items():
+            args.extend(["--variable", f"{key}={value}"])
+        # Recover a push that succeeded just before a crash/state-file write.
+        # A failed named import can be retried under a server-generated name.
+        published = None
+        if not new_template:
+            version_status, published = api.request("GET", f"/api/v2/templates/{template['id']}/versions/bundle-{fingerprint[:16]}")
+            require(version_status, (200, 404), "Template version lookup")
+        if published and published.get("job", {}).get("status") == "succeeded":
+            status, _ = api.request("PATCH", f"/api/v2/templates/{template['id']}/versions", {"id": published["id"]})
+            require(status, (200,), "Template version activation")
+        else:
+            if published:
+                name_index = args.index("--name")
+                del args[name_index:name_index + 2]  # Keep every template variable when retrying.
+            invoke(api, *args)
+        status, template = api.request("GET", template_path)
+        require(status, (200,), "Published template lookup")
+        if new_template:
+            status, _ = api.request("PATCH", f"/api/v2/templates/{template['id']}", {"default_ttl_ms": 0})
+            require(status, (200,), "Initial autostop configuration")
+        fingerprints[name] = fingerprint
+        state["template_fingerprints"] = fingerprints
+        save(state_path, state)
+        print(f"Template {name} published; existing workspaces were not updated", flush=True)
+    else:
+        print(f"Template {name} current", flush=True)
+
+
+
+def run(api, state_path, template_dir, environment, invoke=cli, templates=None):
     state = json.loads(state_path.read_text()) if state_path.exists() else {}
     first = wait_ready(api)
     if first == 404:
@@ -134,38 +186,9 @@ def run(api, state_path, template_dir, environment, invoke=cli):
         "git_name": environment.get("CODER_DEV_GIT_NAME", ""),
         "git_email": environment.get("CODER_DEV_GIT_EMAIL", ""),
     }
-    fingerprint = template_fingerprint(template_dir, variables)
-    template_path = f"/api/v2/organizations/{quote(organization, safe='')}/templates/general-development"
-    status, template = api.request("GET", template_path)
-    require(status, (200, 404), "Template lookup")
-    new_template = status == 404
-    if new_template or state.get("template_fingerprint") != fingerprint:
-        args = ["templates", "push", "general-development", "--yes", "--directory", str(template_dir), "--org", organization, "--name", "bundle-" + fingerprint[:16]]
-        for key, value in variables.items():
-            args.extend(["--variable", f"{key}={value}"])
-        # Recover a push that succeeded just before a crash/state-file write.
-        # A failed named import can be retried under a server-generated name.
-        published = None
-        if not new_template:
-            version_status, published = api.request("GET", f"/api/v2/templates/{template['id']}/versions/bundle-{fingerprint[:16]}")
-            require(version_status, (200, 404), "Template version lookup")
-        if published and published.get("job", {}).get("status") == "succeeded":
-            status, _ = api.request("PATCH", f"/api/v2/templates/{template['id']}/versions", {"id": published["id"]})
-            require(status, (200,), "Template version activation")
-        else:
-            if published:
-                args = args[:-2]  # Failed/canceled named version: choose a fresh name.
-            invoke(api, *args)
-        status, template = api.request("GET", template_path)
-        require(status, (200,), "Published template lookup")
-        if new_template:
-            status, _ = api.request("PATCH", f"/api/v2/templates/{template['id']}", {"default_ttl_ms": 0})
-            require(status, (200,), "Initial autostop configuration")
-        state["template_fingerprint"] = fingerprint
-        save(state_path, state)
-        print("Template published; existing workspaces were not updated", flush=True)
-    else:
-        print("Template current", flush=True)
+    for template_name, stack in (templates if templates is not None else development_templates()).items():
+        publish_template(api, state, state_path, template_dir,
+                         {**variables, "development_stack": stack}, organization, template_name, invoke)
 
     name = state.get("workspace_name", environment.get("CODER_DEV_WORKSPACE_NAME", "dev"))
     if not state.get("workspace_ready"):
@@ -196,7 +219,9 @@ def run(api, state_path, template_dir, environment, invoke=cli):
                 require(status, (200,), "Initial workspace readiness")
                 build = workspace["latest_build"]
                 agents = [agent for resource in build.get("resources", []) for agent in resource.get("agents", []) or []]
-                if build["status"] == "running" and agents and all(a["status"] == "connected" for a in agents):
+                if any(a.get("lifecycle_state") in ("start_error", "start_timeout") for a in agents):
+                    raise BootstrapError("Initial workspace startup script failed; inspect its agent startup log in Coder.")
+                if build["status"] == "running" and agents and all(a["status"] == "connected" and a.get("lifecycle_state", "ready") == "ready" for a in agents):
                     state["workspace_ready"] = True
                     break
                 if build["status"] in ("failed", "canceled", "deleted"):

@@ -2,8 +2,10 @@
 
 Run on a disposable/trusted Linux host with RunTipi 4.10.1+ and Docker's normal
 `/var/run/docker.sock`. This checklist is intentionally **not marked passed**.
-No remote test host was available while implementing the app. Repeat on AMD64
-and ARM64 before certifying both as fully runtime tested.
+No remote test host was available during the initial implementation. Language
+template follow-up smoke checks use the user's existing AMD64 deployment; they
+do not complete this clean-install, restore, IDE or architecture checklist.
+Repeat on AMD64 and ARM64 before certifying both as fully runtime tested.
 
 ## Install and connect
 
