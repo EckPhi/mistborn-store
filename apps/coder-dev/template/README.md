@@ -23,6 +23,11 @@ runs the agent as `coder` (UID 1000). Zsh is the login shell and lands in
 Run `p10k configure` to customize the prompt; a compatible terminal font is
 needed for all symbols to render.
 
+The Zed button opens `/workspaces` through the pinned Coder Registry Zed
+module (1.1.5). On the desktop, install Zed and either run `coder config-ssh`
+with the Coder CLI or use Coder Desktop before clicking the button. No Zed
+server or editor is installed inside the workspace.
+
 ## AI coding agents
 
 `general-development` includes Codex 0.159.2, Claude Code 2.1.285,

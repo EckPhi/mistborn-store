@@ -72,6 +72,11 @@ Coder carries SSH through its normal connectivity; no public workspace SSH port
 or workspace sshd is required. Shell sessions start in `/workspaces` with Zsh,
 Oh My Zsh and Powerlevel10k. Run `p10k configure` to customize the prompt.
 
+**Zed:** use the workspace's **Zed** button to open `/workspaces`. Install Zed
+on your desktop and run `coder config-ssh` locally, or use Coder Desktop, first.
+The button uses the pinned Coder Registry module and does not install Zed in
+the workspace.
+
 ## Develop and add workspaces
 
 Choose `python-development`, `rust-development`, `flutter-development` or

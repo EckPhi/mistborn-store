@@ -76,6 +76,13 @@ resource "coder_agent" "main" {
     UV_PYTHON_INSTALL_DIR = "/cache/uv-python"
   }
 }
+module "zed" {
+  count    = data.coder_workspace.me.start_count
+  source   = "registry.coder.com/coder/zed/coder"
+  version  = "1.1.5"
+  agent_id = coder_agent.main.id
+  folder   = "/workspaces"
+}
 # Builds on the host daemon, using the architecture of the Coder provisioner.
 resource "docker_image" "development" {
   count        = data.coder_workspace.me.start_count
