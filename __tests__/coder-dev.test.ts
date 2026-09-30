@@ -10,16 +10,25 @@ const services = document.services;
 describe("Coder development deployment", () => {
   test("builds and runs the general image as coder in CI", () => {
     if (!process.env.CI) return;
-    const build = spawnSync("docker", [
-      "build", "--target", "general", "--build-arg", "ENABLE_AI_AGENTS=true",
-      "-t", "coder-general-smoke", `${root}/template/image`,
-    ], { encoding: "utf8", timeout: 3_300_000 });
+    const build = spawnSync(
+      "docker",
+      ["build", "--target", "general", "--build-arg", "ENABLE_AI_AGENTS=true", "-t", "coder-general-smoke", `${root}/template/image`],
+      { encoding: "utf8", timeout: 3_300_000 },
+    );
     if (build.status !== 0) console.error(build.stderr || build.stdout);
     expect(build.status).toBe(0);
-    const smoke = spawnSync("docker", [
-      "run", "--rm", "--user", "1000:1000", "--entrypoint", "/bin/sh",
-      "coder-general-smoke", "-ec",
-      `test "$HOME" = /home/coder
+    const smoke = spawnSync(
+      "docker",
+      [
+        "run",
+        "--rm",
+        "--user",
+        "1000:1000",
+        "--entrypoint",
+        "/bin/sh",
+        "coder-general-smoke",
+        "-ec",
+        `test "$HOME" = /home/coder
        codex --version && claude --version && omp --version && vibe --version
        vibe-acp --help >/dev/null
        git --version && python3 --version && node --version
@@ -27,7 +36,9 @@ describe("Coder development deployment", () => {
        test -f /opt/oh-my-zsh/oh-my-zsh.sh
        test -f /opt/oh-my-zsh/custom/themes/powerlevel10k/powerlevel10k.zsh-theme
        agent-info`,
-    ], { encoding: "utf8", timeout: 300_000 });
+      ],
+      { encoding: "utf8", timeout: 300_000 },
+    );
     if (smoke.status !== 0) console.error(smoke.stderr || smoke.stdout);
     expect(smoke.status).toBe(0);
   }, 3_600_000);
