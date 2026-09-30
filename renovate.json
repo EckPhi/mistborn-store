@@ -41,6 +41,15 @@
         "(?:^|\\n)FROM (?<depName>[^ :\\r\\n]+):(?<currentValue>[^ \\r\\n]+)"
       ],
       "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^apps/coder-dev/template/image/Dockerfile$/"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>[^ ]+) depName=(?<depName>[^\\r\\n]+)\\r?\\nARG [A-Z0-9_]+=(?<currentValue>[^\\r\\n]+)"
+      ]
     }
   ],
   "packageRules": [

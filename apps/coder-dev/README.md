@@ -69,7 +69,8 @@ coder config-ssh
 ```
 
 Coder carries SSH through its normal connectivity; no public workspace SSH port
-or workspace sshd is required. Shell sessions start in `/workspaces`.
+or workspace sshd is required. Shell sessions start in `/workspaces` with Zsh,
+Oh My Zsh and Powerlevel10k. Run `p10k configure` to customize the prompt.
 
 ## Develop and add workspaces
 
@@ -78,6 +79,13 @@ Choose `python-development`, `rust-development`, `flutter-development` or
 uv, Poetry and Chromium runtime dependencies for Playwright. Rust includes
 Rust 1.97.1, rustfmt, Clippy, rust-analyzer, the WASI target and native build
 dependencies. Flutter includes Flutter 3.47.3/Dart, web/Linux tooling and JDK 17.
+
+The general workspace includes Codex, Claude Code, OMP and Mistral Vibe when
+**Enable AI coding tools** is on (the default). Run `agent-info` for versions,
+then launch the agent you want from a repository. Sign in or supply a supported
+provider key at runtime; credentials and settings live in the persistent
+`/home/coder` mount. `tmux new -s codex` can keep a CLI running across an IDE
+disconnect. The agents work independently of Omnigent.
 Flutter is published only on AMD64 hosts; Android SDK/licenses and iOS/macOS
 builds are not included. Rust and Python also support ARM64. Node, pnpm and Bun
 are available across all templates. New language workspaces are created on

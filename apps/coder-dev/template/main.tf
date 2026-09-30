@@ -12,6 +12,14 @@ data "coder_parameter" "host_docker" {
   default      = "false"
   mutable      = true
 }
+data "coder_parameter" "ai_agents" {
+  name         = "ai_agents"
+  display_name = "Enable AI coding tools"
+  description  = "Include Codex, Claude Code, OMP and Mistral Vibe in the workspace image."
+  type         = "bool"
+  default      = "true"
+  mutable      = true
+}
 data "coder_parameter" "cpu" {
   name         = "cpu"
   display_name = "CPU limit (cores, 0 = unlimited)"
@@ -31,7 +39,13 @@ data "coder_parameter" "memory" {
 locals {
   root       = "${var.data_root}/workspaces/${data.coder_workspace.me.id}"
   cache      = "${var.data_root}/caches/${data.coder_workspace.me.id}"
-  image_hash = substr(sha256(join("", [file("${path.module}/image/Dockerfile"), file("${path.module}/image/entrypoint.sh")])), 0, 16)
+  image_hash = substr(sha256(join("", [
+    file("${path.module}/image/Dockerfile"),
+    file("${path.module}/image/entrypoint.sh"),
+    file("${path.module}/image/zshrc"),
+    file("${path.module}/image/agent-info"),
+    data.coder_parameter.ai_agents.value,
+  ])), 0, 16)
 }
 resource "coder_agent" "main" {
   arch           = data.coder_provisioner.me.arch
@@ -65,11 +79,14 @@ resource "coder_agent" "main" {
 # Builds on the host daemon, using the architecture of the Coder provisioner.
 resource "docker_image" "development" {
   count        = data.coder_workspace.me.start_count
-  name         = "coder-dev-workspace:${var.development_stack}-${local.image_hash}-${data.coder_provisioner.me.arch}"
+  name         = "coder-dev-workspace:${var.development_stack}-1.3.0-${local.image_hash}-${data.coder_provisioner.me.arch}"
   keep_locally = true
   build {
     context = "${path.module}/image"
     target  = var.development_stack
+    build_args = {
+      ENABLE_AI_AGENTS = data.coder_parameter.ai_agents.value
+    }
   }
   lifecycle {
     precondition {

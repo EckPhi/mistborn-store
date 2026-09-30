@@ -1,0 +1,9 @@
+export ZSH=/opt/oh-my-zsh
+export ZSH_CUSTOM=/opt/oh-my-zsh/custom
+ZSH_THEME="powerlevel10k/powerlevel10k"
+plugins=(git)
+zstyle ':omz:update' mode disabled
+export POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true
+source "$ZSH/oh-my-zsh.sh"
+[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+[[ -o interactive ]] && cd /workspaces && cat /etc/coder-dev-motd

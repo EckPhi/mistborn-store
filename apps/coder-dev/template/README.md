@@ -17,7 +17,39 @@ CPU cores and memory MiB default to 0 (unlimited). Host Docker access is false b
 default; enabling it grants host administrative privileges. No privileged
 container, host network, direct SSH port or Docker TCP listener is created.
 The entrypoint initializes a fresh home, detects the optional socket GID, and
-runs the agent as `coder` (UID 1000). Bash lands in `/workspaces`.
+runs the agent as `coder` (UID 1000). Zsh is the login shell and lands in
+`/workspaces`. Oh My Zsh and Powerlevel10k are pinned in the image; the default
+`~/.zshrc` is copied only when absent, so personal changes survive upgrades.
+Run `p10k configure` to customize the prompt; a compatible terminal font is
+needed for all symbols to render.
+
+## AI coding agents
+
+`general-development` includes Codex 0.159.2, Claude Code 2.1.285,
+OMP 18.4.4, and Mistral Vibe 2.25.8 by default. The Boolean **Enable AI coding
+tools** parameter turns all four off for a smaller image. Run `agent-info` to
+see installed versions. The image is versioned `general-1.3.0` plus a content
+hash; runtime bumps require a version bump and review.
+
+Run `codex`, `claude`, `omp`, or `vibe` in a project under `~/workspaces` and
+follow that CLI's own first-run sign-in or configuration flow. No provider key,
+MCP server, model, or approval policy is preconfigured. Provider environment
+variables supported by each CLI can be supplied at runtime; never put them in
+Docker build arguments or committed Terraform values. Codex uses `~/.codex`,
+Claude Code uses `~/.claude` and `~/.claude.json`, OMP uses `~/.omp`, and Vibe
+uses `~/.vibe`. Those paths stay on the persistent `/home/coder` mount. Project
+settings in repositories remain untouched. Vibe also supplies `vibe-acp`.
+
+Use `tmux new -s codex` followed by `codex` (or another agent) to keep a
+session running when the IDE disconnects; reattach with `tmux attach -t codex`.
+Nothing starts an agent automatically. Omnigent orchestration is a separate
+service and needs no server installation here. Host Docker access remains
+opt-in and grants host-level power to any process, including an AI agent.
+
+The template currently builds an uncached image on the first workspace start
+because Terraform's `docker_image` resource builds on the RunTipi Docker host.
+It reuses that image on subsequent workspace starts. A separate image
+publication pipeline is required to remove this first-start build delay.
 
 The agent configures ccache (10 GB), persistent pnpm storage and optional Git
 identity. IDE backends live in persistent home; their indexing and builds run

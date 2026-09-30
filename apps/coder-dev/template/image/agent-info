@@ -1,0 +1,13 @@
+#!/bin/sh
+set -eu
+printf 'Installed AI agents\n\n'
+for entry in 'Codex:codex' 'Claude:claude' 'OMP:omp' 'Vibe:vibe'; do
+  label=${entry%%:*}
+  command=${entry#*:}
+  if command -v "$command" >/dev/null 2>&1; then
+    printf '%-8s %s\n' "$label" "$("$command" --version 2>&1 | head -n 1)"
+  else
+    printf '%-8s unavailable\n' "$label"
+  fi
+done
+printf '\nAuthentication: Run the desired agent once and follow its login or setup flow.\n'
