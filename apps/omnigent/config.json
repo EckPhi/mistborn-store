@@ -1,0 +1,76 @@
+{
+  "name": "Omnigent",
+  "id": "omnigent",
+  "available": true,
+  "short_desc": "Independent AI agent control plane with external workspace runners",
+  "author": "Omnigent",
+  "port": 8097,
+  "categories": [
+    "ai",
+    "development"
+  ],
+  "description": "Independent Omnigent service for a modular remote development platform.",
+  "tipi_version": 1,
+  "version": "v0.16.0",
+  "source": "https://github.com/omnigent-ai/omnigent",
+  "exposable": true,
+  "dynamic_config": true,
+  "min_tipi_version": "4.10.1",
+  "supported_architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Public or private base URL",
+      "env_variable": "OMNIGENT_BASE_URL",
+      "required": true,
+      "hint": "Full browser URL including scheme and port; reachable from workspace runners."
+    },
+    {
+      "type": "random",
+      "label": "PostgreSQL password",
+      "env_variable": "OMNIGENT_DB_PASSWORD",
+      "required": false,
+      "hint": "Generated once. Do not change after database initialization.",
+      "min": 64,
+      "encoding": "hex"
+    },
+    {
+      "type": "random",
+      "label": "Session cookie secret",
+      "env_variable": "OMNIGENT_COOKIE_SECRET",
+      "required": false,
+      "hint": "Back up with the database and app data.",
+      "min": 64,
+      "encoding": "hex"
+    },
+    {
+      "type": "text",
+      "label": "Optional Coder URL",
+      "env_variable": "OMNIGENT_CODER_URL",
+      "required": false,
+      "default": "",
+      "hint": "Reserved integration contract; workspace provisioning adapter is experimental, not a native Omnigent provider."
+    },
+    {
+      "type": "password",
+      "label": "Optional Coder integration token",
+      "env_variable": "OMNIGENT_CODER_API_TOKEN",
+      "required": false,
+      "default": "",
+      "hint": "Dedicated integration account only. Not automatically consumed by upstream."
+    },
+    {
+      "type": "text",
+      "label": "Optional MLflow tracking URL",
+      "env_variable": "OMNIGENT_MLFLOW_TRACKING_URI",
+      "required": false,
+      "default": "",
+      "hint": "Endpoint contract; enable tracing in workspace-side runner configuration."
+    }
+  ],
+  "created_at": 1790760001681,
+  "updated_at": 1790760001681
+}

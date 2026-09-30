@@ -30,3 +30,9 @@ jobs:
 
       - name: Run tests
         run: bun test
+
+      - name: Verify upstream MLflow authentication, artifacts and restart behavior
+        run: |
+          python3 -m venv /tmp/mlflow-smoke
+          /tmp/mlflow-smoke/bin/python -c 'import json, subprocess; version = json.load(open("apps/mlflow/config.json"))["version"].removeprefix("v").removesuffix("-full"); subprocess.check_call(["/tmp/mlflow-smoke/bin/pip", "install", "mlflow[auth,db]==" + version])'
+          /tmp/mlflow-smoke/bin/python tests/platform/mlflow_local.py

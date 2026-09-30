@@ -11,10 +11,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git git-lfs curl wget ca-certificates openssh-client rsync bash zsh jq \
     unzip zip tar less nano vim build-essential gcc g++ clang lldb gdb cmake \
     ninja-build make pkg-config ccache python3 python3-pip python3-venv \
-    ripgrep fd-find fzf htop gh shellcheck tmux gosu && \
+    ripgrep fd-find fzf htop gh shellcheck tmux gosu bubblewrap procps lsof && \
     rm -rf /var/lib/apt/lists/* && \
     usermod -l coder -d /home/coder -s /usr/bin/zsh node && \
-    groupmod -n coder node && mkdir -p /home/coder && chown coder:coder /home/coder
+    groupmod -n coder node && mkdir -p /home/coder && chown coder:coder /home/coder && \
+    ln -s /usr/bin/fdfind /usr/local/bin/fd
 # Install the shell framework and theme in the image, outside persistent home.
 # renovate: datasource=github-commits depName=ohmyzsh/ohmyzsh
 ARG OH_MY_ZSH_COMMIT=4d4cfc287e9d887b81242c0e431b5f49f9cec5c1
@@ -30,27 +31,42 @@ COPY zshrc /etc/skel/.zshrc
 # Python 3.13 also supplies Vibe's supported Python runtime in the general image.
 COPY --from=python-runtime /usr/local /usr/local
 # Pin Python developer utilities; install outside the persisted developer home.
+# renovate: datasource=pypi depName=uv
+ARG UV_VERSION=0.8.22
+# renovate: datasource=pypi depName=conan
+ARG CONAN_VERSION=2.20.1
+# renovate: datasource=npm depName=pnpm
+ARG PNPM_VERSION=10.17.1
+# renovate: datasource=npm depName=bun
+ARG BUN_VERSION=1.3.14
 RUN python3 -m venv /opt/dev-tools && \
-    /opt/dev-tools/bin/pip install --no-cache-dir uv==0.8.22 conan==2.20.1 && \
-    npm install -g pnpm@10.17.1 bun@1.3.14 && \
+    /opt/dev-tools/bin/pip install --no-cache-dir "uv==$UV_VERSION" "conan==$CONAN_VERSION" && \
+    npm install -g "pnpm@$PNPM_VERSION" "bun@$BUN_VERSION" && \
     mkdir -p /usr/local/lib/docker/cli-plugins
 # AI agent runtimes. Authentication and mutable settings stay under /home/coder.
 # renovate: datasource=npm depName=@openai/codex
 ARG CODEX_VERSION=0.159.2
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
 ARG CLAUDE_CODE_VERSION=2.1.285
+# renovate: datasource=npm depName=opencode-ai
+ARG OPENCODE_VERSION=1.18.33
+# renovate: datasource=pypi depName=omnigent
+ARG OMNIGENT_VERSION=0.16.0
 # renovate: datasource=npm depName=@oh-my-pi/pi-coding-agent
 ARG OMP_VERSION=18.4.4
 # renovate: datasource=pypi depName=mistral-vibe
 ARG VIBE_VERSION=2.25.8
 ARG ENABLE_AI_AGENTS=true
 RUN if [ "$ENABLE_AI_AGENTS" = true ]; then \
-      npm install -g "@openai/codex@$CODEX_VERSION" "@anthropic-ai/claude-code@$CLAUDE_CODE_VERSION" && \
+      npm install -g "@openai/codex@$CODEX_VERSION" "@anthropic-ai/claude-code@$CLAUDE_CODE_VERSION" "opencode-ai@$OPENCODE_VERSION" && \
+      UV_TOOL_DIR=/opt/omnigent-tools UV_TOOL_BIN_DIR=/usr/local/bin \
+        /opt/dev-tools/bin/uv tool install --python /usr/local/bin/python3 "omnigent==$OMNIGENT_VERSION" && \
       BUN_INSTALL=/opt/omp-bun bun install -g "@oh-my-pi/pi-coding-agent@$OMP_VERSION" && \
       UV_TOOL_DIR=/opt/vibe-tools UV_TOOL_BIN_DIR=/usr/local/bin \
         /opt/dev-tools/bin/uv tool install --python /usr/local/bin/python3 "mistral-vibe==$VIBE_VERSION" && \
       PATH="/opt/omp-bun/bin:$PATH" codex --version && \
       PATH="/opt/omp-bun/bin:$PATH" claude --version && \
+      opencode --version && omnigent --version && \
       PATH="/opt/omp-bun/bin:$PATH" omp --version && \
       PATH="/opt/omp-bun/bin:$PATH" vibe --version; \
     fi
@@ -60,7 +76,7 @@ COPY entrypoint.sh /usr/local/bin/workspace-entrypoint
 COPY agent-info /usr/local/bin/agent-info
 RUN chmod 755 /usr/local/bin/workspace-entrypoint && \
     chmod 755 /usr/local/bin/agent-info && \
-    printf 'Coder Development Workspace\nProject directory: ~/workspaces (/workspaces)\nAI agents: codex, claude, omp, vibe (run agent-info)\nTools: git, gh, tmux, gcc, clang, cmake, ninja, python, uv, node, pnpm\n' > /etc/coder-dev-motd && \
+    printf 'Coder Development Workspace\nProject directory: ~/workspaces (/workspaces)\nAI agents: codex, claude, opencode, omnigent, omp, vibe (run agent-info)\nTools: git, gh, tmux, gcc, clang, cmake, ninja, python, uv, node, pnpm\n' > /etc/coder-dev-motd && \
     printf '\ncd /workspaces\ncat /etc/coder-dev-motd\n' >> /etc/bash.bashrc
 ENV HOME=/home/coder PATH=/opt/omp-bun/bin:/home/coder/.local/share/pnpm:/opt/dev-tools/bin:$PATH
 WORKDIR /workspaces

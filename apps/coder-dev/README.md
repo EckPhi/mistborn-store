@@ -216,6 +216,17 @@ Coder/PostgreSQL shutdown. It records previously running workspaces in
 finish. Startup resumes only those recorded workspaces, without changing their
 template versions or starting workspaces that were already stopped.
 
+Before shutdown completes, bootstrap removes Unix socket files from each
+workspace's `.codex/ipc` directory. Codex recreates these runtime sockets when
+needed; removing them prevents RunTipi's native backup from failing while
+copying the persistent workspace home. Other Codex files and workspace data
+are preserved.
+
+If a workspace resume fails during app startup, bootstrap logs the issue and
+retries every 30 seconds while keeping Coder healthy. The resume journal stays
+in place until Coder confirms the workspace is running or the user has changed
+its state.
+
 RunTipi 4.10.1 has no app-store pre-stop/post-start hook fields. This is an
 equivalent container lifecycle mechanism, not a RunTipi hook. Check the bootstrap
 log for **Workspace shutdown complete** during your first backup test. If a build
@@ -285,3 +296,22 @@ Coder service images, preserves the main Coder version when a helper changes,
 and regenerates the embedded runtime archive. Coder app updates require human review
 and never use the store's automatic merge label. Manual review must rerun
 [acceptance](../../tests/coder-dev/ACCEPTANCE.md) before claiming production readiness.
+# Modular platform additions
+
+The general image includes OpenCode and the optional Omnigent host/runner CLI
+alongside Codex, Claude Code and tmux. Authenticate separately inside the
+workspace; all home-based credentials persist. New template parameters provide
+optional Omnigent/MLflow URLs without making either service a dependency.
+
+The experimental **Enable Docker development** parameter adds an isolated
+rootless Docker sidecar with a Unix socket, off by default. It still requires a
+privileged sidecar and host user-namespace support. It is mutually exclusive
+with the existing trusted-user host-socket parameter. Its named daemon-data
+volume is outside RunTipi app-data backups and is disposable on workspace
+deletion; keep source and important artifacts in normal persistent workspace
+storage. Live validation of this mode remains pending.
+
+See the [platform guide](../../docs/development-platform.md) for independent
+Omnigent/MLflow installation, credentials, backups and the experimental Coder
+provisioning bridge. [Current validation](../../docs/development-platform-validation.md)
+explicitly separates passing local checks from pending live acceptance.

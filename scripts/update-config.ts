@@ -12,6 +12,12 @@ type AppConfig = {
 
 const updateAppConfig = async (packageFile: string, newVersion: string) => {
   try {
+    if (packageFile.startsWith("apps/mlflow/") || packageFile.startsWith("apps/omnigent/") || packageFile === "scripts/platform/mlflow.compose.yml") {
+      const { spawnSync } = await import("node:child_process");
+      const result = spawnSync("python3", ["scripts/platform/update.py", packageFile], { stdio: "inherit" });
+      if (result.status !== 0) process.exit(result.status ?? 1);
+      return;
+    }
     if (packageFile.startsWith("apps/coder-dev/") || packageFile === "scripts/coder-dev/compose.template.yml") {
       const { spawnSync } = await import("node:child_process");
       const result = spawnSync("python3", ["scripts/coder-dev/update.py", packageFile], { stdio: "inherit" });

@@ -203,7 +203,8 @@ def run(api, state_path, template_dir, environment, invoke=cli, templates=None):
             state.update(workspace_creation_attempted=True, workspace_name=name)
             save(state_path, state)
             invoke(api, "create", name, "--template", "general-development", "--org", organization,
-                   "--yes", "--parameter", "host_docker=false", "--parameter", "cpu=0", "--parameter", "memory=0")
+                   "--yes", "--use-parameter-defaults", "--parameter", "host_docker=false",
+                   "--parameter", "docker_development=false", "--parameter", "cpu=0", "--parameter", "memory=0")
             status, workspace = api.request("GET", path)
             require(status, (200,), "Created workspace lookup")
         if not state.get("workspace_creation_attempted"):
@@ -263,7 +264,7 @@ def main():
             require(status, (200,), "Shutdown identity")
             if user["id"] != state.get("user_id"):
                 raise BootstrapError("Shutdown identity differs from bootstrap; stop workspaces manually.")
-            lifecycle.stop(api, journal, save)
+            lifecycle.stop(api, journal, save, Path("/workspaces"))
         except (BootstrapError, lifecycle.LifecycleError, KeyError, ValueError):
             print("Automatic workspace shutdown failed. Stop all workspaces manually before taking a backup.", flush=True)
             raise SystemExit(1)
@@ -279,16 +280,14 @@ def main():
         try:
             lifecycle.resume(api, journal, save)
         except lifecycle.LifecycleError as error:
-            raise BootstrapError(str(error)) from error
+            print(f"Workspace resume deferred; Coder is ready and will retry: {error}", flush=True)
     Path("/tmp/ready").touch()
     while True:
         time.sleep(30)
         try:
             lifecycle.resume(api, journal, save)
-            Path("/tmp/ready").touch()
-        except (BootstrapError, lifecycle.LifecycleError):
-            print("Workspace resume needs attention; inspect Coder workspace builds.", flush=True)
-            Path("/tmp/ready").unlink(missing_ok=True)
+        except lifecycle.LifecycleError as error:
+            print(f"Workspace resume still needs attention; Coder remains ready and will retry: {error}", flush=True)
 
 
 if __name__ == "__main__":

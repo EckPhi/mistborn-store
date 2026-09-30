@@ -12,12 +12,34 @@ data "coder_parameter" "host_docker" {
   default      = "false"
   mutable      = true
 }
+data "coder_parameter" "docker_development" {
+  name         = "docker_development"
+  display_name = "Enable Docker development (experimental rootless sidecar)"
+  description  = "Isolated rootless daemon, no host socket. Requires a privileged sidecar for user namespaces; trusted hosts only."
+  type         = "bool"
+  default      = "false"
+  mutable      = true
+}
 data "coder_parameter" "ai_agents" {
   name         = "ai_agents"
   display_name = "Enable AI coding tools"
-  description  = "Include Codex, Claude Code, OMP and Mistral Vibe in the workspace image."
+  description  = "Include Codex, Claude Code, OpenCode, Omnigent, OMP and Mistral Vibe in the workspace image."
   type         = "bool"
   default      = "true"
+  mutable      = true
+}
+data "coder_parameter" "omnigent_url" {
+  name         = "omnigent_url"
+  display_name = "Optional Omnigent URL"
+  type         = "string"
+  default      = ""
+  mutable      = true
+}
+data "coder_parameter" "mlflow_url" {
+  name         = "mlflow_url"
+  display_name = "Optional MLflow tracking URL"
+  type         = "string"
+  default      = ""
   mutable      = true
 }
 data "coder_parameter" "cpu" {
@@ -37,8 +59,8 @@ data "coder_parameter" "memory" {
   validation { min = 0 }
 }
 locals {
-  root       = "${var.data_root}/workspaces/${data.coder_workspace.me.id}"
-  cache      = "${var.data_root}/caches/${data.coder_workspace.me.id}"
+  root  = "${var.data_root}/workspaces/${data.coder_workspace.me.id}"
+  cache = "${var.data_root}/caches/${data.coder_workspace.me.id}"
   image_hash = substr(sha256(join("", [
     file("${path.module}/image/Dockerfile"),
     file("${path.module}/image/entrypoint.sh"),
@@ -57,23 +79,36 @@ resource "coder_agent" "main" {
     ccache --max-size=10G
     pnpm config set store-dir /cache/pnpm --global
     git lfs install --skip-repo >/dev/null
+    if [ -n "$${DOCKER_HOST:-}" ]; then
+      ready=false
+      for attempt in {1..60}; do
+        if docker info >/dev/null 2>&1; then ready=true; break; fi
+        sleep 2
+      done
+      if [ "$ready" != true ]; then echo 'Development Docker daemon did not become ready.' >&2; exit 1; fi
+    fi
     if [ -n "$CODER_DEV_GIT_NAME" ]; then git config --global user.name "$CODER_DEV_GIT_NAME"; fi
     if [ -n "$CODER_DEV_GIT_EMAIL" ]; then git config --global user.email "$CODER_DEV_GIT_EMAIL"; fi
     printf 'Coder ${var.development_stack} Development Workspace\nClone a repository: git clone <repo>\n'
   EOT
   env = {
-    CODER_DEV_GIT_NAME    = var.git_name
-    CODER_DEV_GIT_EMAIL   = var.git_email
-    CCACHE_DIR            = "/cache/ccache"
-    CONAN_HOME            = "/cache/conan"
-    PIP_CACHE_DIR         = "/cache/pip"
-    UV_CACHE_DIR          = "/cache/uv"
-    npm_config_cache      = "/cache/npm"
-    PNPM_HOME             = "/home/coder/.local/share/pnpm"
-    XDG_CACHE_HOME        = "/cache"
-    PUB_CACHE             = "/cache/pub"
-    CARGO_TARGET_DIR      = "/cache/cargo-target"
-    UV_PYTHON_INSTALL_DIR = "/cache/uv-python"
+    OMNIGENT_SERVER            = data.coder_parameter.omnigent_url.value
+    MLFLOW_TRACKING_URI        = data.coder_parameter.mlflow_url.value
+    OMNIGENT_ANALYTICS         = "0"
+    OMNIGENT_DISABLE_TELEMETRY = "true"
+    DO_NOT_TRACK               = "1"
+    CODER_DEV_GIT_NAME         = var.git_name
+    CODER_DEV_GIT_EMAIL        = var.git_email
+    CCACHE_DIR                 = "/cache/ccache"
+    CONAN_HOME                 = "/cache/conan"
+    PIP_CACHE_DIR              = "/cache/pip"
+    UV_CACHE_DIR               = "/cache/uv"
+    npm_config_cache           = "/cache/npm"
+    PNPM_HOME                  = "/home/coder/.local/share/pnpm"
+    XDG_CACHE_HOME             = "/cache"
+    PUB_CACHE                  = "/cache/pub"
+    CARGO_TARGET_DIR           = "/cache/cargo-target"
+    UV_PYTHON_INSTALL_DIR      = "/cache/uv-python"
   }
 }
 module "zed" {
@@ -97,6 +132,10 @@ resource "docker_image" "development" {
   }
   lifecycle {
     precondition {
+      condition     = !(data.coder_parameter.host_docker.value == "true" && data.coder_parameter.docker_development.value == "true")
+      error_message = "Select either the rootless sidecar or host Docker socket, not both."
+    }
+    precondition {
       condition     = var.development_stack != "flutter" || data.coder_provisioner.me.arch == "amd64"
       error_message = "The packaged Flutter SDK requires an AMD64 Linux host. Use a Python, Rust or general template on ARM64."
     }
@@ -108,7 +147,7 @@ resource "docker_container" "workspace" {
   hostname   = data.coder_workspace.me.name
   image      = docker_image.development[0].image_id
   command    = ["bash", "-c", coder_agent.main.init_script]
-  env        = ["CODER_AGENT_TOKEN=${coder_agent.main.token}"]
+  env        = concat(["CODER_AGENT_TOKEN=${coder_agent.main.token}"], data.coder_parameter.docker_development.value == "true" ? ["DOCKER_HOST=unix:///docker-socket/docker.sock"] : [])
   memory     = tonumber(data.coder_parameter.memory.value)
   cpu_quota  = tonumber(data.coder_parameter.cpu.value) * 100000
   cpu_period = 100000
@@ -132,6 +171,14 @@ resource "docker_container" "workspace" {
       container_path = "/var/run/docker.sock"
     }
   }
+  dynamic "volumes" {
+    for_each = data.coder_parameter.docker_development.value == "true" ? [1] : []
+    content {
+      volume_name    = docker_volume.docker_socket[0].name
+      container_path = "/docker-socket"
+    }
+  }
+  depends_on = [docker_container.docker_development]
   host {
     host = "host.docker.internal"
     ip   = "host-gateway"
@@ -139,5 +186,45 @@ resource "docker_container" "workspace" {
   labels {
     label = "coder.workspace_id"
     value = data.coder_workspace.me.id
+  }
+}
+resource "docker_volume" "docker_socket" {
+  count = data.coder_parameter.docker_development.value == "true" ? 1 : 0
+  name  = "coder-dev-${data.coder_workspace.me.id}-docker-socket"
+}
+resource "docker_volume" "docker_data" {
+  count = data.coder_parameter.docker_development.value == "true" ? 1 : 0
+  name  = "coder-dev-${data.coder_workspace.me.id}-docker-data"
+}
+resource "docker_image" "docker_development" {
+  count        = data.coder_parameter.docker_development.value == "true" && data.coder_workspace.me.start_count > 0 ? 1 : 0
+  name         = "docker:28.5.2-dind-rootless"
+  keep_locally = true
+}
+resource "docker_container" "docker_development" {
+  count        = data.coder_parameter.docker_development.value == "true" ? data.coder_workspace.me.start_count : 0
+  name         = "coder-dev-${data.coder_workspace.me.id}-docker"
+  image        = docker_image.docker_development[0].image_id
+  privileged   = true
+  user         = "1000:1000"
+  wait         = true
+  wait_timeout = 180
+  # Bind only a Unix socket; never introduce a Docker TCP listener.
+  command = ["dockerd", "--host=unix:///run/user/1000/docker.sock"]
+  env     = ["DOCKER_TLS_CERTDIR=", "DOCKER_HOST=unix:///run/user/1000/docker.sock"]
+  restart = "unless-stopped"
+  volumes {
+    volume_name    = docker_volume.docker_socket[0].name
+    container_path = "/run/user/1000"
+  }
+  volumes {
+    volume_name    = docker_volume.docker_data[0].name
+    container_path = "/home/rootless/.local/share/docker"
+  }
+  healthcheck {
+    test     = ["CMD", "docker", "info"]
+    interval = "10s"
+    timeout  = "5s"
+    retries  = 30
   }
 }

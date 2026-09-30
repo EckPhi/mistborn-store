@@ -40,7 +40,7 @@ class LifecycleTests(unittest.TestCase):
         self.api = API()
         self.output = io.StringIO(); self.redirect = contextlib.redirect_stdout(self.output); self.redirect.__enter__(); self.addCleanup(self.redirect.__exit__, None, None, None)
 
-    def stop(self): lifecycle.stop(self.api, self.journal, bootstrap.save, timeout=1, delay=0)
+    def stop(self, workspaces_root=None): lifecycle.stop(self.api, self.journal, bootstrap.save, workspaces_root, timeout=1, delay=0)
     def resume(self): lifecycle.resume(self.api, self.journal, bootstrap.save)
 
     def test_stops_running_only_and_resumes_original_template_versions(self):
@@ -81,6 +81,23 @@ class LifecycleTests(unittest.TestCase):
         self.api.items['one']['latest_build']['status'] = 'starting'
         with self.assertRaises(lifecycle.LifecycleError): self.stop()
         self.assertEqual(self.api.calls, [])
+
+    def test_shutdown_removes_only_codex_ipc_sockets(self):
+        import socket
+        root = Path(self.temp.name) / 'workspaces'
+        ipc = root / 'workspace-id' / 'home' / '.codex' / 'ipc'
+        ipc.mkdir(parents=True)
+        path = ipc / 'ipc.sock'
+        listener = socket.socket(socket.AF_UNIX)
+        listener.bind(str(path))
+        ordinary = ipc / 'settings.json'
+        ordinary.write_text('{}')
+        try:
+            self.stop(root)
+            self.assertFalse(path.exists())
+            self.assertEqual(ordinary.read_text(), '{}')
+        finally:
+            listener.close()
 
 class SignalTests(unittest.TestCase):
     def test_sigterm_runs_workspace_stop_before_process_exit(self):

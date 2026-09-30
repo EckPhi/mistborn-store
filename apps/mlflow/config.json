@@ -1,0 +1,103 @@
+{
+  "name": "MLflow",
+  "id": "mlflow",
+  "available": true,
+  "short_desc": "Independent Authenticated experiment tracking and agent tracing",
+  "author": "MLflow",
+  "port": 8098,
+  "categories": [
+    "ai",
+    "development"
+  ],
+  "description": "Independent MLflow service for a modular remote development platform.",
+  "tipi_version": 1,
+  "version": "v3.16.1-full",
+  "source": "https://github.com/mlflow/mlflow",
+  "exposable": true,
+  "dynamic_config": true,
+  "min_tipi_version": "4.10.1",
+  "supported_architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Administrator username",
+      "env_variable": "MLFLOW_ADMIN_USERNAME",
+      "required": true
+    },
+    {
+      "type": "password",
+      "label": "Initial administrator password",
+      "env_variable": "MLFLOW_ADMIN_PASSWORD",
+      "required": true,
+      "hint": "At least 12 characters. Avoid dollar signs. Existing account passwords are never reset by this field.",
+      "regex": "^[^$\\r\\n]{12,}$"
+    },
+    {
+      "type": "random",
+      "label": "PostgreSQL password",
+      "env_variable": "MLFLOW_DB_PASSWORD",
+      "required": false,
+      "hint": "Generated once. Do not change after database initialization.",
+      "min": 64,
+      "encoding": "hex"
+    },
+    {
+      "type": "random",
+      "label": "Session CSRF secret",
+      "env_variable": "MLFLOW_COOKIE_SECRET",
+      "required": false,
+      "min": 64,
+      "encoding": "hex"
+    },
+    {
+      "type": "text",
+      "label": "Allowed HTTP hosts",
+      "env_variable": "MLFLOW_ALLOWED_HOSTS",
+      "required": true,
+      "hint": "Comma-separated browser hostnames/IPs, with ports where needed; include localhost:*,127.0.0.1:* for health checks. No scheme. Avoid wildcard *."
+    },
+    {
+      "type": "text",
+      "label": "Optional S3 bucket",
+      "env_variable": "MLFLOW_S3_BUCKET",
+      "required": false,
+      "default": "",
+      "hint": "Pre-create bucket. Empty uses persistent local artifacts; see migration documentation."
+    },
+    {
+      "type": "text",
+      "label": "Optional S3 endpoint",
+      "env_variable": "MLFLOW_S3_ENDPOINT_URL",
+      "required": false,
+      "default": "",
+      "hint": "Full HTTP(S) endpoint for MinIO or another S3-compatible service."
+    },
+    {
+      "type": "text",
+      "label": "S3 access key",
+      "env_variable": "MLFLOW_S3_ACCESS_KEY",
+      "required": false,
+      "default": ""
+    },
+    {
+      "type": "password",
+      "label": "S3 secret key",
+      "env_variable": "MLFLOW_S3_SECRET_KEY",
+      "required": false,
+      "default": "",
+      "hint": "Avoid dollar signs; use protected runtime configuration for values needing literal dollar signs."
+    },
+    {
+      "type": "text",
+      "label": "S3 region",
+      "env_variable": "MLFLOW_S3_REGION",
+      "required": false,
+      "default": "us-east-1"
+    }
+  ],
+  "created_at": 1790760001681,
+  "updated_at": 1790760001681
+}

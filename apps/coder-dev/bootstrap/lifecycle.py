@@ -1,5 +1,6 @@
 """Graceful Compose shutdown/startup using Coder builds and a durable journal."""
 import json
+import stat
 import time
 from urllib.parse import quote
 
@@ -27,7 +28,24 @@ def workspaces(api):
         offset += len(items)
 
 
-def stop(api, journal, save, timeout=180, delay=1):
+def remove_codex_ipc_sockets(workspaces_root):
+    """Remove stale Codex runtime sockets before RunTipi copies workspace data."""
+    root = workspaces_root
+    if not root.exists():
+        return
+    for workspace in root.iterdir():
+        ipc = workspace / "home" / ".codex" / "ipc"
+        if not ipc.is_dir():
+            continue
+        for entry in ipc.iterdir():
+            try:
+                if stat.S_ISSOCK(entry.lstat().st_mode):
+                    entry.unlink()
+            except FileNotFoundError:
+                pass
+
+
+def stop(api, journal, save, workspaces_root=None, timeout=180, delay=1):
     # Retain an earlier interrupted shutdown's resume list; never add a
     # workspace that the user had already stopped before this shutdown.
     state = json.loads(journal.read_text()) if journal.exists() else {"workspaces": {}}
@@ -58,6 +76,8 @@ def stop(api, journal, save, timeout=180, delay=1):
             if time.monotonic() >= deadline:
                 raise LifecycleError("Workspace shutdown timed out; verify every workspace is stopped before backup.")
             time.sleep(delay)
+    if workspaces_root is not None:
+        remove_codex_ipc_sockets(workspaces_root)
     print("Workspace shutdown complete; previous running state recorded", flush=True)
 
 

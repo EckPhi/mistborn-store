@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 printf 'Installed AI agents\n\n'
-for entry in 'Codex:codex' 'Claude:claude' 'OMP:omp' 'Vibe:vibe'; do
+for entry in 'Codex:codex' 'Claude:claude' 'OpenCode:opencode' 'Omnigent:omnigent' 'OMP:omp' 'Vibe:vibe'; do
   label=${entry%%:*}
   command=${entry#*:}
   if command -v "$command" >/dev/null 2>&1; then

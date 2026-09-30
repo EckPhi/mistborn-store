@@ -50,6 +50,16 @@
       "matchStrings": [
         "# renovate: datasource=(?<datasource>[^ ]+) depName=(?<depName>[^\\r\\n]+)\\r?\\nARG [A-Z0-9_]+=(?<currentValue>[^\\r\\n]+)"
       ]
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^apps/coder-dev/template/main\\.tf$/"
+      ],
+      "matchStrings": [
+        "name\\s*=\\s*\"(?<depName>docker):(?<currentValue>[^\"\\r\\n]+)\""
+      ],
+      "datasourceTemplate": "docker"
     }
   ],
   "packageRules": [
@@ -142,6 +152,20 @@
         "automerge"
       ],
       "groupName": "coder-dev"
+    },
+    {
+      "description": "Platform services require reviewed migrations and acceptance testing",
+      "matchFileNames": [
+        "apps/omnigent/**",
+        "apps/mlflow/**"
+      ],
+      "automerge": false,
+      "removeLabels": [
+        "automerge"
+      ],
+      "addLabels": [
+        "development-platform-review"
+      ]
     }
   ],
   "postUpgradeTasks": {

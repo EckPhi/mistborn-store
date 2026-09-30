@@ -88,6 +88,7 @@ services:
     volumes:
       - ${APP_DATA_DIR}/runtime:/runtime:ro
       - ${APP_DATA_DIR}/bootstrap:/state
+      - ${APP_DATA_DIR}/workspaces:/workspaces
     depends_on:
       coder-dev:
         condition: service_healthy

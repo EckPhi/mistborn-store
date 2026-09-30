@@ -43,3 +43,7 @@ resumes only that set. Verify shutdown completion before a backup/restore. A
 forced shutdown or hook failure requires stopping workspaces manually. Native backups include caches;
 selective backups may omit caches and reproducible builds. Treat archives as
 secret-bearing. See the [full installation, IDE, backup and troubleshooting guide](https://github.com/EckPhi/mistborn-store/blob/main/apps/coder-dev/README.md).
+
+## Modular agent and tracking integrations
+
+The workspace image now includes pinned OpenCode and Omnigent CLI tools alongside Codex, Claude Code and tmux. Optional template URLs connect to separately installed Omnigent/MLflow apps through network interfaces. Login remains user-controlled. The experimental rootless Docker sidecar defaults off and requires a privileged container; the host-socket mode is separately opt-in. Live acceptance for these additions is pending. See the repository platform guide for backup and security boundaries.

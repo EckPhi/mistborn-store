@@ -29,7 +29,7 @@ describe("Coder development deployment", () => {
         "coder-general-smoke",
         "-ec",
         `test "$HOME" = /home/coder
-       codex --version && claude --version && omp --version && vibe --version
+       codex --version && claude --version && opencode --version && omnigent --version && omp --version && vibe --version
        vibe-acp --help >/dev/null
        git --version && python3 --version && node --version
        cmake --version && ninja --version && zsh --version && tmux -V
@@ -41,6 +41,13 @@ describe("Coder development deployment", () => {
     );
     if (smoke.status !== 0) console.error(smoke.stderr || smoke.stdout);
     expect(smoke.status).toBe(0);
+    const buildTest = spawnSync("docker", ["run", "--rm", "-i", "--user", "1000:1000", "--entrypoint", "/bin/bash", "coder-general-smoke", "-s"], {
+      input: fs.readFileSync("tests/platform/workspace-smoke.sh", "utf8"),
+      encoding: "utf8",
+      timeout: 300_000,
+    });
+    if (buildTest.status !== 0) console.error(buildTest.stderr || buildTest.stdout);
+    expect(buildTest.status).toBe(0);
   }, 3_600_000);
   test("packages the maintained runtime without drift", () => {
     const result = spawnSync("python3", ["-c", "import runpy; x=runpy.run_path('scripts/coder-dev/package.py'); print(x['render'](), end='')"], {
@@ -94,7 +101,7 @@ describe("Coder development deployment", () => {
   });
   test("uses persistent host paths independent of Terraform deletion", () => {
     const template = fs.readFileSync(`${root}/template/main.tf`, "utf8");
-    expect(template).not.toMatch(/resource "docker_volume"/);
+    expect(template).not.toMatch(/resource "docker_volume" "(?:home|source)"/);
     // biome-ignore lint/suspicious/noTemplateCurlyInString: Verify literal interpolation placeholders.
     expect(template).toContain("${var.data_root}/workspaces/${data.coder_workspace.me.id}");
     // biome-ignore lint/suspicious/noTemplateCurlyInString: Verify literal interpolation placeholders.

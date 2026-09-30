@@ -35,4 +35,7 @@ before issuing any stop. The journal survives recreation and backups. Startup
 resumes that set only; subsequent checks remove entries once running. Deleted
 workspaces and later user/scheduler stops are respected. A failed/forced stop
 cannot prevent RunTipi's backup, so logs explicitly require manual verification.
+Workspace resumes are retried every 30 seconds. A resume error is logged and
+kept in the journal, but does not make the Coder app unhealthy; bootstrap
+continues retrying without submitting duplicate start builds.
 This path is scenario tested; live Docker shutdown/backup behavior is pending.

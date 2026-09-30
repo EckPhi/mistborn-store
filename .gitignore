@@ -194,3 +194,10 @@ dist
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,node,visualstudiocode
+
+# Python and Terraform validation output
+__pycache__/
+*.pyc
+.terraform/
+*.tfstate
+*.tfstate.*
