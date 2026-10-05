@@ -111,7 +111,13 @@
       "automerge": false
     },
     {
-      "description": "Label safe updates so the auto-merge workflow merges them after CI passes",
+      "description": "Label safe updates outside reviewed apps so the auto-merge workflow merges them after CI passes",
+      "matchFileNames": [
+        "!apps/coder-dev/**",
+        "!scripts/coder-dev/**",
+        "!apps/omnigent/**",
+        "!apps/mlflow/**"
+      ],
       "matchUpdateTypes": [
         "minor",
         "patch",
@@ -148,9 +154,6 @@
       "addLabels": [
         "coder-dev-review"
       ],
-      "removeLabels": [
-        "automerge"
-      ],
       "groupName": "coder-dev"
     },
     {
@@ -160,9 +163,6 @@
         "apps/mlflow/**"
       ],
       "automerge": false,
-      "removeLabels": [
-        "automerge"
-      ],
       "addLabels": [
         "development-platform-review"
       ]
