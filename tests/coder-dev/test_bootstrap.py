@@ -95,6 +95,12 @@ class BootstrapTests(unittest.TestCase):
         self.templates = {"general-development": "general"}
         self.logs = io.StringIO()
 
+    def test_new_workspace_enables_isolated_docker(self):
+        self.run_bootstrap()
+        create = next(command for command in self.coder.commands if command[0] == "create")
+        self.assertIn("docker_development=true", create)
+        self.assertFalse(any("host_docker" in argument for argument in create))
+
     def run_bootstrap(self):
         with contextlib.redirect_stdout(self.logs):
             b.run(self.coder, self.path, self.template, self.env, self.coder.cli, self.templates)

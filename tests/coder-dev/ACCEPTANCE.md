@@ -81,10 +81,26 @@ Run `python3 -m http.server 8000 --bind 0.0.0.0` and access it through
   should fail visibly; fix it and retry without duplicate resources.
 - Interrupt bootstrap after admin/template initialization. Restart and confirm
   setup resumes. Test a failed initial workspace build and successful retry.
-- Verify the normal workspace has no `/var/run/docker.sock` and `docker info`
-  cannot connect. Enable Host Docker socket access on the disposable workspace,
-  restart it, then run a small build and `docker compose up/down`. Confirm its
-  effective socket GID is detected automatically; never chmod the socket.
+- Create two workspaces with Docker enabled (the new default). Verify neither
+  has `/var/run/docker.sock`, both agents run as UID 1000, and `docker info`
+  identifies a rootless daemon. The host sees two separate privileged sidecars.
+- In each, build and start a Compose project with a `/workspaces` source bind,
+  a named volume and `8080:80`. Verify file edits reach the nested container,
+  workspace-local HTTP and Coder forwarding work, and the production host has
+  no development-port mappings. Repeat binds from `/home/coder` and `/cache`.
+- Stop/start one workspace. Verify source/home and Docker volume contents persist,
+  then run `docker compose up -d` and verify HTTP again. Confirm the other
+  workspace remains reachable and its daemon lists no containers from the first.
+- On a disposable test host, record host resources and prune only the first
+  workspace's development daemon. Confirm the second daemon and host resources
+  remain untouched. Delete the first workspace and verify its sidecar and named
+  data/socket volumes disappear while persistent source/home remain.
+- Disable Docker on the second workspace. Confirm its daemon volumes are removed,
+  normal workspace startup works and `docker info` cannot connect. Re-enable
+  Docker and verify a fresh daemon. A failed daemon must never use the host socket.
+- Update an existing Docker-disabled workspace: its saved false value must remain
+  false until explicitly enabled. Update an old host-socket workspace: access is
+  removed, and containers it created on the host are left intact.
 - From the host (test verification only), inspect the Coder process UID: 1000.
   Inspect workspace agent UID: 1000. PostgreSQL must have no host port mappings;
   only Coder has the RunTipi UI mapping. No Docker TCP endpoint is introduced.

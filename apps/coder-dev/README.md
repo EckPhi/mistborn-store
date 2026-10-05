@@ -146,20 +146,37 @@ runs as UID 1000 with the actual socket group. It never changes socket ownership
 or grants world access. PostgreSQL has no published port; no Docker TCP endpoint
 is enabled.
 
-The workspace has Docker CLI/Compose but no daemon access by default. For a
-trusted workspace, edit its **Host Docker socket access** parameter to `true`
-and rebuild/restart it. Its wrapper determines the socket GID and drops to the
-`coder` user. This gives that workspace host administrative power; it also lets
-`docker compose up` publish ports directly, outside Coder's port controls.
-Rootless Docker/Podman and Sysbox would require host/kernel configuration or a
-separate daemon and have not been bundled. The explicit host-socket option is
-the supported pragmatic choice for this first version.
+New workspaces enable **Docker development** by default. Each gets an isolated
+rootless Docker-in-Docker sidecar and a private Unix socket; no workspace receives
+the production Docker socket. The sidecar still requires privileged mode and a
+host that supports user namespaces. This protects against accidental operations
+on the production daemon, but is not a security boundary for malicious workloads.
+Disable **Enable Docker development** for hosts that cannot run this mode.
 
-With host Docker access, bind mounts passed to Docker resolve on the HOST, not
-inside the workspace. `/workspaces` is not a host directory. Use named volumes
-for workloads or the documented underlying app-data source path; otherwise
-Compose bind mounts can show empty data. Docker image layers/volumes are outside
-the app backup. Do not enable Docker on untrusted workspaces.
+Run `docker info`, `docker compose build`, and `docker compose up -d` from a
+repository under `/workspaces` or `/home/coder/workspaces`. Workspace home, source
+and cache paths are mounted identically in the sidecar, so Compose bind mounts
+under `/home/coder`, `/workspaces` and `/cache` work. Other workspace-only paths
+(such as `/tmp`) are not shared. Containers run rootless: their root maps to UID
+1000; arbitrary container users may need bind-directory permission adjustments.
+
+Compose published ports share the workspace network namespace and are reachable
+at workspace localhost. Use ports above 1024, for example `8080:80`, and forward
+with `coder port-forward dev --tcp 8080:8080`. No development ports are published
+on the production host. A port already used by a workspace process cannot also
+be published by Compose. The Docker API has no TCP listener.
+
+Docker images, nested containers and named volumes survive workspace stop/start.
+Deleting the workspace or disabling Docker deletes its daemon data and socket
+volumes; source/home remain on the existing persistent paths. Docker data is
+outside RunTipi app-data backups. Keep important artifacts in source/home storage.
+
+After updating the app, explicitly update an existing workspace to the new
+template and enable **Docker development** if its saved value is false. Template
+publication does not restart or change existing workspaces automatically. The
+old **Host Docker socket access** parameter is removed. Updating such a workspace
+removes its production-socket access, but leaves any containers it previously
+created on the production daemon untouched; review those separately on the host.
 
 ## Persistence, upgrades and deletion
 
@@ -303,13 +320,10 @@ alongside Codex, Claude Code and tmux. Authenticate separately inside the
 workspace; all home-based credentials persist. New template parameters provide
 optional Omnigent/MLflow URLs without making either service a dependency.
 
-The experimental **Enable Docker development** parameter adds an isolated
-rootless Docker sidecar with a Unix socket, off by default. It still requires a
-privileged sidecar and host user-namespace support. It is mutually exclusive
-with the existing trusted-user host-socket parameter. Its named daemon-data
-volume is outside RunTipi app-data backups and is disposable on workspace
-deletion; keep source and important artifacts in normal persistent workspace
-storage. Live validation of this mode remains pending.
+**Enable Docker development** now defaults on for new workspaces and uses one
+privileged rootless sidecar per workspace. Existing saved parameter values are
+preserved. See **Docker and trust** above for Compose, lifecycle and migration.
+Live validation of this mode remains pending.
 
 See the [platform guide](../../docs/development-platform.md) for independent
 Omnigent/MLflow installation, credentials, backups and the experimental Coder

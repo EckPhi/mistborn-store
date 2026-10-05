@@ -19,8 +19,8 @@ Poetry), `rust-development` (Rust 1.97.1, Clippy, rust-analyzer, WASI), or
 created automatically. See the [project migration guide](https://github.com/EckPhi/mistborn-store/blob/main/apps/coder-dev/MIGRATION.md).
 
 **Docker socket access gives approximately administrative control over the host.**
-Coder needs it to provision workspaces. Ordinary workspaces do not receive it
-unless you explicitly enable their Host Docker socket access parameter. This
+Coder needs it to provision workspaces. Workspaces never receive it. New workspaces enable an isolated rootless Docker
+sidecar by default; each privileged sidecar requires host user-namespace support. This
 app is for personal servers and trusted teams, not hostile-user isolation.
 PostgreSQL is not published; Coder runs as UID 1000 after automatic permission
 setup. No public workspace SSH port is needed.
@@ -46,4 +46,4 @@ secret-bearing. See the [full installation, IDE, backup and troubleshooting guid
 
 ## Modular agent and tracking integrations
 
-The workspace image now includes pinned OpenCode and Omnigent CLI tools alongside Codex, Claude Code and tmux. Optional template URLs connect to separately installed Omnigent/MLflow apps through network interfaces. Login remains user-controlled. The experimental rootless Docker sidecar defaults off and requires a privileged container; the host-socket mode is separately opt-in. Live acceptance for these additions is pending. See the repository platform guide for backup and security boundaries.
+The workspace image now includes pinned OpenCode and Omnigent CLI tools alongside Codex, Claude Code and tmux. Optional template URLs connect to separately installed Omnigent/MLflow apps through network interfaces. Login remains user-controlled. The rootless Docker sidecar defaults on for new workspaces and requires a privileged container. Compose bind mounts in home/source/cache and workspace-local published ports are supported. Docker data survives stop/start and is discarded on workspace deletion or Docker disable. Existing workspace parameters are retained; update the template and enable Docker explicitly if previously disabled. Workspace host-socket access has been removed. Live acceptance for these additions is pending. See the repository platform guide for backup and security boundaries.

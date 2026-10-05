@@ -13,10 +13,17 @@ caches at `/cache`. Paths use workspace UUIDs, survive container deletion, and
 are not Terraform-owned resources that a destroy can remove. Restarting a
 workspace preserves SSH configuration, Git settings and repositories.
 
-CPU cores and memory MiB default to 0 (unlimited). Host Docker access is false by
-default; enabling it grants host administrative privileges. No privileged
-container, host network, direct SSH port or Docker TCP listener is created.
-The entrypoint initializes a fresh home, detects the optional socket GID, and
+CPU cores and memory MiB default to 0 (unlimited). Docker development defaults
+on and creates a privileged rootless DinD sidecar per workspace. The workspace
+joins its network namespace and shares its Unix socket; neither receives the
+host Docker socket. Home/source/cache have identical paths in both containers,
+so Compose bind mounts work there. Published ports above 1024 are available at
+workspace localhost through Coder forwarding, with no host port mappings or
+Docker TCP listener. Disable the parameter for hosts without user-namespace
+support. Daemon data survives stop/start and is deleted on workspace deletion
+or parameter disable, outside native RunTipi backups. The control plane retains
+host-socket access to provision these resources.
+The entrypoint initializes a fresh home and
 runs the agent as `coder` (UID 1000). Zsh is the login shell and lands in
 `/workspaces`. Oh My Zsh and Powerlevel10k are pinned in the image; the default
 `~/.zshrc` is copied only when absent, so personal changes survive upgrades.
@@ -48,8 +55,8 @@ settings in repositories remain untouched. Vibe also supplies `vibe-acp`.
 Use `tmux new -s codex` followed by `codex` (or another agent) to keep a
 session running when the IDE disconnects; reattach with `tmux attach -t codex`.
 Nothing starts an agent automatically. Omnigent orchestration is a separate
-service and needs no server installation here. Host Docker access remains
-opt-in and grants host-level power to any process, including an AI agent.
+service and needs no server installation here. Workspaces use their own Docker
+daemon; privileged sidecars still require trusted workloads.
 
 The template currently builds an uncached image on the first workspace start
 because Terraform's `docker_image` resource builds on the RunTipi Docker host.
@@ -80,3 +87,8 @@ For manual validation, run `terraform init -backend=false` and
 `terraform validate` in this directory. `.terraform.lock.hcl` includes AMD64
 and ARM64 provider checksums. Never commit Terraform state or `.terraform/`.
 See the [app README](../README.md) for installation, IDEs, backups and security.
+
+Existing workspace parameter values are retained on template publication; update
+workspaces explicitly and enable Docker if previously disabled. The removed
+`host_docker` parameter no longer mounts the host socket. Host containers created
+under the old mode remain untouched.

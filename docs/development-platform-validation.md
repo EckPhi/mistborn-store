@@ -42,7 +42,7 @@ Sources inspected: [RunTipi custom stores](https://runtipi.io/docs/guides/create
 - Omnigent PostgreSQL startup, first-account flow, authenticated workspace-host registration, task/session persistence and reconnect.
 - MLflow PostgreSQL migration/persistence, full-image dependencies/non-root startup, S3-compatible authenticated upload/readback, backup restoration.
 - The supplied `tests/platform/live.py` three-service prepare/restart/verify acceptance; Omnigent health in this test must be supplemented with a real authenticated runner session test.
-- Experimental rootless sidecar socket ownership, health/readiness, kernel compatibility, container build and data persistence; trusted host-socket mode validation.
+- Rootless sidecar socket ownership, health/readiness, kernel compatibility, Compose bind mounts and forwarded ports, multi-workspace isolation, data persistence and deletion; migration away from workspace host-socket access.
 - Upgrades of all three services and rollback/restore on disposable deployments.
 
 ## Integration limits
@@ -50,3 +50,41 @@ Sources inspected: [RunTipi custom stores](https://runtipi.io/docs/guides/create
 Omnigent's supported server/runner connectivity is configured/documented; native Coder provisioning is absent upstream and not invented here. Optional Coder installer fields are explicitly reserved for an adapter. `scripts/platform/task.py` is an isolated experimental operator bridge, with tested command construction but no live execution. It is not registered as an Omnigent UI/scheduler provider. Automatic issue handling, PR creation and retention policy remain future work.
 
 MLflow SDK integration is standard and demonstrated locally. Automatic Omnigent OTLP-to-MLflow tracing is not configured; a tracking URI alone does not enable it. Provider login, least-privilege credential grants, production TLS/Tailscale setup, object-bucket provisioning, backup/restore and destructive cleanup require operator participation. Details are in the [platform guide](development-platform.md).
+
+## Per-workspace Docker follow-up — 2026-10-05
+
+App revision 10 enables isolated rootless Docker development by default for new
+workspaces, including bootstrap and the Omnigent operator bridge. The workspace
+host-socket parameter and permission-grant code have been removed. Coder's
+control plane still uses the production socket to provision workspaces and their
+sidecars. Existing workspaces retain saved parameter values until explicitly
+updated; the update never cleans up containers previously created on the host.
+
+Workspace and sidecar share the sidecar's network namespace and matching
+home/source/cache bind paths. A network-disabled one-shot container initializes
+UID 1000 ownership of the socket and Docker data volume roots before daemon
+startup. This fixes fresh socket volumes otherwise being owned by root. It does
+not recursively change ownership of existing Docker data. Named data/socket
+volumes remain Terraform-owned across stop/start and are removed on workspace
+deletion or Docker disable; source/home keep their existing persistence behavior.
+
+Checks passed on the final implementation:
+
+- 240 repository tests, including 28 Coder Python scenarios, with Terraform
+  1.15.5 available. New real Docker-provider plans cover enabled start, enabled
+  stop, disabled start and disabled stop, matching bind paths, Unix-only daemon
+  configuration, namespace sharing, ownership initialization and no workspace
+  host-socket mounts. These plans use an HTTP ping stub and create no containers.
+- Terraform initialization and validation with the locked providers, Biome CI,
+  shell syntax, deterministic runtime packaging and `git diff --check`.
+- The pinned RunTipi 4.10.1 builder generated the updated Coder deployment under
+  direct-port, exposed-domain, local-domain and Tailscale/direct-port forms.
+  Docker Compose 2.40.3 accepted all four with `config --quiet`; readiness gates,
+  control-plane mounts, bootstrap grace period and backing-service port isolation
+  were preserved. Only the helper import path was adapted in a temporary harness.
+
+There is no reachable Docker daemon in this environment. Actual rootless startup,
+Compose execution, Coder forwarding, prune isolation, stop/start data retention,
+workspace deletion and host-kernel compatibility remain pending. The expanded
+[Coder acceptance checklist](../tests/coder-dev/ACCEPTANCE.md) covers these checks.
+No production deployment or live workspace update was performed.

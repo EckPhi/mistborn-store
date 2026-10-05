@@ -61,9 +61,27 @@ Sources: [Codex auth](https://learn.chatgpt.com/docs/auth), [Claude settings](ht
 
 Coder's control plane discovers the Docker socket GID at boot, adds its runtime user to that group and drops privileges to UID 1000. It never makes the socket world-writable. Host Docker access gives effectively administrative host control. This is a trusted-user platform; Docker workspaces do not provide a hostile multitenancy boundary.
 
-Default workspace: no socket, no Docker daemon. `Enable Docker development` optionally provisions an **experimental rootless Docker sidecar**, using a shared Unix socket and separate daemon data. It does not receive the host socket and introduces no TCP listener. The official rootless-DinD image nevertheless requires a privileged container/user-namespace support. This is a significant host capability grant and is not certified here as a strong security boundary. Test kernel/user-namespace/AppArmor compatibility before enabling. Its named Docker data volume persists stop/start, but is disposable on workspace deletion or parameter disable and is outside native RunTipi app-data backups. Keep source outside it. Compose bind paths are resolved in the sidecar, so use named volumes/build contexts instead of assuming workspace paths are available to that daemon. Published sidecar ports are not automatically reachable through Coder workspace forwarding.
+New workspaces enable **Docker development** by default: one rootless DinD
+sidecar per workspace, a shared Unix socket and separate daemon data. No workspace
+receives the host socket, and there is no Docker TCP listener. The sidecar is
+privileged and requires user-namespace support; this remains a trusted-host design.
+Disable the workspace parameter if the host cannot support it.
 
-The alternative `Host Docker socket access` is trusted-user mode, off by default. It grants root-equivalent host control. The two daemon modes cannot be selected together. Rootless Podman requires separate user-namespace/storage configuration; Sysbox requires host runtime installation. Neither is silently installed by this app. [Docker rootless guidance](https://docs.docker.com/engine/security/rootless/).
+The workspace joins its sidecar's network namespace. Compose published ports
+above 1024 are reachable at workspace localhost through Coder forwarding, without
+production-host port mappings. Home/source/cache are mounted identically at
+`/home/coder`, `/workspaces`, and `/cache` so Compose bind paths there work;
+workspace-only paths such as `/tmp` are not shared. Container root maps to UID
+1000; other container users may need bind-directory permission adjustments.
+Docker data persists stop/start, but workspace deletion or Docker disable removes
+its named data/socket volumes. These are outside native RunTipi app-data backups.
+Keep important artifacts in persistent source/home storage.
+
+Existing workspaces retain their saved parameter values and are not restarted
+by publication. Update explicitly and enable Docker if previously disabled.
+The old host-socket parameter is removed; previously created host containers
+remain untouched. Rootless Podman and Sysbox are not installed by this app.
+[Docker rootless guidance](https://docs.docker.com/engine/security/rootless/).
 
 Only the Coder control plane normally has the host socket. Each app has independent internal PostgreSQL; backing services have no host ports. No database/filesystem sharing is needed for integration.
 

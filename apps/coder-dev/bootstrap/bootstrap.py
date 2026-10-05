@@ -203,8 +203,8 @@ def run(api, state_path, template_dir, environment, invoke=cli, templates=None):
             state.update(workspace_creation_attempted=True, workspace_name=name)
             save(state_path, state)
             invoke(api, "create", name, "--template", "general-development", "--org", organization,
-                   "--yes", "--use-parameter-defaults", "--parameter", "host_docker=false",
-                   "--parameter", "docker_development=false", "--parameter", "cpu=0", "--parameter", "memory=0")
+                   "--yes", "--use-parameter-defaults",
+                   "--parameter", "docker_development=true", "--parameter", "cpu=0", "--parameter", "memory=0")
             status, workspace = api.request("GET", path)
             require(status, (200,), "Created workspace lookup")
         if not state.get("workspace_creation_attempted"):

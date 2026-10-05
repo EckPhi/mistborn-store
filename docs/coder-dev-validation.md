@@ -125,3 +125,19 @@ Live AMD64 checks on the existing RunTipi host:
 - All 25 Python regressions, all 224 store tests, Biome CI, Terraform validation,
   shell syntax and deterministic packaging passed. The maintained RunTipi
   generator preserved all four URL/routing scenarios.
+
+## Isolated Docker development — app revision 10
+
+New workspaces now default to per-workspace rootless DinD. Workspace host-socket
+access has been removed; the control plane retains its provisioning socket.
+Source/home/cache bind paths and the sidecar network namespace are shared so
+Compose bind mounts and workspace-local published ports can work. A one-shot
+initializer prepares UID 1000 volume ownership. Docker data survives stop/start
+and is disposable on workspace deletion or Docker disable.
+
+The repository suite (240 tests, including 28 Python scenarios), locked-provider
+Terraform validation, real-provider start/stop/disable plans, lint, shell syntax,
+deterministic packaging and four pinned RunTipi/Docker Compose configuration
+checks passed. Runtime execution remains pending without a local Docker daemon.
+See [the follow-up verification record](development-platform-validation.md#per-workspace-docker-follow-up--2026-10-05)
+and [acceptance checklist](../tests/coder-dev/ACCEPTANCE.md).

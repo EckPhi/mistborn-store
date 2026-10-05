@@ -11,10 +11,4 @@ if [ ! -e /home/coder/workspaces ]; then ln -s /workspaces /home/coder/workspace
 mkdir -p /cache/{ccache,conan,pip,uv,uv-python,npm,pnpm,pub,cargo-target,playwright} /workspaces /home/coder/.ssh /home/coder/.config /home/coder/.local /home/coder/.cargo
 chown coder:coder /home/coder /home/coder/.ssh /home/coder/.config /home/coder/.local /home/coder/.cargo /workspaces /cache /cache/*
 chmod 700 /home/coder/.ssh
-if [ -S /var/run/docker.sock ]; then
-  gid=$(stat -c '%g' /var/run/docker.sock)
-  group=$(getent group "$gid" | cut -d: -f1 || true)
-  if [ -z "$group" ]; then group=coder-host-docker-$gid; groupadd -g "$gid" "$group"; fi
-  usermod -aG "$group" coder
-fi
 exec gosu coder "$@"

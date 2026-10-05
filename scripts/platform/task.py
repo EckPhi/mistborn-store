@@ -17,7 +17,7 @@ def commands(name, url):
         raise ValueError('Omnigent requires an HTTP(S) URL')
     create = ['coder', 'create', name, '--template', 'general-development',
               '--yes', '--use-parameter-defaults', '--stop-after', '8h',
-              '--parameter', 'host_docker=false', '--parameter', 'docker_development=false',
+              '--parameter', 'docker_development=true',
               '--parameter', 'ai_agents=true']
     # Host stays in the foreground. Disconnect/restart handling is upstream's job.
     runner = ['coder', 'ssh', name, '--', 'bash', '-lc',

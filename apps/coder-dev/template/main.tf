@@ -4,20 +4,12 @@ data "coder_provisioner" "me" {}
 data "coder_workspace" "me" {}
 data "coder_workspace_owner" "me" {}
 
-data "coder_parameter" "host_docker" {
-  name         = "host_docker"
-  display_name = "Host Docker socket access"
-  description  = "Grants administrative control over the RunTipi Docker host. Trusted users only."
-  type         = "bool"
-  default      = "false"
-  mutable      = true
-}
 data "coder_parameter" "docker_development" {
   name         = "docker_development"
-  display_name = "Enable Docker development (experimental rootless sidecar)"
+  display_name = "Enable Docker development (isolated rootless sidecar)"
   description  = "Isolated rootless daemon, no host socket. Requires a privileged sidecar for user namespaces; trusted hosts only."
   type         = "bool"
-  default      = "false"
+  default      = "true"
   mutable      = true
 }
 data "coder_parameter" "ai_agents" {
@@ -92,6 +84,7 @@ resource "coder_agent" "main" {
     printf 'Coder ${var.development_stack} Development Workspace\nClone a repository: git clone <repo>\n'
   EOT
   env = {
+    DOCKER_HOST                = data.coder_parameter.docker_development.value == "true" ? "unix:///docker-socket/docker.sock" : ""
     OMNIGENT_SERVER            = data.coder_parameter.omnigent_url.value
     MLFLOW_TRACKING_URI        = data.coder_parameter.mlflow_url.value
     OMNIGENT_ANALYTICS         = "0"
@@ -132,26 +125,23 @@ resource "docker_image" "development" {
   }
   lifecycle {
     precondition {
-      condition     = !(data.coder_parameter.host_docker.value == "true" && data.coder_parameter.docker_development.value == "true")
-      error_message = "Select either the rootless sidecar or host Docker socket, not both."
-    }
-    precondition {
       condition     = var.development_stack != "flutter" || data.coder_provisioner.me.arch == "amd64"
       error_message = "The packaged Flutter SDK requires an AMD64 Linux host. Use a Python, Rust or general template on ARM64."
     }
   }
 }
 resource "docker_container" "workspace" {
-  count      = data.coder_workspace.me.start_count
-  name       = "coder-dev-${data.coder_workspace.me.id}"
-  hostname   = data.coder_workspace.me.name
-  image      = docker_image.development[0].image_id
-  command    = ["bash", "-c", coder_agent.main.init_script]
-  env        = concat(["CODER_AGENT_TOKEN=${coder_agent.main.token}"], data.coder_parameter.docker_development.value == "true" ? ["DOCKER_HOST=unix:///docker-socket/docker.sock"] : [])
-  memory     = tonumber(data.coder_parameter.memory.value)
-  cpu_quota  = tonumber(data.coder_parameter.cpu.value) * 100000
-  cpu_period = 100000
-  restart    = "unless-stopped"
+  count        = data.coder_workspace.me.start_count
+  name         = "coder-dev-${data.coder_workspace.me.id}"
+  hostname     = data.coder_parameter.docker_development.value == "true" ? null : data.coder_workspace.me.name
+  network_mode = data.coder_parameter.docker_development.value == "true" ? "container:${docker_container.docker_development[0].id}" : "bridge"
+  image        = docker_image.development[0].image_id
+  command      = ["bash", "-c", coder_agent.main.init_script]
+  env          = concat(["CODER_AGENT_TOKEN=${coder_agent.main.token}"], data.coder_parameter.docker_development.value == "true" ? ["DOCKER_HOST=unix:///docker-socket/docker.sock"] : [])
+  memory       = tonumber(data.coder_parameter.memory.value)
+  cpu_quota    = tonumber(data.coder_parameter.cpu.value) * 100000
+  cpu_period   = 100000
+  restart      = "unless-stopped"
   volumes {
     host_path      = "${local.root}/home"
     container_path = "/home/coder"
@@ -165,13 +155,6 @@ resource "docker_container" "workspace" {
     container_path = "/cache"
   }
   dynamic "volumes" {
-    for_each = data.coder_parameter.host_docker.value == "true" ? [1] : []
-    content {
-      host_path      = "/var/run/docker.sock"
-      container_path = "/var/run/docker.sock"
-    }
-  }
-  dynamic "volumes" {
     for_each = data.coder_parameter.docker_development.value == "true" ? [1] : []
     content {
       volume_name    = docker_volume.docker_socket[0].name
@@ -179,9 +162,12 @@ resource "docker_container" "workspace" {
     }
   }
   depends_on = [docker_container.docker_development]
-  host {
-    host = "host.docker.internal"
-    ip   = "host-gateway"
+  dynamic "host" {
+    for_each = data.coder_parameter.docker_development.value == "true" ? [] : [1]
+    content {
+      host = "host.docker.internal"
+      ip   = "host-gateway"
+    }
   }
   labels {
     label = "coder.workspace_id"
@@ -201,10 +187,37 @@ resource "docker_image" "docker_development" {
   name         = "docker:28.5.2-dind-rootless"
   keep_locally = true
 }
+# Fresh named socket volumes otherwise belong to root, preventing UID 1000
+# from creating its socket. Attach waits for this one-shot initializer to exit.
+resource "docker_container" "docker_permissions" {
+  count        = data.coder_parameter.docker_development.value == "true" ? data.coder_workspace.me.start_count : 0
+  name         = "coder-dev-${data.coder_workspace.me.id}-docker-permissions"
+  image        = docker_image.development[0].image_id
+  user         = "0:0"
+  network_mode = "none"
+  must_run     = false
+  attach       = true
+  entrypoint   = ["/bin/bash", "-ec"]
+  command      = ["chown 1000:1000 /docker-socket /docker-data && chmod 700 /docker-socket"]
+  volumes {
+    volume_name    = docker_volume.docker_socket[0].name
+    container_path = "/docker-socket"
+  }
+  volumes {
+    volume_name    = docker_volume.docker_data[0].name
+    container_path = "/docker-data"
+  }
+  labels {
+    label = "coder.workspace_id"
+    value = data.coder_workspace.me.id
+  }
+}
 resource "docker_container" "docker_development" {
   count        = data.coder_parameter.docker_development.value == "true" ? data.coder_workspace.me.start_count : 0
   name         = "coder-dev-${data.coder_workspace.me.id}-docker"
+  hostname     = data.coder_workspace.me.name
   image        = docker_image.docker_development[0].image_id
+  depends_on   = [docker_container.docker_permissions]
   privileged   = true
   user         = "1000:1000"
   wait         = true
@@ -220,6 +233,23 @@ resource "docker_container" "docker_development" {
   volumes {
     volume_name    = docker_volume.docker_data[0].name
     container_path = "/home/rootless/.local/share/docker"
+  }
+  # Compose bind sources must exist at the same absolute paths in the daemon.
+  volumes {
+    host_path      = "${local.root}/home"
+    container_path = "/home/coder"
+  }
+  volumes {
+    host_path      = "${local.root}/source"
+    container_path = "/workspaces"
+  }
+  volumes {
+    host_path      = local.cache
+    container_path = "/cache"
+  }
+  labels {
+    label = "coder.workspace_id"
+    value = data.coder_workspace.me.id
   }
   healthcheck {
     test     = ["CMD", "docker", "info"]

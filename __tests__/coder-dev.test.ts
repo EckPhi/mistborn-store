@@ -106,8 +106,13 @@ describe("Coder development deployment", () => {
     expect(template).toContain("${var.data_root}/workspaces/${data.coder_workspace.me.id}");
     // biome-ignore lint/suspicious/noTemplateCurlyInString: Verify literal interpolation placeholders.
     expect(template).toContain("${var.data_root}/caches/${data.coder_workspace.me.id}");
-    expect(template).toContain('data.coder_parameter.host_docker.value == "true" ? [1] : []');
-    expect(template).toMatch(/name\s*= "host_docker"[\s\S]*?default\s*= "false"/);
+    expect(template).not.toContain("host_docker");
+    expect(template).toMatch(/name\s*= "docker_development"[\s\S]*?default\s*= "true"/);
+    const workspace = template.split('resource "docker_container" "workspace" {')[1].split('resource "docker_volume"')[0];
+    expect(workspace).not.toContain("/var/run/docker.sock");
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: Verify literal Terraform interpolation.
+    expect(workspace).toContain('"container:${docker_container.docker_development[0].id}"');
+    expect(fs.readFileSync(`${root}/template/image/entrypoint.sh`, "utf8")).not.toContain("docker.sock");
     expect(fs.readFileSync(`${root}/bootstrap/server.sh`, "utf8")).toContain("exec su -p");
   });
 });

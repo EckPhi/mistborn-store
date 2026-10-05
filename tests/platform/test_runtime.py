@@ -81,8 +81,8 @@ class UpdateTests(unittest.TestCase):
     def test_bridge_validates_name_and_uses_no_host_docker(self):
         bridge = runpy.run_path(str(ROOT / 'scripts/platform/task.py'))
         create, runner = bridge['commands']('agent-issue-123', 'https://omnigent.test')
-        self.assertIn('host_docker=false', create)
-        self.assertIn('docker_development=false', create)
+        self.assertFalse(any('host_docker' in argument for argument in create))
+        self.assertIn('docker_development=true', create)
         self.assertNotIn('delete', runner)
         with self.assertRaises(ValueError):
             bridge['commands']('dev', 'https://omnigent.test')
