@@ -1,0 +1,24 @@
+services:
+  solid-edge:
+    image: solid-edge-webtop:0.1.0
+    pull_policy: never
+    platform: linux/amd64
+    shm_size: 1gb
+    environment:
+      PUID: ${SE_PUID}
+      PGID: ${SE_PGID}
+      TZ: ${TZ}
+      CUSTOM_USER: ${SE_DESKTOP_USER}
+      PASSWORD: ${SE_DESKTOP_PASSWORD}
+      FILE_MANAGER_PATH: /config/uploads
+      PIXELFLUX_WAYLAND: "false"
+      START_DOCKER: "false"
+    volumes:
+      - ${APP_DATA_DIR}/config:/config
+      - ${APP_DATA_DIR}/projects:/projects
+    restart: unless-stopped
+    x-runtipi:
+      is_main: true
+      internal_port: 3000
+x-runtipi:
+  schema_version: 2

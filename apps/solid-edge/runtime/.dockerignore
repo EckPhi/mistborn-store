@@ -1,0 +1,6 @@
+*
+!Dockerfile
+!scripts/
+!scripts/**
+!init/
+!init/**

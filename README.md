@@ -69,6 +69,7 @@ pending; the experimental Coder provisioning bridge is separate from the core.
 | <img src="apps/scrape-dojo/metadata/logo.jpg" width="32"> | [Scrape Dojo](https://github.com/disane87/scrape-dojo) | Self-hosted, config-driven web scraping platform |
 | <img src="apps/scryer/metadata/logo.jpg" width="32"> | [Scryer](https://github.com/scryer-media/scryer) | Media management for movies, series and anime |
 | <img src="apps/seamtec-scraper/metadata/logo.jpg" width="32"> | [Seamtec Scraper](https://github.com/EckPhi/seamtec-scraper) | Scraper for the Seamtec SCADA web UI |
+| <img src="apps/solid-edge/metadata/logo.jpg" width="32"> | [Solid Edge Community (Experimental Wine)](https://github.com/EckPhi/mistborn-store/tree/main/apps/solid-edge) | Bring your own Siemens installer to a private Wine desktop. |
 | <img src="apps/telegraf/metadata/logo.jpg" width="32"> | [Telegraf](https://github.com/influxdata/telegraf) | Plugin-driven agent for collecting and sending metrics |
 | <img src="apps/unmanic/metadata/logo.jpg" width="32"> | [Unmanic](https://github.com/Unmanic/unmanic) | Automated media library processing and transcoding |
 | <img src="apps/victoriametrics/metadata/logo.jpg" width="32"> | [VictoriaMetrics](https://github.com/VictoriaMetrics/VictoriaMetrics) | Fast, cost-effective time-series database |

@@ -1,0 +1,20 @@
+#!/bin/bash
+set -eu
+if [ -z "${PASSWORD:-}" ] || [ -z "${CUSTOM_USER:-}" ]; then
+  echo 'Solid Edge desktop requires CUSTOM_USER and a nonempty PASSWORD' >&2
+  exit 1
+fi
+mkdir -p /config/{Desktop,uploads,installers,logs,wine} /projects
+for action in install launch logs; do
+  case "$action" in install) title='Install Solid Edge';; launch) title='Launch Solid Edge';; logs) title='Solid Edge Logs';; esac
+  cat > "/config/Desktop/solid-edge-$action.desktop" <<EOF
+[Desktop Entry]
+Type=Application
+Name=$title
+Exec=/opt/solid-edge/desktop.py $action
+Icon=applications-engineering
+Terminal=false
+EOF
+  chmod +x "/config/Desktop/solid-edge-$action.desktop"
+done
+chown -R abc:abc /config/Desktop /config/uploads /config/installers /config/logs /config/wine /projects

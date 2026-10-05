@@ -1,0 +1,12 @@
+*.exe
+*.msi
+*.cab
+*.lic
+*.zip
+*.tar
+*.gz
+*.7z
+.env
+__pycache__/
+state/
+private/

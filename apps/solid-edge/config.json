@@ -1,0 +1,61 @@
+{
+  "name": "Solid Edge Community (Experimental Wine)",
+  "id": "solid-edge",
+  "available": true,
+  "port": 8276,
+  "exposable": true,
+  "dynamic_config": true,
+  "min_tipi_version": "4.10.1",
+  "tipi_version": 1,
+  "version": "0.1.0",
+  "categories": [
+    "utilities"
+  ],
+  "short_desc": "Bring your own Siemens installer to a private Wine desktop.",
+  "description": "Experimental amd64 Wine desktop for Solid Edge Community 2026 (2510). Compatibility is unverified. No Siemens software is distributed.",
+  "author": "mistborn-store contributors",
+  "source": "https://github.com/EckPhi/mistborn-store/tree/main/apps/solid-edge",
+  "website": "https://solidedge.siemens.com/en/",
+  "supported_architectures": [
+    "amd64"
+  ],
+  "force_pull": false,
+  "created_at": 1789516800000,
+  "updated_at": 1789516800000,
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Desktop username",
+      "env_variable": "SE_DESKTOP_USER",
+      "required": true,
+      "min": 1,
+      "max": 64
+    },
+    {
+      "type": "password",
+      "label": "Desktop password",
+      "env_variable": "SE_DESKTOP_PASSWORD",
+      "required": true,
+      "min": 16,
+      "max": 128
+    },
+    {
+      "type": "number",
+      "label": "Desktop user ID",
+      "env_variable": "SE_PUID",
+      "required": false,
+      "default": 1000,
+      "min": 1,
+      "hint": "Match the owner of private installer and project directories on the host."
+    },
+    {
+      "type": "number",
+      "label": "Desktop group ID",
+      "env_variable": "SE_PGID",
+      "required": false,
+      "default": 1000,
+      "min": 1,
+      "hint": "Match the owner of private installer and project directories on the host."
+    }
+  ]
+}

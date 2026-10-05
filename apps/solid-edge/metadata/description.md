@@ -1,0 +1,3 @@
+Experimental Solid Edge Community 2026 (2510) on Wine. Build `solid-edge-webtop:0.1.0` locally before installing this app. Obtain the installer directly from Siemens. Transfer the complete folder as ZIP or tar archive using the desktop file upload, then use Install Solid Edge. No Siemens software is included. Compatibility remains unverified. Authentication is required; use HTTPS and a trusted network or VPN. See repository README for storage, backups and limits.
+
+Build instructions, transfer workflow, backups and compatibility risks: [Solid Edge documentation](https://github.com/EckPhi/mistborn-store/blob/main/apps/solid-edge/README.md). Container source and helper tests live alongside this app in `apps/solid-edge/runtime` and `apps/solid-edge/tests`.
