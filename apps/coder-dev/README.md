@@ -315,6 +315,31 @@ and never use the store's automatic merge label. Manual review must rerun
 [acceptance](../../tests/coder-dev/ACCEPTANCE.md) before claiming production readiness.
 # Modular platform additions
 
+## Automatic LiteLLM workspace keys
+
+The optional **AI gateway URL**, **AI gateway admin key** and **AI gateway model
+aliases** installer fields enable server-side LiteLLM provisioning. Use a base URL
+reachable from both the bootstrap helper and workspaces. Add the allowed aliases
+in LiteLLM first; the default is `coding,fast`.
+
+The helper issues one inference-only key per bootstrap-administrator workspace,
+writes it privately into the persistent home and configures OMP on fresh homes.
+Existing OMP settings are preserved, with a mergeable catalog saved at
+`~/.config/ai-gateway/models.yml`. Restart OMP after initial provisioning.
+No template update is needed for key delivery. The gateway admin key stays in the
+server helper and is excluded from Coder CLI subprocess environments.
+
+The helper reconciles every 30 seconds without affecting Coder's readiness when
+the gateway is unavailable. Stops/restarts preserve keys; workspace deletion
+revokes them. Manual key blocks, deletion and expiration are respected. Allowed
+model changes update existing active keys. Back up `bootstrap/ai-gateway.json`
+alongside the other bootstrap state; it contains virtual keys and recovery data.
+Disabling provisioning does not revoke existing keys. A gateway URL change needs
+explicit old-key cleanup and an archived provisioning state file.
+
+See the [LiteLLM setup guide](../litellm/metadata/description.md) for the installation,
+automatic provisioning and manual client settings.
+
 The general image includes OpenCode and the optional Omnigent host/runner CLI
 alongside Codex, Claude Code and tmux. Authenticate separately inside the
 workspace; all home-based credentials persist. New template parameters provide

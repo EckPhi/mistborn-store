@@ -13,6 +13,25 @@ repository, build and test remotely. Git/LFS, GCC/Clang, CMake/Ninja, debuggers,
 Python/uv, Node/npm/pnpm, Conan, Docker CLI/Compose and ccache are included.
 Sources, home/configuration and caches survive workspace recreation.
 
+## Optional central AI gateway
+
+Install **LiteLLM AI Gateway**, add your provider models, and set this app's
+**Optional AI gateway URL**, **AI gateway admin key** and **AI gateway model aliases**
+fields. The server helper automatically provisions a separate inference-only key
+for each administrator-owned workspace with a persistent home. Its admin key
+stays on the server; workspaces receive only their own virtual key.
+
+Fresh workspace homes get OMP gateway settings automatically. Existing OMP
+settings are preserved; merge `~/.config/ai-gateway/models.yml` into the existing
+catalog if needed. Restart OMP after provisioning. Key delivery does not require
+updating workspace templates. The helper checks every 30 seconds, retains keys
+across stops/restarts and revokes them after workspace deletion. Manual blocks,
+deletion and expiration are respected. Back up `bootstrap/ai-gateway.json` with
+the other bootstrap state and app configuration; it contains virtual keys.
+
+See the [LiteLLM guide](https://github.com/EckPhi/mistborn-store/blob/main/apps/litellm/metadata/description.md)
+for setup, shared skills and gateway switching.
+
 Create additional workspaces from `python-development` (Python 3.13, uv,
 Poetry), `rust-development` (Rust 1.97.1, Clippy, rust-analyzer, WASI), or
 `flutter-development` (Flutter 3.47.3/Dart, web/Linux tooling). Only `dev` is

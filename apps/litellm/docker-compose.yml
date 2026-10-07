@@ -1,0 +1,44 @@
+x-runtipi:
+  schema_version: 2
+
+services:
+  litellm:
+    image: ghcr.io/berriai/litellm:v1.104.0
+    x-runtipi:
+      is_main: true
+      internal_port: 4000
+    environment:
+      LITELLM_MASTER_KEY: sk-${LITELLM_MASTER_KEY_MATERIAL}
+      LITELLM_SALT_KEY: ${LITELLM_SALT_KEY}
+      UI_USERNAME: ${LITELLM_UI_USERNAME}
+      UI_PASSWORD: ${LITELLM_UI_PASSWORD}
+      DATABASE_URL: postgresql://litellm:${LITELLM_DB_PASSWORD}@litellm-db:5432/litellm
+      STORE_MODEL_IN_DB: "True"
+    depends_on:
+      litellm-db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python3
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:4000/health/readiness', timeout=5).close()"
+      interval: 30s
+      timeout: 10s
+      start_period: 180s
+      retries: 5
+
+  litellm-db:
+    image: postgres:17.11-bookworm
+    environment:
+      POSTGRES_DB: litellm
+      POSTGRES_USER: litellm
+      POSTGRES_PASSWORD: ${LITELLM_DB_PASSWORD}
+    volumes:
+      - ${APP_DATA_DIR}/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U litellm -d litellm"]
+      interval: 5s
+      timeout: 5s
+      start_period: 30s
+      retries: 12

@@ -65,7 +65,7 @@ def wait_ready(api, attempts=120, delay=2):
 
 
 def cli(api, *arguments):
-    environment = {key: value for key, value in os.environ.items() if not key.startswith("CODER_DEV_ADMIN_")}
+    environment = {key: value for key, value in os.environ.items() if not key.startswith("CODER_DEV_ADMIN_") and key != "CODER_DEV_AI_GATEWAY_ADMIN_KEY"}
     environment.update(CODER_URL=api.url, CODER_SESSION_TOKEN=api.token, CODER_CONFIG_DIR="/tmp/coder-cli")
     try:
         subprocess.run(["/runtime/bin/coder", *arguments], env=environment, stdin=subprocess.DEVNULL,
@@ -283,6 +283,22 @@ def main():
             print(f"Workspace resume deferred; Coder is ready and will retry: {error}", flush=True)
     Path("/tmp/ready").touch()
     while True:
+        # Optional personal gateway provisioning stays in the control plane;
+        # only per-workspace virtual keys are delivered to persistent homes.
+        gateway_url = os.environ.get("CODER_DEV_AI_GATEWAY_URL", "").strip()
+        if gateway_url:
+            import ai_gateway
+            try:
+                gateway_key = os.environ.get("CODER_DEV_AI_GATEWAY_ADMIN_KEY", "")
+                if not gateway_key:
+                    raise ai_gateway.GatewayError("Set the AI gateway admin key to enable workspace provisioning.")
+                status, _ = api.request("GET", "/api/v2/users/me")
+                if status == 401:
+                    run(api, state_path, Path("/runtime/template"), os.environ)
+                models = [model.strip() for model in os.environ.get("CODER_DEV_AI_GATEWAY_MODELS", "coding,fast").split(",") if model.strip()]
+                ai_gateway.sync(api, ai_gateway.Gateway(gateway_url, gateway_key), Path("/state/ai-gateway.json"), Path("/workspaces"), models)
+            except (ai_gateway.GatewayError, BootstrapError, OSError, KeyError, ValueError):
+                print("AI gateway provisioning deferred; check gateway URL/key, model aliases and bootstrap storage. Coder remains ready.", flush=True)
         time.sleep(30)
         try:
             lifecycle.resume(api, journal, save)

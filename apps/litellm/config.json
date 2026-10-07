@@ -1,0 +1,64 @@
+{
+  "name": "LiteLLM AI Gateway",
+  "id": "litellm",
+  "available": true,
+  "short_desc": "Central AI providers, workspace keys and usage tracking",
+  "author": "BerriAI",
+  "port": 4011,
+  "categories": ["ai", "development"],
+  "description": "A personal AI gateway with a web dashboard for provider credentials, model aliases, virtual keys and usage tracking. Connect OMP in Coder workspaces using gateway keys instead of distributing OpenRouter or Requesty credentials. Includes a private PostgreSQL database.",
+  "tipi_version": 1,
+  "version": "v1.104.0",
+  "source": "https://github.com/BerriAI/litellm",
+  "website": "https://docs.litellm.ai",
+  "exposable": true,
+  "dynamic_config": true,
+  "min_tipi_version": "4.10.1",
+  "supported_architectures": ["amd64", "arm64"],
+  "created_at": 1789713890486,
+  "updated_at": 1789713890486,
+  "url_suffix": "/ui/",
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Dashboard username",
+      "env_variable": "LITELLM_UI_USERNAME",
+      "required": false,
+      "default": "admin"
+    },
+    {
+      "type": "password",
+      "label": "Dashboard password",
+      "env_variable": "LITELLM_UI_PASSWORD",
+      "required": true,
+      "hint": "Choose a strong password for the admin dashboard. Provider credentials are added there after installation."
+    },
+    {
+      "type": "random",
+      "label": "Gateway master key material",
+      "env_variable": "LITELLM_MASTER_KEY_MATERIAL",
+      "required": false,
+      "min": 64,
+      "encoding": "hex",
+      "hint": "Generated automatically; the actual master key is sk- followed by this value. Keep it on the server and issue virtual keys for workspaces."
+    },
+    {
+      "type": "random",
+      "label": "Provider encryption key",
+      "env_variable": "LITELLM_SALT_KEY",
+      "required": false,
+      "min": 64,
+      "encoding": "hex",
+      "hint": "Back up with the database. Do not change it: stored provider credentials would become unreadable."
+    },
+    {
+      "type": "random",
+      "label": "Database password",
+      "env_variable": "LITELLM_DB_PASSWORD",
+      "required": false,
+      "min": 48,
+      "encoding": "hex",
+      "hint": "Generated for database initialization on first boot. Changing it later does not change the database password and will prevent the gateway from connecting."
+    }
+  ]
+}

@@ -10,7 +10,7 @@
     "utilities"
   ],
   "description": "Coder with PostgreSQL, an automatically initialized administrator, general, Python, Rust and Flutter development templates and persistent workspaces.",
-  "tipi_version": 25,
+  "tipi_version": 26,
   "version": "v2.36.6",
   "source": "https://github.com/coder/coder",
   "website": "https://coder.com",
@@ -82,8 +82,31 @@
       "required": false,
       "default": "",
       "hint": "Normally derived from RunTipi. Override only for a different reachable LAN/domain/Tailscale HTTP(S) URL, including port. Never localhost."
+    },
+    {
+      "type": "text",
+      "label": "Optional AI gateway URL",
+      "env_variable": "CODER_DEV_AI_GATEWAY_URL",
+      "required": false,
+      "default": "",
+      "hint": "LiteLLM base URL reachable from both the server and workspaces, e.g. https://ai.example.com. Enables automatic per-workspace virtual keys. Leave empty to disable."
+    },
+    {
+      "type": "password",
+      "label": "AI gateway admin key",
+      "env_variable": "CODER_DEV_AI_GATEWAY_ADMIN_KEY",
+      "required": false,
+      "hint": "LiteLLM master key (sk- plus its generated key material). Used only by the server helper; workspaces receive scoped virtual keys."
+    },
+    {
+      "type": "text",
+      "label": "AI gateway model aliases",
+      "env_variable": "CODER_DEV_AI_GATEWAY_MODELS",
+      "required": false,
+      "default": "coding,fast",
+      "hint": "Comma-separated LiteLLM aliases allowed for managed workspace keys. Add these models in LiteLLM first. Existing keys receive permission changes; wildcard access is rejected."
     }
   ],
   "created_at": 1790472900000,
-  "updated_at": 1791359384851
+  "updated_at": 1791390009765
 }
