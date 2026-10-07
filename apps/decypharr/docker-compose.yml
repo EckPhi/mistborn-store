@@ -3,7 +3,7 @@ x-runtipi:
 
 services:
   decypharr:
-    image: cy01/blackhole:v2.5
+    image: cy01/blackhole:v2.6
     environment:
       PUID: ${UID:-0}
       PGID: ${GID:-0}
