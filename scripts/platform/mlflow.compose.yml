@@ -27,7 +27,7 @@ services:
       start_period: 30s
       retries: 30
   mlflow:
-    image: ghcr.io/mlflow/mlflow:v3.16.1-full
+    image: ghcr.io/mlflow/mlflow:v3.17.0-full
     user: '1000:1000'
     working_dir: /data
     entrypoint: [python, -c, "import base64; exec(compile(base64.b64decode('@SERVER@'), 'mlflow-server.py', 'exec'))"]
