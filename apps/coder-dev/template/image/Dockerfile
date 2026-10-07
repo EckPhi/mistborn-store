@@ -1,9 +1,9 @@
 # renovate: datasource=docker depName=docker
 FROM docker:28.5.2-cli AS docker-cli
 # renovate: datasource=docker depName=python
-FROM python:3.13.15-bookworm AS python-runtime
+FROM python:3.14.8-bookworm AS python-runtime
 # renovate: datasource=docker depName=rust
-FROM rust:1.97.1-bookworm AS rust-runtime
+FROM rust:1.99.0-bookworm AS rust-runtime
 # renovate: datasource=docker depName=node
 FROM node:24.21.0-bookworm AS base
 USER root
@@ -32,30 +32,30 @@ COPY zshrc /etc/skel/.zshrc
 COPY --from=python-runtime /usr/local /usr/local
 # Pin Python developer utilities; install outside the persisted developer home.
 # renovate: datasource=pypi depName=uv
-ARG UV_VERSION=0.8.22
+ARG UV_VERSION=0.12.23
 # renovate: datasource=pypi depName=conan
-ARG CONAN_VERSION=2.20.1
+ARG CONAN_VERSION=2.33.0
 # renovate: datasource=npm depName=pnpm
-ARG PNPM_VERSION=10.17.1
+ARG PNPM_VERSION=10.34.6
 # renovate: datasource=npm depName=bun
-ARG BUN_VERSION=1.3.14
+ARG BUN_VERSION=1.4.2
 RUN python3 -m venv /opt/dev-tools && \
     /opt/dev-tools/bin/pip install --no-cache-dir "uv==$UV_VERSION" "conan==$CONAN_VERSION" && \
     npm install -g "pnpm@$PNPM_VERSION" "bun@$BUN_VERSION" && \
     mkdir -p /usr/local/lib/docker/cli-plugins
 # AI agent runtimes. Authentication and mutable settings stay under /home/coder.
 # renovate: datasource=npm depName=@openai/codex
-ARG CODEX_VERSION=0.159.2
+ARG CODEX_VERSION=0.160.1
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.285
+ARG CLAUDE_CODE_VERSION=2.1.292
 # renovate: datasource=npm depName=opencode-ai
-ARG OPENCODE_VERSION=1.18.33
+ARG OPENCODE_VERSION=1.18.35
 # renovate: datasource=pypi depName=omnigent
-ARG OMNIGENT_VERSION=0.16.0
+ARG OMNIGENT_VERSION=0.17.0
 # renovate: datasource=npm depName=@oh-my-pi/pi-coding-agent
-ARG OMP_VERSION=18.4.4
+ARG OMP_VERSION=18.8.0
 # renovate: datasource=pypi depName=mistral-vibe
-ARG VIBE_VERSION=2.25.8
+ARG VIBE_VERSION=2.26.0
 ARG ENABLE_AI_AGENTS=true
 RUN if [ "$ENABLE_AI_AGENTS" = true ]; then \
       npm install -g "@openai/codex@$CODEX_VERSION" "@anthropic-ai/claude-code@$CLAUDE_CODE_VERSION" "opencode-ai@$OPENCODE_VERSION" && \
