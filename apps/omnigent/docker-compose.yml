@@ -27,7 +27,7 @@ services:
       start_period: 30s
       retries: 30
   omnigent:
-    image: ghcr.io/omnigent-ai/omnigent-server:v0.16.0
+    image: ghcr.io/omnigent-ai/omnigent-server:v0.17.0
     user: '1000:1000'
     environment:
       HOME: /data
