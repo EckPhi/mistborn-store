@@ -1,5 +1,5 @@
 # renovate: datasource=docker depName=docker
-FROM docker:28.5.2-cli AS docker-cli
+FROM docker:29.8.2-cli AS docker-cli
 # renovate: datasource=docker depName=python
 FROM python:3.14.8-bookworm AS python-runtime
 # renovate: datasource=docker depName=rust
@@ -36,7 +36,7 @@ ARG UV_VERSION=0.12.23
 # renovate: datasource=pypi depName=conan
 ARG CONAN_VERSION=2.33.0
 # renovate: datasource=npm depName=pnpm
-ARG PNPM_VERSION=10.34.6
+ARG PNPM_VERSION=12.10.1
 # renovate: datasource=npm depName=bun
 ARG BUN_VERSION=1.4.2
 RUN python3 -m venv /opt/dev-tools && \
