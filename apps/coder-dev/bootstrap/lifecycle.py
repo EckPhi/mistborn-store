@@ -1,5 +1,7 @@
 """Graceful Compose shutdown/startup using Coder builds and a durable journal."""
 import json
+import os
+from pathlib import Path
 import stat
 import time
 from urllib.parse import quote
@@ -28,16 +30,17 @@ def workspaces(api):
         offset += len(items)
 
 
-def remove_codex_ipc_sockets(workspaces_root):
-    """Remove stale Codex runtime sockets before RunTipi copies workspace data."""
-    root = workspaces_root
-    if not root.exists():
+def remove_workspace_sockets(workspaces_root):
+    """Remove runtime sockets after workspace shutdown, without following links."""
+    if not workspaces_root.exists():
         return
-    for workspace in root.iterdir():
-        ipc = workspace / "home" / ".codex" / "ipc"
-        if not ipc.is_dir():
-            continue
-        for entry in ipc.iterdir():
+
+    def fail(error):
+        raise error
+
+    for directory, _, files in os.walk(workspaces_root, followlinks=False, onerror=fail):
+        for name in files:
+            entry = Path(directory) / name
             try:
                 if stat.S_ISSOCK(entry.lstat().st_mode):
                     entry.unlink()
@@ -77,7 +80,7 @@ def stop(api, journal, save, workspaces_root=None, timeout=180, delay=1):
                 raise LifecycleError("Workspace shutdown timed out; verify every workspace is stopped before backup.")
             time.sleep(delay)
     if workspaces_root is not None:
-        remove_codex_ipc_sockets(workspaces_root)
+        remove_workspace_sockets(workspaces_root)
     print("Workspace shutdown complete; previous running state recorded", flush=True)
 
 

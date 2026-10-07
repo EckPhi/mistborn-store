@@ -82,22 +82,46 @@ class LifecycleTests(unittest.TestCase):
         with self.assertRaises(lifecycle.LifecycleError): self.stop()
         self.assertEqual(self.api.calls, [])
 
-    def test_shutdown_removes_only_codex_ipc_sockets(self):
+    def test_shutdown_removes_nested_runtime_sockets_and_preserves_files_and_links(self):
         import socket
-        root = Path(self.temp.name) / 'workspaces'
-        ipc = root / 'workspace-id' / 'home' / '.codex' / 'ipc'
-        ipc.mkdir(parents=True)
-        path = ipc / 'ipc.sock'
-        listener = socket.socket(socket.AF_UNIX)
-        listener.bind(str(path))
-        ordinary = ipc / 'settings.json'
+        short_temp = tempfile.TemporaryDirectory(dir='/tmp')
+        self.addCleanup(short_temp.cleanup)
+        root = Path(short_temp.name) / 'w'
+        home = root / 'id' / 'home'
+        paths = [home / '.codex/ipc/ipc.sock',
+                 home / '.local/share/zed/server_state/workspace-2/stdin.sock',
+                 root / 'id/source/tool.sock']
+        listeners = []
+        self.addCleanup(lambda: [listener.close() for listener in listeners])
+        for path in paths:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            listener = socket.socket(socket.AF_UNIX)
+            listeners.append(listener)
+            listener.bind(str(path))
+        ordinary = home / 'settings.sock'
         ordinary.write_text('{}')
-        try:
-            self.stop(root)
+        outside = Path(short_temp.name) / 'outside'
+        outside.mkdir()
+        external_socket = outside / 'external.sock'
+        listener = socket.socket(socket.AF_UNIX)
+        listeners.append(listener)
+        listener.bind(str(external_socket))
+        (home / 'linked-directory').symlink_to(outside, target_is_directory=True)
+        (home / 'linked-socket').symlink_to(external_socket)
+        self.stop(root)
+        for path in paths:
             self.assertFalse(path.exists())
-            self.assertEqual(ordinary.read_text(), '{}')
-        finally:
-            listener.close()
+        self.assertEqual(ordinary.read_text(), '{}')
+        self.assertTrue(external_socket.exists())
+        self.assertTrue((home / 'linked-socket').is_symlink())
+
+    def test_failed_stop_does_not_remove_sockets(self):
+        from unittest.mock import patch
+        self.api.fail_stop = True
+        with patch.object(lifecycle, 'remove_workspace_sockets') as cleanup:
+            with self.assertRaises(lifecycle.LifecycleError):
+                self.stop(Path(self.temp.name))
+            cleanup.assert_not_called()
 
 class SignalTests(unittest.TestCase):
     def test_sigterm_runs_workspace_stop_before_process_exit(self):

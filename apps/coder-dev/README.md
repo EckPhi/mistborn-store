@@ -234,8 +234,10 @@ finish. Startup resumes only those recorded workspaces, without changing their
 template versions or starting workspaces that were already stopped.
 
 Before shutdown completes, bootstrap removes Unix socket files from each
-workspace's `.codex/ipc` directory. Codex recreates these runtime sockets when
-needed; removing them prevents RunTipi's native backup from failing while
+workspace's persistent home, source and cache directories, including Codex IPC
+and Zed server state. Cleanup does not follow symbolic links or remove regular
+files. Tools recreate these runtime sockets when needed; removing them prevents
+RunTipi's native backup from failing while
 copying the persistent workspace home. Other Codex files and workspace data
 are preserved.
 
