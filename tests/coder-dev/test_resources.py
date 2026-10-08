@@ -121,6 +121,7 @@ class ResourceLimitTests(unittest.TestCase):
                 path = Path(directory)
                 shutil.copyfile(TEMPLATE / ".terraform.lock.hcl", path / ".terraform.lock.hcl")
                 shutil.copytree(TEMPLATE / 'image', path / 'image')
+                shutil.copyfile(TEMPLATE / 'storage-migrate.sh', path / 'storage-migrate.sh')
                 providers = (TEMPLATE / "versions.tf").read_text()
                 version = re.search(r'version\s*=\s*"([^"]+)"', providers.split('docker = {')[1]).group(1)
                 (path / "main.tf").write_text(
@@ -134,6 +135,7 @@ class ResourceLimitTests(unittest.TestCase):
                     'variable "workspace_name" { default = "regression" }\n'
                     'variable "agent_token" { default = "test-token" }\n'
                     'variable "development_stack" { default = "general" }\n'
+                    'variable "data_root" { default = "/test" }\n'
                     'locals {\n  root = "/test/workspaces/${var.workspace_id}"\n'
                     '  cache = "/test/caches/${var.workspace_id}"\n  image_hash = "test"\n}\n'
                     + source
@@ -160,7 +162,7 @@ class ResourceLimitTests(unittest.TestCase):
                         volumes = [r for r in resources if r.startswith('docker_volume.')]
                         self.assertEqual(len(volumes), 2 if enabled else 0)
                         containers = [r for r in resources if r.startswith('docker_container.')]
-                        self.assertEqual(len(containers), (3 if enabled else 1) if started else 0)
+                        self.assertEqual(len(containers), (4 if enabled else 2) if started else 0)
                         if not started:
                             self.assertEqual(len(resources), 2 if enabled else 0)
                             continue
@@ -168,6 +170,11 @@ class ResourceLimitTests(unittest.TestCase):
                         self.assertNotIn('/var/run/docker.sock', str(workspace['volumes']))
                         self.assertFalse(workspace['privileged'])
                         self.assertFalse(workspace['ports'])
+                        self.assertEqual(workspace['mounts'][0]['type'], 'volume')
+                        storage = resources['docker_container.storage[0]']
+                        self.assertTrue(storage['attach'])
+                        self.assertFalse(storage['must_run'])
+                        self.assertTrue(storage['volumes'][0]['read_only'])
                         if not enabled:
                             self.assertEqual(workspace['network_mode'], 'bridge')
                             self.assertEqual(workspace['hostname'], 'regression')
@@ -183,7 +190,7 @@ class ResourceLimitTests(unittest.TestCase):
                         self.assertFalse(workspace['host'])
                         self.assertIsNone(workspace.get('hostname'))
                         shared = ['/home/coder', '/workspaces', '/cache']
-                        mounts = lambda container: {v['container_path']: v['host_path'] for v in container['volumes']}
+                        mounts = lambda container: {v['target']: (v['source'], v['volume_options'][0]['subpath']) for v in container['mounts']}
                         for mount in shared:
                             self.assertEqual(mounts(workspace)[mount], mounts(sidecar)[mount])
                         initializer = resources['docker_container.docker_permissions[0]']

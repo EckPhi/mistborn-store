@@ -129,7 +129,7 @@ class SignalTests(unittest.TestCase):
         import subprocess
         import time
         with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary); (root / 'state').mkdir(); (root / 'tmp').mkdir()
+            root = Path(temporary); (root / 'state').mkdir(); (root / 'tmp').mkdir(); (root / 'workspaces').mkdir()
             (root / 'state/state.json').write_text(json.dumps({'user_id': 'admin', 'session_token': 'fixture-session'}))
             script = root / 'signal-test.py'
             script.write_text(f'''
@@ -165,5 +165,8 @@ bootstrap.main()
                     self.assertEqual({key for key, body in calls}, {'one', 'two'})
                     self.assertTrue(all(body['transition'] == 'stop' for key, body in calls))
                     self.assertFalse((root / 'tmp/ready').exists())
+                    self.assertTrue(json.loads((root / 'snapshots/status.json').read_text())['ok'])
+                    latest = json.loads((root / 'snapshots/latest.json').read_text())['directory']
+                    self.assertTrue((root / 'snapshots' / latest / 'manifest.json').exists())
                 finally:
                     if process.poll() is None: process.kill(); process.wait()

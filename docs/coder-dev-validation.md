@@ -141,3 +141,25 @@ deterministic packaging and four pinned RunTipi/Docker Compose configuration
 checks passed. Runtime execution remains pending without a local Docker daemon.
 See [the follow-up verification record](development-platform-validation.md#per-workspace-docker-follow-up--2026-10-05)
 and [acceptance checklist](../tests/coder-dev/ACCEPTANCE.md).
+
+## Dated filtered workspace snapshots (2026-10-08)
+
+Implemented shared Compose-owned workspace/cache named volumes, Docker volume
+subpath mounts (Engine 26+/API 1.45), guarded copy migration of stopped legacy
+workspaces, and snapshots in app-data on bootstrap shutdown. Snapshot tests cover
+cache/special-file filtering, broken links, hardlinks, changed contents and modes,
+retention and failed publication. Migration tests preserve originals and refuse
+unmarked destination conflicts. SIGTERM tests verify stop before snapshot.
+
+Pinned RunTipi 4.10.1 generator and Docker Compose configuration validation pass
+for private, direct-port and domain modes. Pinned Docker-provider plan regression
+checks pass. Native backup uses fs.cp, losing hardlink deduplication and potentially
+rewriting link targets. Stop failures do not abort native backup; status freshness
+is required. Native restore of links and automatic named-volume restore are not
+claimed. Live migration, shutdown duration and Backup-button archive recovery
+remain acceptance checks on the target host. Legacy bind directories must be
+relocated outside app-data after all template migrations before caches are excluded.
+
+Verified primary sources: [RunTipi stop-before-copy command](https://github.com/runtipi/runtipi/blob/5734817389df55aafb9afd571e42e12ab7e647e0/packages/backend/src/modules/app-lifecycle/commands/backup-app-command.ts),
+[filesystem copying](https://github.com/runtipi/runtipi/blob/5734817389df55aafb9afd571e42e12ab7e647e0/packages/backend/src/core/filesystem/filesystem.service.ts),
+and [Node fs.cp options](https://nodejs.org/api/fs.html#fspromisescpsrc-dest-options).

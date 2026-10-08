@@ -59,8 +59,12 @@ can sign in when its saved session expires.
 Back up PostgreSQL, Coder/bootstrap state and workspace source/home together.
 Graceful app shutdown records and stops running workspaces via Coder; startup
 resumes only that set. Verify shutdown completion before a backup/restore. A
-forced shutdown or hook failure requires stopping workspaces manually. Native backups include caches;
-selective backups may omit caches and reproducible builds. Treat archives as
+forced shutdown or hook failure requires stopping workspaces manually. Workspace homes and source now use retained named volumes (Docker 26+). On app
+shutdown, the helper creates dated, filtered snapshots under app-data; native
+backups include the last three snapshots and exclude the live cache volume.
+Existing installations must migrate each stopped workspace to the new template
+and relocate old bind directories after verification. Check snapshot status and
+freshness before relying on a native backup. Treat archives as
 secret-bearing. See the [full installation, IDE, backup and troubleshooting guide](https://github.com/EckPhi/mistborn-store/blob/main/apps/coder-dev/README.md).
 
 ## Modular agent and tracking integrations

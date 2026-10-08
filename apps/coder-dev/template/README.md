@@ -8,9 +8,12 @@ The first build needs Internet access and substantial free disk space.
 
 Bootstrap injects the absolute host `data_root` and optional Git identity.
 Do not replace `data_root` on an existing template without migrating its data.
-The sources bind at `/workspaces`, developer home at `/home/coder` and disposable
-caches at `/cache`. Paths use workspace UUIDs, survive container deletion, and
-are not Terraform-owned resources that a destroy can remove. Restarting a
+Sources mount at `/workspaces`, developer home at `/home/coder` and disposable
+caches at `/cache`, using UUID subpaths in Compose-owned named volumes. Docker
+Engine 26+/API 1.45 is required. Paths survive container deletion and are not
+Terraform-owned resources that a destroy can remove. Stop existing workspaces
+before updating their template; the initializer copies legacy home/source and
+retains originals. See the app README for migration and snapshot recovery. Restarting a
 workspace preserves SSH configuration, Git settings and repositories.
 
 CPU cores and memory MiB default to 0 (unlimited). Docker development defaults

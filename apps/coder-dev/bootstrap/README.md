@@ -29,7 +29,7 @@ Generate the bundled Compose archive with `python3 scripts/coder-dev/package.py`
 after editing these files. Do not edit the base64 archive directly.
 
 `lifecycle.py` supplies the equivalent of pre-stop/post-start handling through
-Docker SIGTERM and dependency ordering. The bootstrap service has five minutes
+Docker SIGTERM and dependency ordering. The bootstrap service has thirty minutes
 to stop running Coder workspaces, journaling their IDs and template versions
 before issuing any stop. The journal survives recreation and backups. Startup
 resumes that set only; subsequent checks remove entries once running. Deleted
@@ -39,3 +39,9 @@ Workspace resumes are retried every 30 seconds. A resume error is logged and
 kept in the journal, but does not make the Coder app unhealthy; bootstrap
 continues retrying without submitting duplicate start builds.
 This path is scenario tested; live Docker shutdown/backup behavior is pending.
+
+After workspace stopping, snapshot.py creates filtered UTC-dated home/source
+snapshots in /snapshots, shares unchanged files locally and retains three. Check
+status.json and latest.json freshness: native RunTipi backup cannot be aborted
+by a helper failure. Live workspace files are mounted from a retained shared
+named volume at /workspaces. See the app README for migration and recovery.

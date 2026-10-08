@@ -240,6 +240,7 @@ def run(api, state_path, template_dir, environment, invoke=cli, templates=None):
 def main():
     Path("/tmp/ready").unlink(missing_ok=True)
     import lifecycle
+    import snapshot
     state_path = Path("/state/state.json")
     journal = Path("/state/lifecycle.json")
     api = API(os.environ["CODER_URL"])
@@ -250,6 +251,7 @@ def main():
         if not state_path.exists():
             raise SystemExit(0)
         try:
+            snapshot.mark_in_progress(Path("/snapshots"))
             state = json.loads(state_path.read_text())
             api.token = state.get("session_token", "")
             status, user = api.request("GET", "/api/v2/users/me")
@@ -265,8 +267,18 @@ def main():
             if user["id"] != state.get("user_id"):
                 raise BootstrapError("Shutdown identity differs from bootstrap; stop workspaces manually.")
             lifecycle.stop(api, journal, save, Path("/workspaces"))
-        except (BootstrapError, lifecycle.LifecycleError, KeyError, ValueError):
-            print("Automatic workspace shutdown failed. Stop all workspaces manually before taking a backup.", flush=True)
+            for legacy in Path("/legacy-workspaces").glob("*"):
+                if legacy.is_dir() and any((legacy / kind).exists() and not (Path("/workspaces") / legacy.name / kind).is_dir() for kind in ("home", "source")):
+                    raise BootstrapError("Legacy workspace storage has not migrated; update its template before relying on snapshots.")
+            result = snapshot.create_snapshot(Path("/workspaces"), Path("/snapshots"),
+                                               workspace_metadata=lifecycle.workspaces(api))
+            print(f"Workspace snapshot complete: {result.name}", flush=True)
+        except (BootstrapError, lifecycle.LifecycleError, OSError, KeyError, ValueError):
+            try:
+                snapshot.record_failure(Path("/snapshots"), "Workspace shutdown or snapshot failed; inspect bootstrap logs.")
+            except OSError:
+                pass
+            print("Workspace shutdown or snapshot failed. Native backup may contain an older snapshot; inspect snapshots/status.json and latest.json before relying on it.", flush=True)
             raise SystemExit(1)
         raise SystemExit(0)
 

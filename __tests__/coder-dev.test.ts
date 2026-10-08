@@ -99,13 +99,13 @@ describe("Coder development deployment", () => {
       expect(JSON.parse(fs.readFileSync(`apps/${app}/config.json`, "utf8")).port).not.toBe(config.port);
     }
   });
-  test("uses persistent host paths independent of Terraform deletion", () => {
+  test("uses shared persistent named volumes independent of Terraform deletion", () => {
     const template = fs.readFileSync(`${root}/template/main.tf`, "utf8");
     expect(template).not.toMatch(/resource "docker_volume" "(?:home|source)"/);
     // biome-ignore lint/suspicious/noTemplateCurlyInString: Verify literal interpolation placeholders.
-    expect(template).toContain("${var.data_root}/workspaces/${data.coder_workspace.me.id}");
+    expect(template).toContain('source = "coder-dev-workspaces"');
     // biome-ignore lint/suspicious/noTemplateCurlyInString: Verify literal interpolation placeholders.
-    expect(template).toContain("${var.data_root}/caches/${data.coder_workspace.me.id}");
+    expect(template).toContain('source = "coder-dev-caches"');
     expect(template).not.toContain("host_docker");
     expect(template).toMatch(/name\s*= "docker_development"[\s\S]*?default\s*= "true"/);
     const workspace = template.split('resource "docker_container" "workspace" {')[1].split('resource "docker_volume"')[0];

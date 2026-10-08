@@ -180,29 +180,29 @@ created on the production daemon untouched; review those separately on the host.
 
 ## Persistence, upgrades and deletion
 
-All app files live under RunTipi's `${APP_DATA_DIR}`:
+Control-plane files and snapshots live under RunTipi's `${APP_DATA_DIR}`; live workspace files use named volumes:
 
 | Path | Purpose | Backup importance |
 | --- | --- | --- |
 | `postgres/` | Coder users, templates, workspace metadata and Terraform state | Critical |
 | `coder/` | Server configuration and provisioner working state | Critical |
 | `bootstrap/` | Identity, bundle fingerprint and session token (mode 0600) | Critical and secret |
-| `workspaces/<uuid>/source/` | `/workspaces`, including uncommitted repositories | Critical |
-| `workspaces/<uuid>/home/` | `/home/coder`, SSH/Git/IDE/tool settings | Critical and possibly secret |
-| `caches/<uuid>/` | ccache, Conan, pip, uv, npm and pnpm | Disposable |
+| `coder-dev-workspaces` volume: `<uuid>/source/` | `/workspaces`, including uncommitted repositories | Critical |
+| `coder-dev-workspaces` volume: `<uuid>/home/` | `/home/coder`, SSH/Git/IDE/tool settings | Critical and possibly secret |
+| `coder-dev-caches` volume: `<uuid>/` | ccache, Conan, pip, uv, npm and pnpm | Disposable |
 | `runtime/` | Embedded scripts, template, matching CLI | Regenerable |
 
-The image filesystem is disposable. Source and home are host bind mounts, not
-Terraform-managed volumes, so deleting a Coder workspace leaves them on disk.
+The image filesystem is disposable. Source and home are directories within a
+Compose-owned named volume, so deleting a Coder workspace leaves them on disk.
 A new workspace with the same name gets a new UUID and fresh storage. Restoring
 old data requires explicitly copying the retained directory; no automatic
-cross-workspace reuse occurs. Removing RunTipi app-data itself can delete source.
+cross-workspace reuse occurs. Removing the named volume deletes live source; removing app-data deletes snapshots.
 Deleting caches is optional; ccache is capped at 10 GB per workspace.
 
 Upgrades publish a new default template version only when bundled template or
 its installer variables change. Existing workspaces stay on their current
-version until you explicitly update them in Coder. Their bind paths remain the
-same. Bootstrap never resets an administrator password, restarts a deliberately
+version until you explicitly update them in Coder. The first update to this
+layout migrates storage; subsequent updates retain the same named-volume paths. Bootstrap never resets an administrator password, restarts a deliberately
 stopped workspace after initial setup, renames it or recreates a deleted default.
 On a graceful app shutdown, the bootstrap helper records running workspaces and
 stops them through Coder before the control plane shuts down. On startup it
@@ -216,45 +216,82 @@ it is used to initialize the database only once.
 
 ## Backups and restore
 
-RunTipi 4.10.1's native backup copies the entire app-data directory, excluding
-paths containing `backups`, plus the installed app and user config. Thus ALL
-paths above, including caches, are covered by default. There is no supported
-per-app cache exclusion in that version. A separate selective backup should
-exclude `caches/`, `runtime/`, Docker image layers and reproducible build output;
-keep `postgres/`, `coder/`, `bootstrap/`, source/home and installation secrets.
-The source directory may contain `build/`, `node_modules/`, `dist/` or `target/`;
-exclude these explicitly in selective backups when they are reproducible.
+Workspace home/source data now lives in the retained Docker named volume
+`coder-dev-workspaces`; disposable caches live in `coder-dev-caches`. These
+volumes are owned by Compose, not workspace Terraform, so deleting a workspace
+retains home/source files. Do not remove them with `docker compose down -v` or
+volume pruning. This layout requires Docker Engine 26+ (API 1.45+) for volume
+subpath mounts and supports one Coder installation per Docker daemon because
+the shared volume names are fixed.
 
-**Before taking or restoring a native backup, verify every workspace is stopped.**
-This app handles graceful stops using the bootstrap container’s SIGTERM handler:
-Compose stops dependent bootstrap first, allowing it up to five minutes before
-Coder/PostgreSQL shutdown. It records previously running workspaces in
-`bootstrap/lifecycle.json`, requests Coder stop builds, and waits for them to
-finish. Startup resumes only those recorded workspaces, without changing their
-template versions or starting workspaces that were already stopped.
+RunTipi's Backup button stops the app before copying app-data. During that stop,
+the bootstrap helper records running workspaces, stops them through Coder,
+and creates a filtered file snapshot from the named volume. Normal startup
+resumes only the recorded workspaces with their existing template versions.
+Every app stop, including an update or manual stop, creates a snapshot. The
+helper has a 30-minute shutdown allowance; large data sets may exceed it.
 
-Before shutdown completes, bootstrap removes Unix socket files from each
-workspace's persistent home, source and cache directories, including Codex IPC
-and Zed server state. Cleanup does not follow symbolic links or remove regular
-files. Tools recreate these runtime sockets when needed; removing them prevents
-RunTipi's native backup from failing while
-copying the persistent workspace home. Other Codex files and workspace data
-are preserved.
+Snapshots are ordinary files at `${APP_DATA_DIR}/snapshots/`:
 
-If a workspace resume fails during app startup, bootstrap logs the issue and
-retries every 30 seconds while keeping Coder healthy. The resume journal stays
-in place until Coder confirms the workspace is running or the user has changed
-its state.
+```text
+snapshots/
+  latest.json                 # completed directory name and timestamp
+  status.json                 # most recent snapshot/shutdown success or failure
+  2026-10-08T183000.000000Z/
+    manifest.json             # completion time and workspace identity
+    workspaces/<uuid>/home/
+    workspaces/<uuid>/source/
+```
 
-RunTipi 4.10.1 has no app-store pre-stop/post-start hook fields. This is an
-equivalent container lifecycle mechanism, not a RunTipi hook. Check the bootstrap
-log for **Workspace shutdown complete** during your first backup test. If a build
-is in progress, authentication fails, a stop build fails, or Docker force-kills
-the helper, the handler cannot block RunTipi from continuing the backup. In those
-cases stop all workspaces manually in Coder and retry. Power loss/SIGKILL bypasses
-the handler. Live shutdown ordering and native backup/restore remain manual
-acceptance checks; do not assume a successful backup means graceful stopping ran. Treat the archive as sensitive: it includes session
-credentials, database credentials and potentially SSH keys. Store it encrypted.
+The last three completed snapshots are retained. Unchanged regular files share
+hard links locally; changed files get new copies, and deleted files remain in
+older snapshots. Copying uses a temporary directory and publishes only after
+success. A failed copy keeps the previous snapshot. Treat completed snapshots
+as read-only: **copy a file elsewhere before editing it**, since editing a shared
+inode changes multiple snapshots. VS Code Remote SSH can browse the host's
+snapshot directory directly; the manifest maps workspace UUIDs to names.
+
+Caches in the separate cache volume are omitted. Directories named `.cache`,
+`__pycache__`, `.npm`, `.yarn-cache`, `.pnpm-store` and `.uv-cache` inside home/source
+are also omitted, along with sockets, FIFOs and device nodes. Build outputs,
+virtual environments, `node_modules` and other source files are retained.
+Symbolic links, including broken links, are copied without following targets;
+external targets are not included automatically.
+
+Native RunTipi backups include snapshots, PostgreSQL, Coder configuration,
+bootstrap state and installation secrets. RunTipi's copy does not preserve
+hard-link deduplication, so archives can contain three full copies of unchanged
+files. Its pinned 4.10.1 implementation can rewrite relative symlink targets
+and reject symlink entries during native restore. This feature targets manual
+file recovery; automatic named-volume restore is not implemented.
+
+**A successful RunTipi backup does not prove a current workspace snapshot.**
+RunTipi continues even when Compose stop fails. Check bootstrap logs for
+`Workspace snapshot complete` and check `snapshots/status.json` is `ok: true`
+with a current timestamp before relying on the archive. An interrupted shutdown leaves an `in_progress` status; always check the date
+as power loss before the handler starts can leave older metadata. Power loss bypasses the handler.
+Live shutdown ordering and native backup acceptance remain unverified locally.
+Encrypt archives: homes and configuration contain credentials and SSH keys.
+
+### Existing installation migration
+
+For each existing workspace: stop it in Coder, update it to the newly published
+template version, then start it. Never apply the storage migration to a running
+workspace. The template initializer copies its legacy bind-mounted home/source
+into the named volume before starting the new container, preserves symlinks,
+and records completion for idempotent retries. Caches start empty. Existing
+bind files are deliberately retained for rollback; switching to an old template
+uses those original files and will not include edits made after migration.
+
+Verify each migrated workspace's projects/configuration and make a successful
+snapshot. **After all workspaces have migrated**, move the old host
+`${APP_DATA_DIR}/workspaces` and `${APP_DATA_DIR}/caches` directories to a safe
+location outside app-data, retaining them until recovery has been checked.
+Stop the app first, and recreate empty directories at the original paths before
+restarting. Do not move them while an old template still uses them. Old cache
+files remain part of native backups until relocated and can still trigger the
+original backup error. The helper marks snapshots failed when legacy workspace
+home/source directories have no corresponding migrated storage.
 
 Restore a matching PostgreSQL + bootstrap + source/home set. Restore on the same
 host path whenever possible; Coder's stored template/Terraform paths reference

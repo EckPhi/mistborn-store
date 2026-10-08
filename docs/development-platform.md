@@ -32,7 +32,7 @@ cmake --build build
 ctest --test-dir build
 ```
 
-`~/workspaces` links to persistent `/workspaces`. Home, source and caches have separate host bind paths keyed by Coder workspace UUID. Home and source survive container recreation and are deliberately retained after workspace deletion; clean them only after reviewing ownership/backups. The entire operating system is not persisted.
+`~/workspaces` links to persistent `/workspaces`. Home/source and caches use separate retained named volumes with directories keyed by Coder workspace UUID (Docker 26+). Home and source survive container recreation and are deliberately retained after workspace deletion; clean them only after reviewing ownership/backups. The entire operating system is not persisted.
 
 ## AI agents and sessions
 
@@ -113,7 +113,7 @@ Install [MLflow](../apps/mlflow/README.md) independently. Configure optional `ML
 
 RunTipi 4.10.1 native backups cover app-data directories and installation configuration; they do not automatically cover arbitrary Docker volumes or external S3. Quiesce writers and verify workspace shutdown before a Coder backup. Use a consistent database dump/snapshot and artifact copy for separate backup tooling. Encrypt backups: homes and installation config contain credentials. Restore each app independently on a disposable installation with matching host paths, DB credentials and object keys; existing Coder bootstrap tests do not establish actual restore behavior.
 
-ccache is capped at 10 GB per workspace. Monitor `docker system df` and disk usage. Review unused images before `docker image prune`; review cache before `docker builder prune --keep-storage 20GB`. Avoid `docker system prune --volumes`, which can destroy unrelated data. In a stopped or idle workspace, review `conan cache clean`, `pnpm store prune`, `npm cache clean --force`, `python3 -m pip cache purge`, and `uv cache prune`; package cache cleaning is not source cleanup. Identify old agent workspaces through Coder metadata, stop them first and delete only after reviewing source/PR/backups. RunTipi cannot automatically exclude all disposable caches from native backups. MLflow GC/object lifecycle requires explicit retention policy; no unattended deletion is enabled.
+ccache is capped at 10 GB per workspace. Monitor `docker system df` and disk usage. Review unused images before `docker image prune`; review cache before `docker builder prune --keep-storage 20GB`. Avoid `docker system prune --volumes`, which can destroy unrelated data. In a stopped or idle workspace, review `conan cache clean`, `pnpm store prune`, `npm cache clean --force`, `python3 -m pip cache purge`, and `uv cache prune`; package cache cleaning is not source cleanup. Identify old agent workspaces through Coder metadata, stop them first and delete only after reviewing source/PR/backups. Coder shutdown creates filtered dated app-data snapshots of named-volume homes/source; native backups exclude its live cache volume. Legacy bind caches must be relocated after migration; see the Coder backup guide. MLflow GC/object lifecycle requires explicit retention policy; no unattended deletion is enabled.
 
 ## Upgrade and test
 

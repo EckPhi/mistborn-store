@@ -131,3 +131,14 @@ Run `python3 -m http.server 8000 --bind 0.0.0.0` and access it through
 
 Testing is complete only after these live checks pass. Local scenario tests
 prove bootstrap control flow, not actual image builds, IDE behavior or host reboot.
+
+## Named-volume snapshots
+
+- Verify Docker Engine 26+/API 1.45 and migrate stopped workspaces by template update.
+- Verify home/source persistence, AI gateway delivery and rootless Docker bind visibility.
+- Confirm original bind data remains untouched; relocate it outside app-data only after all migrations.
+- Take a native backup and verify a fresh successful snapshots/status.json and manifest.
+- Browse home/source with VS Code; copy files out for recovery, including broken links.
+- Take four snapshots, change/delete a file between them, verify retention of three and historical content.
+- Force a snapshot failure: old snapshot stays available and failure/freshness is evident.
+- Measure backup archive size: native copying does not retain hardlink savings.

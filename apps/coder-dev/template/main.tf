@@ -51,8 +51,6 @@ data "coder_parameter" "memory" {
   validation { min = 0 }
 }
 locals {
-  root  = "${var.data_root}/workspaces/${data.coder_workspace.me.id}"
-  cache = "${var.data_root}/caches/${data.coder_workspace.me.id}"
   image_hash = substr(sha256(join("", [
     file("${path.module}/image/Dockerfile"),
     file("${path.module}/image/entrypoint.sh"),
@@ -142,17 +140,32 @@ resource "docker_container" "workspace" {
   cpu_quota    = tonumber(data.coder_parameter.cpu.value) * 100000
   cpu_period   = 100000
   restart      = "unless-stopped"
-  volumes {
-    host_path      = "${local.root}/home"
-    container_path = "/home/coder"
+  mounts {
+    type   = "volume"
+    source = "coder-dev-workspaces"
+    target = "/home/coder"
+    volume_options {
+      no_copy = true
+      subpath = "${data.coder_workspace.me.id}/home"
+    }
   }
-  volumes {
-    host_path      = "${local.root}/source"
-    container_path = "/workspaces"
+  mounts {
+    type   = "volume"
+    source = "coder-dev-workspaces"
+    target = "/workspaces"
+    volume_options {
+      no_copy = true
+      subpath = "${data.coder_workspace.me.id}/source"
+    }
   }
-  volumes {
-    host_path      = local.cache
-    container_path = "/cache"
+  mounts {
+    type   = "volume"
+    source = "coder-dev-caches"
+    target = "/cache"
+    volume_options {
+      no_copy = true
+      subpath = data.coder_workspace.me.id
+    }
   }
   dynamic "volumes" {
     for_each = data.coder_parameter.docker_development.value == "true" ? [1] : []
@@ -161,7 +174,7 @@ resource "docker_container" "workspace" {
       container_path = "/docker-socket"
     }
   }
-  depends_on = [docker_container.docker_development]
+  depends_on = [docker_container.docker_development, docker_container.storage]
   dynamic "host" {
     for_each = data.coder_parameter.docker_development.value == "true" ? [] : [1]
     content {
@@ -217,7 +230,7 @@ resource "docker_container" "docker_development" {
   name         = "coder-dev-${data.coder_workspace.me.id}-docker"
   hostname     = data.coder_workspace.me.name
   image        = docker_image.docker_development[0].image_id
-  depends_on   = [docker_container.docker_permissions]
+  depends_on   = [docker_container.docker_permissions, docker_container.storage]
   privileged   = true
   user         = "1000:1000"
   wait         = true
@@ -235,17 +248,32 @@ resource "docker_container" "docker_development" {
     container_path = "/home/rootless/.local/share/docker"
   }
   # Compose bind sources must exist at the same absolute paths in the daemon.
-  volumes {
-    host_path      = "${local.root}/home"
-    container_path = "/home/coder"
+  mounts {
+    type   = "volume"
+    source = "coder-dev-workspaces"
+    target = "/home/coder"
+    volume_options {
+      no_copy = true
+      subpath = "${data.coder_workspace.me.id}/home"
+    }
   }
-  volumes {
-    host_path      = "${local.root}/source"
-    container_path = "/workspaces"
+  mounts {
+    type   = "volume"
+    source = "coder-dev-workspaces"
+    target = "/workspaces"
+    volume_options {
+      no_copy = true
+      subpath = "${data.coder_workspace.me.id}/source"
+    }
   }
-  volumes {
-    host_path      = local.cache
-    container_path = "/cache"
+  mounts {
+    type   = "volume"
+    source = "coder-dev-caches"
+    target = "/cache"
+    volume_options {
+      no_copy = true
+      subpath = data.coder_workspace.me.id
+    }
   }
   labels {
     label = "coder.workspace_id"
@@ -256,5 +284,42 @@ resource "docker_container" "docker_development" {
     interval = "10s"
     timeout  = "5s"
     retries  = 30
+  }
+}
+
+# Shared named volumes belong to the store Compose deployment, not Terraform:
+# destroying a workspace must not destroy its persisted files.
+# Native volume subpaths require Docker Engine 26+ (API 1.45).
+resource "docker_container" "storage" {
+  count        = data.coder_workspace.me.start_count
+  name         = "coder-dev-${data.coder_workspace.me.id}-storage"
+  image        = docker_image.development[0].image_id
+  user         = "0:0"
+  network_mode = "none"
+  must_run     = false
+  attach       = true
+  entrypoint   = ["/bin/bash", "-ec"]
+  command      = [file("${path.module}/storage-migrate.sh")]
+  env          = ["WORKSPACE_ID=${data.coder_workspace.me.id}"]
+  volumes {
+    host_path      = var.data_root
+    container_path = "/legacy"
+    read_only      = true
+  }
+  mounts {
+    type   = "volume"
+    source = "coder-dev-workspaces"
+    target = "/persistent"
+    volume_options { no_copy = true }
+  }
+  mounts {
+    type   = "volume"
+    source = "coder-dev-caches"
+    target = "/cache-storage"
+    volume_options { no_copy = true }
+  }
+  labels {
+    label = "coder.workspace_id"
+    value = data.coder_workspace.me.id
   }
 }
