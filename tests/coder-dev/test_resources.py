@@ -136,6 +136,7 @@ class ResourceLimitTests(unittest.TestCase):
                     'variable "agent_token" { default = "test-token" }\n'
                     'variable "development_stack" { default = "general" }\n'
                     'variable "data_root" { default = "/test" }\n'
+                    'variable "docker_apparmor_profile" { default = "" }\n'
                     'locals {\n  root = "/test/workspaces/${var.workspace_id}"\n'
                     '  cache = "/test/caches/${var.workspace_id}"\n  image_hash = "test"\n}\n'
                     + source
@@ -151,11 +152,11 @@ class ResourceLimitTests(unittest.TestCase):
                 if os.environ.get("CODER_TERRAFORM_PLUGIN_DIR"):
                     init_args.append(f"-plugin-dir={os.environ['CODER_TERRAFORM_PLUGIN_DIR']}")
                 terraform(*init_args)
-                for enabled, started in ((True, 1), (True, 0), (False, 1), (False, 0)):
-                    with self.subTest(enabled=enabled, started=started):
+                for enabled, started, profile in ((True, 1, ""), (True, 1, "coder-dev-rootless"), (True, 0, ""), (False, 1, ""), (False, 0, "")):
+                    with self.subTest(enabled=enabled, started=started, profile=profile):
                         terraform("plan", "-refresh=false", "-input=false", "-no-color",
                                   f"-var=docker_development={str(enabled).lower()}",
-                                  f"-var=start_count={started}", "-out=plan")
+                                  f"-var=start_count={started}", f"-var=docker_apparmor_profile={profile}", "-out=plan")
                         plan = json.loads(terraform("show", "-json", "plan"))
                         resources = {r['address']: r['values'] for r in
                                      plan['planned_values'].get('root_module', {}).get('resources', [])}
@@ -181,6 +182,7 @@ class ResourceLimitTests(unittest.TestCase):
                             self.assertNotIn('DOCKER_HOST=', ' '.join(workspace['env']))
                             continue
                         sidecar = resources['docker_container.docker_development[0]']
+                        self.assertEqual(sidecar.get('security_opts') or [], [f'apparmor={profile}'] if profile else [])
                         self.assertTrue(sidecar['privileged'])
                         self.assertEqual(sidecar['user'], '1000:1000')
                         self.assertFalse(sidecar['ports'])

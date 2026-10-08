@@ -185,6 +185,7 @@ def run(api, state_path, template_dir, environment, invoke=cli, templates=None):
         "data_root": environment["CODER_DEV_DATA_ROOT"],
         "git_name": environment.get("CODER_DEV_GIT_NAME", ""),
         "git_email": environment.get("CODER_DEV_GIT_EMAIL", ""),
+        "docker_apparmor_profile": environment.get("CODER_DEV_DOCKER_APPARMOR_PROFILE", ""),
     }
     for template_name, stack in (templates if templates is not None else development_templates()).items():
         publish_template(api, state, state_path, template_dir,

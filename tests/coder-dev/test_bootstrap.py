@@ -95,6 +95,15 @@ class BootstrapTests(unittest.TestCase):
         self.templates = {"general-development": "general"}
         self.logs = io.StringIO()
 
+    def test_apparmor_setting_publishes_new_template_with_selected_profile(self):
+        self.run_bootstrap()
+        initial = sum(command[0] == "templates" for command in self.coder.commands)
+        self.env["CODER_DEV_DOCKER_APPARMOR_PROFILE"] = "coder-dev-rootless"
+        self.run_bootstrap()
+        self.assertEqual(sum(command[0] == "templates" for command in self.coder.commands), initial + 1)
+        command = self.coder.commands[-1]
+        self.assertIn("docker_apparmor_profile=coder-dev-rootless", command)
+
     def test_new_workspace_enables_isolated_docker(self):
         self.run_bootstrap()
         create = next(command for command in self.coder.commands if command[0] == "create")
@@ -199,6 +208,7 @@ class BootstrapTests(unittest.TestCase):
         self.assertIn('data_root=/test/app-data', command)
         self.assertIn('git_name=', command)
         self.assertIn('git_email=', command)
+        self.assertIn('docker_apparmor_profile=', command)
 
     def test_arm64_skips_only_flutter(self):
         with contextlib.redirect_stdout(self.logs):

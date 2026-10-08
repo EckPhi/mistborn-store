@@ -23,3 +23,13 @@ variable "development_stack" {
     error_message = "Select general, python, rust or flutter."
   }
 }
+
+variable "docker_apparmor_profile" {
+  type        = string
+  default     = ""
+  description = "Optional host-loaded AppArmor profile for the rootless Docker sidecar."
+  validation {
+    condition     = var.docker_apparmor_profile == "" || can(regex("^[a-zA-Z0-9_.-]+$", var.docker_apparmor_profile))
+    error_message = "Use a simple host-loaded profile name, or leave empty."
+  }
+}

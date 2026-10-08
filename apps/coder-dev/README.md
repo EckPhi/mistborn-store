@@ -153,6 +153,53 @@ host that supports user namespaces. This protects against accidental operations
 on the production daemon, but is not a security boundary for malicious workloads.
 Disable **Enable Docker development** for hosts that cannot run this mode.
 
+### Rootless Docker on hosts with restricted user namespaces
+
+If sidecar logs show `fork/exec /proc/self/exe: operation not permitted` and the
+kernel audit shows RootlessKit transitioning from `unconfined` to
+`unprivileged_userns`, the host's AppArmor user-namespace restriction is blocking
+startup. `privileged=true` and `AppArmor=unconfined` alone can still encounter
+this Ubuntu restriction. See [Ubuntu's restriction explanation](https://documentation.ubuntu.com/release-notes/24.04/).
+
+Install a named profile on the Docker host that allows user namespaces for
+containers explicitly assigned this profile:
+
+```bash
+sudo tee /etc/apparmor.d/coder-dev-rootless >/dev/null <<'EOF'
+abi <abi/4.0>,
+include <tunables/global>
+
+profile coder-dev-rootless flags=(unconfined) {
+  userns,
+}
+EOF
+sudo apparmor_parser -r /etc/apparmor.d/coder-dev-rootless
+```
+
+This deliberately permits user namespaces for the assigned sidecar. Its
+`unconfined` flag matches the sidecar's existing AppArmor mode; the host-wide
+`kernel.apparmor_restrict_unprivileged_userns=1` stays enabled. Apply the profile
+only to trusted development sidecars. Do not enter its name until it loads
+successfully; Docker refuses startup when a requested profile is absent.
+
+Set the RunTipi app field **Docker sidecar AppArmor profile** to
+`coder-dev-rootless`, apply the app configuration, and wait for bootstrap to
+publish the updated templates. Stop each workspace, update it to the newest
+template version, and start it. This changes the sidecar, leaving workspace
+home/source storage intact. Confirm the selected profile and readiness:
+
+```bash
+docker inspect --format '{{.AppArmorProfile}}' coder-dev-<workspace-uuid>-docker
+docker exec coder-dev-<workspace-uuid>-docker docker info
+```
+
+The first command should print `coder-dev-rootless`; the second should connect
+to the daemon. Leave the optional app field empty on hosts that do not need
+this allowance. Live validation of this host-loaded profile is required; local
+provider-plan tests verify configuration wiring only. To undo, clear the field,
+apply the app configuration and update stopped workspaces again before removing
+the profile. The original restriction will then apply again.
+
 Run `docker info`, `docker compose build`, and `docker compose up -d` from a
 repository under `/workspaces` or `/home/coder/workspaces`. Workspace home, source
 and cache paths are mounted identically in the sidecar, so Compose bind mounts

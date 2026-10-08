@@ -232,6 +232,7 @@ resource "docker_container" "docker_development" {
   image        = docker_image.docker_development[0].image_id
   depends_on   = [docker_container.docker_permissions, docker_container.storage]
   privileged   = true
+  security_opts = var.docker_apparmor_profile == "" ? [] : ["apparmor=${var.docker_apparmor_profile}"]
   user         = "1000:1000"
   wait         = true
   wait_timeout = 180

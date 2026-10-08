@@ -10,7 +10,7 @@
     "utilities"
   ],
   "description": "Coder with PostgreSQL, an automatically initialized administrator, general, Python, Rust and Flutter development templates and persistent workspaces.",
-  "tipi_version": 37,
+  "tipi_version": 38,
   "version": "v2.36.6",
   "source": "https://github.com/coder/coder",
   "website": "https://coder.com",
@@ -105,8 +105,17 @@
       "required": false,
       "default": "coding,fast",
       "hint": "Comma-separated LiteLLM aliases allowed for managed workspace keys. Add these models in LiteLLM first. Existing keys receive permission changes; wildcard access is rejected."
+    },
+    {
+      "type": "text",
+      "label": "Docker sidecar AppArmor profile",
+      "env_variable": "CODER_DEV_DOCKER_APPARMOR_PROFILE",
+      "required": false,
+      "default": "",
+      "regex": "^[a-zA-Z0-9_.-]*$",
+      "hint": "Optional host-loaded profile, e.g. coder-dev-rootless on Ubuntu with restricted user namespaces. Install the profile from the app guide first, then update stopped workspaces to the new template."
     }
   ],
   "created_at": 1790472900000,
-  "updated_at": 1791452053336
+  "updated_at": 1791468428272
 }

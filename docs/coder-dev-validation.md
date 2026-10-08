@@ -163,3 +163,14 @@ relocated outside app-data after all template migrations before caches are exclu
 Verified primary sources: [RunTipi stop-before-copy command](https://github.com/runtipi/runtipi/blob/5734817389df55aafb9afd571e42e12ab7e647e0/packages/backend/src/modules/app-lifecycle/commands/backup-app-command.ts),
 [filesystem copying](https://github.com/runtipi/runtipi/blob/5734817389df55aafb9afd571e42e12ab7e647e0/packages/backend/src/core/filesystem/filesystem.service.ts),
 and [Node fs.cp options](https://nodejs.org/api/fs.html#fspromisescpsrc-dest-options).
+
+## RootlessKit AppArmor host restriction (2026-10-08)
+
+Live sidecar logs showed EPERM spawning RootlessKit; host audit records showed
+`unconfined` transitioning to `unprivileged_userns` despite privileged mode.
+The app now accepts an optional host-loaded AppArmor profile passed through
+bootstrap template variables to only the Docker sidecar's security_opts. The
+README documents a named unconfined profile with explicit userns permission,
+keeping the global host restriction enabled. Provider-plan regression covers
+empty and named profile settings. Host profile loading and successful daemon
+startup cannot be verified in the local macOS environment.
