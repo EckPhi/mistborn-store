@@ -45,15 +45,15 @@ RUN python3 -m venv /opt/dev-tools && \
     mkdir -p /usr/local/lib/docker/cli-plugins
 # AI agent runtimes. Authentication and mutable settings stay under /home/coder.
 # renovate: datasource=npm depName=@openai/codex
-ARG CODEX_VERSION=0.160.1
+ARG CODEX_VERSION=0.161.0
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.292
+ARG CLAUDE_CODE_VERSION=2.1.293
 # renovate: datasource=npm depName=opencode-ai
 ARG OPENCODE_VERSION=1.18.35
 # renovate: datasource=pypi depName=omnigent
 ARG OMNIGENT_VERSION=0.17.0
 # renovate: datasource=npm depName=@oh-my-pi/pi-coding-agent
-ARG OMP_VERSION=18.8.0
+ARG OMP_VERSION=18.8.4
 # renovate: datasource=pypi depName=mistral-vibe
 ARG VIBE_VERSION=2.26.0
 ARG ENABLE_AI_AGENTS=true
