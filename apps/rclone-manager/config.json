@@ -1,0 +1,57 @@
+{
+  "name": "RClone Manager",
+  "id": "rclone-manager",
+  "available": true,
+  "short_desc": "Manage the host rclone service, transfers and mounts",
+  "author": "Zarestia-Dev",
+  "port": 5574,
+  "categories": ["utilities", "media"],
+  "description": "RClone Manager provides a web interface for the existing host rclone service, with remote configuration, file management, transfers, scheduling and host mounts. The host backend is selected automatically on first startup.",
+  "tipi_version": 1,
+  "version": "sha-6d43c77",
+  "source": "https://github.com/Zarestia-Dev/rclone-manager",
+  "website": "https://hakanismail.info/zarestia/rclone-manager/",
+  "exposable": true,
+  "supported_architectures": ["amd64", "arm64"],
+  "dynamic_config": true,
+  "min_tipi_version": "4.10.1",
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Web UI username",
+      "env_variable": "RCLONE_MANAGER_UI_USER",
+      "required": true,
+      "hint": "Choose a username for signing in to RClone Manager."
+    },
+    {
+      "type": "password",
+      "label": "Web UI password",
+      "env_variable": "RCLONE_MANAGER_UI_PASS",
+      "required": true,
+      "hint": "Choose a password for signing in to RClone Manager."
+    },
+    {
+      "type": "text",
+      "label": "Host rclone RC username",
+      "env_variable": "RCLONE_MANAGER_HOST_USER",
+      "required": true,
+      "hint": "The existing RCLONE_RC_USER from the host rclone service's rc.env file."
+    },
+    {
+      "type": "password",
+      "label": "Host rclone RC password",
+      "env_variable": "RCLONE_MANAGER_HOST_PASS",
+      "required": true,
+      "hint": "The existing RCLONE_RC_PASS from the host rclone service's rc.env file. Update this field if the host password changes."
+    },
+    {
+      "type": "random",
+      "label": "Credential encryption secret",
+      "env_variable": "RCLONE_MANAGER_CREDENTIAL_SECRET",
+      "required": false,
+      "min": 64,
+      "encoding": "hex",
+      "hint": "Generated once for Manager's saved credentials. Back up this secret with app data; changing it can make saved credentials unreadable."
+    }
+  ]
+}

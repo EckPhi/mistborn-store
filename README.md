@@ -65,6 +65,7 @@ pending; the experimental Coder provisioning bridge is separate from the core.
 | <img src="apps/pyload-ng/metadata/logo.jpg" width="32"> | [pyLoad-ng](https://github.com/pyload/pyload) | Lightweight web download manager with hoster plugins |
 | <img src="apps/questdb/metadata/logo.jpg" width="32"> | [QuestDB](https://github.com/questdb/questdb) | High-performance time-series database with SQL |
 | <img src="apps/rclone/metadata/logo.jpg" width="32"> | [Rclone](https://github.com/rclone/rclone) | Web interface for a host-installed rclone service |
+| <img src="apps/rclone-manager/metadata/logo.jpg" width="32"> | [RClone Manager](https://github.com/Zarestia-Dev/rclone-manager) | Manage the host rclone service, transfers and mounts |
 | <img src="apps/receipt-wrangler/metadata/logo.jpg" width="32"> | [Receipt Wrangler](https://github.com/Receipt-Wrangler/receipt-wrangler) | Self-hosted receipt manager with OCR and AI scanning |
 | <img src="apps/runtipi-companion/metadata/logo.jpg" width="32"> | [Runtipi Companion](https://github.com/EckPhi/runtipi-companion) | Verified Runtipi backups through an existing rclone service |
 | <img src="apps/scrape-dojo/metadata/logo.jpg" width="32"> | [Scrape Dojo](https://github.com/disane87/scrape-dojo) | Self-hosted, config-driven web scraping platform |

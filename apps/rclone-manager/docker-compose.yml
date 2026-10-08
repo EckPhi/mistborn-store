@@ -1,0 +1,96 @@
+x-runtipi:
+  schema_version: 2
+
+services:
+  rclone-manager:
+    image: ghcr.io/zarestia-dev/rclone-manager:sha-6d43c77
+    depends_on:
+      rclone-host-bridge:
+        condition: service_healthy
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        set -eu
+        umask 077
+        mkdir -p /data
+        if [ ! -e /data/connections.json ]; then
+          cat > /data/connections.json.tmp <<'CONNECTIONS'
+        {
+          "_active": "Host rclone",
+          "Host rclone": {
+            "is_local": false,
+            "host": "rclone-host-bridge",
+            "port": 5572
+          }
+        }
+        CONNECTIONS
+          mv /data/connections.json.tmp /data/connections.json
+        fi
+        umask 022
+        exec /usr/local/bin/entrypoint.sh
+    environment:
+      RCLONE_MANAGER_HOST: 0.0.0.0
+      RCLONE_MANAGER_PORT: "8080"
+      RCLONE_MANAGER_DATA_DIR: /data
+      RCLONE_MANAGER_USER: ${RCLONE_MANAGER_UI_USER}
+      RCLONE_MANAGER_PASS: ${RCLONE_MANAGER_UI_PASS}
+      RCLONE_MANAGER_SECRET: ${RCLONE_MANAGER_CREDENTIAL_SECRET}
+      TZ: ${TZ}
+    volumes:
+      - ${APP_DATA_DIR}/data:/data
+      - ${APP_DATA_DIR}/config:/config
+    x-runtipi:
+      is_main: true
+      internal_port: 8080
+
+  rclone-host-bridge:
+    image: nginx:1.30.5-alpine
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -eu
+        umask 077
+        test -n "$$HOST_RC_USER"
+        test -n "$$HOST_RC_PASS"
+        host_auth=$$(printf '%s:%s' "$$HOST_RC_USER" "$$HOST_RC_PASS" | base64 | tr -d '\n')
+
+        cat > /etc/nginx/conf.d/default.conf <<'NGINX_CONFIG'
+        server {
+            listen 5572;
+            server_name _;
+            client_max_body_size 0;
+
+            location / {
+                proxy_pass http://unix:/run/rclone/rc.sock:/;
+                proxy_http_version 1.1;
+                proxy_read_timeout 3600s;
+                proxy_request_buffering off;
+                proxy_set_header Host localhost;
+                proxy_set_header Authorization "Basic HOST_AUTH_PLACEHOLDER";
+            }
+        }
+        NGINX_CONFIG
+        sed -i "s|HOST_AUTH_PLACEHOLDER|$$host_auth|" /etc/nginx/conf.d/default.conf
+
+        socket_gid=$$(stat -c '%g' /run/rclone/rc.sock)
+        socket_group=$$(awk -F: -v gid="$$socket_gid" '$$3 == gid { print $$1; exit }' /etc/group)
+        if [ -z "$$socket_group" ]; then
+          socket_group=rclone-socket
+          printf 'rclone-socket:x:%s:nginx\n' "$$socket_gid" >> /etc/group
+        fi
+        sed -i "s/^user[[:space:]][[:space:]]*nginx;.*/user nginx $$socket_group;/" /etc/nginx/nginx.conf
+        exec nginx -g 'daemon off;'
+    environment:
+      HOST_RC_USER: ${RCLONE_MANAGER_HOST_USER}
+      HOST_RC_PASS: ${RCLONE_MANAGER_HOST_PASS}
+    volumes:
+      - type: bind
+        source: /run/rclone
+        target: /run/rclone
+        read_only: true
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null --post-data='{}' http://127.0.0.1:5572/core/version"]
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 6
