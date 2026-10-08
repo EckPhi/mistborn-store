@@ -3,7 +3,7 @@ x-runtipi:
 
 services:
   runtipi-companion:
-    image: ghcr.io/eckphi/runtipi-companion:3.5.0
+    image: ghcr.io/eckphi/runtipi-companion:3.5.1
     environment:
       PORT: "8080"
       TZ: ${TZ}
