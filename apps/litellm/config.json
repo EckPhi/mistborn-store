@@ -10,8 +10,8 @@
     "development"
   ],
   "description": "A personal AI gateway with a web dashboard for provider credentials, model aliases, virtual keys and usage tracking. Connect OMP in Coder workspaces using gateway keys instead of distributing OpenRouter or Requesty credentials. Includes a private PostgreSQL database.",
-  "tipi_version": 2,
-  "version": "v1.104.1",
+  "tipi_version": 3,
+  "version": "v1.104.2",
   "source": "https://github.com/BerriAI/litellm",
   "website": "https://docs.litellm.ai",
   "exposable": true,
@@ -22,7 +22,7 @@
     "arm64"
   ],
   "created_at": 1789713890486,
-  "updated_at": 1791407735949,
+  "updated_at": 1791533269449,
   "url_suffix": "/ui/",
   "form_fields": [
     {
