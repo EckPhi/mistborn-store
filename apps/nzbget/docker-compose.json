@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json",
+  "services": [
+    {
+      "name": "nzbget",
+      "image": "linuxserver/nzbget:v26.3-ls266",
+      "isMain": true,
+      "internalPort": 6789,
+      "environment": [
+        {
+          "key": "PUID",
+          "value": "${UID:-0}"
+        },
+        {
+          "key": "PGID",
+          "value": "${GID:-0}"
+        },
+        {
+          "key": "TZ",
+          "value": "${TZ}"
+        },
+        {
+          "key": "NZBGET_USER",
+          "value": "${NZBGET_USERNAME}"
+        },
+        {
+          "key": "NZBGET_PASS",
+          "value": "${NZBGET_PASSWORD}"
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/config",
+          "containerPath": "/config"
+        },
+        {
+          "hostPath": "${ROOT_FOLDER_HOST}/media/downloads",
+          "containerPath": "/downloads"
+        }
+      ]
+    }
+  ]
+}

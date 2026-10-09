@@ -1,0 +1,41 @@
+{
+  "name": "NZBGet",
+  "id": "nzbget",
+  "available": true,
+  "short_desc": "Efficient Usenet downloader with automatic repair and extraction",
+  "author": "NZBGet",
+  "port": 6789,
+  "categories": [
+    "media",
+    "utilities"
+  ],
+  "description": "NZBGet manages Usenet downloads through a web interface with automatic repair, extraction, RSS feeds and scheduling.",
+  "tipi_version": 1,
+  "version": "v26.3-ls266",
+  "source": "https://github.com/nzbgetcom/nzbget",
+  "website": "https://nzbget.com",
+  "exposable": true,
+  "supported_architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Web username",
+      "env_variable": "NZBGET_USERNAME",
+      "required": true,
+      "placeholder": "nzbget"
+    },
+    {
+      "type": "password",
+      "label": "Web password",
+      "env_variable": "NZBGET_PASSWORD",
+      "required": true,
+      "hint": "Used for web and API authentication. Set a strong password; applied on every container startup."
+    }
+  ],
+  "created_at": 1790472900000,
+  "updated_at": 1791546523322
+}

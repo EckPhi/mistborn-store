@@ -59,6 +59,7 @@ pending; the experimental Coder provisioning bridge is separate from the core.
 | <img src="apps/matter-server/metadata/logo.jpg" width="32"> | [Matter Server](https://github.com/matter-js/matterjs-server) | Matter.js controller server (WebSocket) |
 | <img src="apps/mlflow/metadata/logo.jpg" width="32"> | [MLflow](https://github.com/mlflow/mlflow) | Independent Authenticated experiment tracking and agent tracing |
 | <img src="apps/music-assistant/metadata/logo.jpg" width="32"> | [Music Assistant](https://github.com/music-assistant/server) | Music library manager and multi-room streaming |
+| <img src="apps/nzbget/metadata/logo.jpg" width="32"> | [NZBGet](https://github.com/nzbgetcom/nzbget) | Efficient Usenet downloader with automatic repair and extraction |
 | <img src="apps/omnigent/metadata/logo.jpg" width="32"> | [Omnigent](https://github.com/omnigent-ai/omnigent) | Independent AI agent control plane with external workspace runners |
 | <img src="apps/openthread-border-router/metadata/logo.jpg" width="32"> | [OpenThread Border Router](https://github.com/bnutzer/docker-otbr-tcp) | Thread mesh network border router (network RCP) |
 | <img src="apps/power-price-collector/metadata/logo.jpg" width="32"> | [Power Price Collector](https://github.com/EckPhi/power-price-collector) | European power prices into QuestDB, MQTT, Grist and more |
