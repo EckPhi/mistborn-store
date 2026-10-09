@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import os
 import stat
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -24,6 +25,58 @@ class SnapshotTests(unittest.TestCase):
         self.home.mkdir(parents=True)
         self.source.mkdir()
         self.backups = self.root / "snapshots"
+
+    def git(self, repository, *arguments):
+        subprocess.run(["git", "-C", str(repository), *arguments], check=True,
+                       capture_output=True)
+
+    def test_git_ignores_preserve_tracked_and_nonignored_files(self):
+        repo = self.source / "project"
+        repo.mkdir()
+        self.git(repo, "init")
+        (repo / ".gitignore").write_text("*.secret\nbuild/\n.cache/\n!keep.secret\n")
+        (repo / "tracked.secret").write_text("tracked modified content")
+        self.git(repo, "add", "-f", "tracked.secret")
+        (repo / "hidden.secret").write_text("omit")
+        (repo / "keep.secret").write_text("keep")
+        (repo / "new file\nwith newline.txt").write_text("uncommitted")
+        (repo / "build").mkdir()
+        (repo / "build/output").write_text("omit")
+        (repo / ".cache").mkdir()
+        (repo / ".cache/tracked").write_text("tracked cache-named source")
+        self.git(repo, "add", "-f", ".cache/tracked")
+        (repo / ".git/info/exclude").write_text("local.tmp\n")
+        (repo / "local.tmp").write_text("omit")
+        nested = repo / "nested"
+        nested.mkdir()
+        (nested / ".gitignore").write_text("*.tmp\n")
+        (nested / "generated.tmp").write_text("omit")
+        tree = self.create() / "workspaces/workspace-1/source/project"
+        for name in ("tracked.secret", "keep.secret", "new file\nwith newline.txt", ".cache/tracked", ".git/index"):
+            self.assertTrue((tree / name).exists(), name)
+        for name in ("hidden.secret", "build", "local.tmp", "nested/generated.tmp"):
+            self.assertFalse((tree / name).exists(), name)
+
+    def test_nested_repository_has_its_own_ignore_rules(self):
+        self.git(self.source, "init")
+        nested = self.source / "nested"
+        nested.mkdir()
+        self.git(nested, "init")
+        (nested / ".gitignore").write_text("generated\n")
+        (nested / "generated").write_text("omit")
+        (nested / "source").write_text("keep")
+        tree = self.create() / "workspaces/workspace-1/source/nested"
+        self.assertFalse((tree / "generated").exists())
+        self.assertTrue((tree / "source").exists())
+
+    def test_git_failure_keeps_previous_snapshot(self):
+        self.git(self.source, "init")
+        first = self.create()
+        with patch.object(snapshot, "_git_ignored", side_effect=OSError("git unavailable")):
+            with self.assertRaises(OSError):
+                self.create()
+        self.assertEqual(json.loads((self.backups / "latest.json").read_text())["directory"], first.name)
+        self.assertFalse(json.loads((self.backups / "status.json").read_text())["ok"])
 
     def test_interrupted_attempt_does_not_report_previous_success(self):
         completed = self.create()

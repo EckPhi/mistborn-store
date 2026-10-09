@@ -298,10 +298,23 @@ as read-only: **copy a file elsewhere before editing it**, since editing a share
 inode changes multiple snapshots. VS Code Remote SSH can browse the host's
 snapshot directory directly; the manifest maps workspace UUIDs to names.
 
-Caches in the separate cache volume are omitted. Directories named `.cache`,
-`__pycache__`, `.npm`, `.yarn-cache`, `.pnpm-store` and `.uv-cache` inside home/source
-are also omitted, along with sockets, FIFOs and device nodes. Build outputs,
-virtual environments, `node_modules` and other source files are retained.
+Caches in the separate cache volume are omitted, along with sockets, FIFOs and
+device nodes. Inside Git repositories, snapshots exclude ignored **untracked**
+files using Git's own rules: nested `.gitignore` files, negations and
+`.git/info/exclude`. Tracked files (including modified/staged files) and untracked
+files that are not ignored are kept, as is `.git` metadata. A tracked file is
+kept even if it matches an ignore pattern or has a cache-directory name.
+Global ignore settings from the bootstrap container are disabled. Standalone
+`.gitignore` files outside repositories are not applied.
+
+Outside repositories, directories named `.cache`, `__pycache__`, `.npm`,
+`.yarn-cache`, `.pnpm-store` and `.uv-cache` are omitted. Other build outputs,
+virtual environments and `node_modules` are retained unless Git ignores them.
+Ignored local configuration, such as an untracked `.env`, is omitted too; keep
+important ignored files in separate backup storage or track them appropriately.
+A Git evaluation failure leaves the previous snapshot and reports failure rather
+than silently making an incomplete snapshot. Linked worktrees require their
+referenced Git metadata to be accessible to the snapshot helper.
 Symbolic links, including broken links, are copied without following targets;
 external targets are not included automatically.
 

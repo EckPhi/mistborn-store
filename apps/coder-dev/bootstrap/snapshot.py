@@ -8,6 +8,7 @@ from pathlib import Path
 import re
 import shutil
 import stat
+import subprocess
 import tempfile
 
 # Package caches are disposable; build outputs and application data are retained.
@@ -20,17 +21,37 @@ def _digest(path):
         return hashlib.file_digest(stream, "sha256").digest()
 
 
-def _copy(source, destination, previous=None):
+def _git_ignored(repository):
+    """Ask Git for ignored untracked paths; never run repository helpers."""
+    environment = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+    try:
+        result = subprocess.run(
+            ["git", "-c", f"safe.directory={repository}", "-c", "core.fsmonitor=false",
+             "-c", "core.excludesFile=/dev/null", "-C", str(repository), "ls-files",
+             "--others", "--ignored", "--exclude-standard", "--directory", "-z"],
+            env=environment, capture_output=True, timeout=60,
+        )
+    except subprocess.TimeoutExpired as error:
+        raise OSError(f"Git ignore evaluation timed out: {repository}") from error
+    if result.returncode:
+        raise OSError(f"Git ignore evaluation failed: {repository}")
+    return {repository / os.fsdecode(value).rstrip("/") for value in result.stdout.split(b"\0") if value}
+
+
+def _copy(source, destination, previous=None, ignored=None, git_metadata=False):
     info = source.lstat()
     if stat.S_ISLNK(info.st_mode):
         destination.symlink_to(os.readlink(source))
     elif stat.S_ISDIR(info.st_mode):
+        if not git_metadata and (source / ".git").exists():
+            ignored = _git_ignored(source)
         destination.mkdir()
         if previous is not None and (previous.is_symlink() or not previous.is_dir()):
             previous = None
         for child in source.iterdir():
-            if child.name not in CACHE_NAMES:
-                _copy(child, destination / child.name, previous / child.name if previous is not None else None)
+            if (git_metadata or ignored is not None or child.name not in CACHE_NAMES) and (ignored is None or child not in ignored):
+                _copy(child, destination / child.name, previous / child.name if previous is not None else None,
+                      ignored, git_metadata or child.name == ".git")
         shutil.copystat(source, destination, follow_symlinks=False)
     elif stat.S_ISREG(info.st_mode):
         # Compare bytes, not just timestamps: tools can preserve mtimes on edits.
@@ -132,7 +153,8 @@ def _create(workspaces_root, root, metadata, retain, workspace_paths):
         name = completed_at.strftime("%Y-%m-%dT%H%M%S.%fZ")
         manifest = {"format_version": 1, "complete": True,
                     "completed_at": completed_at.isoformat(), "workspaces": records,
-                    "excluded_directory_names": sorted(CACHE_NAMES)}
+                    "excluded_directory_names": sorted(CACHE_NAMES),
+                    "git_ignore": "untracked files ignored by repository .gitignore and .git/info/exclude"}
         (staging / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
         published = root / name
         staging.rename(published)

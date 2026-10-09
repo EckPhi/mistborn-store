@@ -174,3 +174,13 @@ README documents a named unconfined profile with explicit userns permission,
 keeping the global host restriction enabled. Provider-plan regression covers
 empty and named profile settings. Host profile loading and successful daemon
 startup cannot be verified in the local macOS environment.
+
+## Git-aware snapshots (2026-10-09)
+
+Snapshots invoke read-only Git ls-files to omit ignored untracked files inside
+repositories while preserving tracked and nonignored untracked files and Git
+metadata. Repository-local ignore rules apply; global bootstrap ignores and
+filesystem-monitor helpers are disabled. Regression cases cover nested ignore
+rules, negation, force-tracked ignored files, cache-named tracked files, newline
+filenames, nested repositories and failed evaluation preserving previous snapshots.
+The pinned full Python bookworm image inherits Git from buildpack-deps/scm.
