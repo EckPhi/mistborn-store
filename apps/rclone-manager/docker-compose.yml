@@ -44,7 +44,7 @@ services:
       internal_port: 8080
 
   rclone-host-bridge:
-    image: nginx:1.30.5-alpine
+    image: nginx:1.31.6-alpine
     entrypoint: ["/bin/sh", "-c"]
     command:
       - |
