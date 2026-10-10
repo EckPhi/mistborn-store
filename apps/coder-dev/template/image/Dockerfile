@@ -1,5 +1,5 @@
 # renovate: datasource=docker depName=docker
-FROM docker:29.8.2-cli AS docker-cli
+FROM docker:29.9.0-cli AS docker-cli
 # renovate: datasource=docker depName=python
 FROM python:3.14.8-bookworm AS python-runtime
 # renovate: datasource=docker depName=rust
@@ -32,30 +32,30 @@ COPY zshrc /etc/skel/.zshrc
 COPY --from=python-runtime /usr/local /usr/local
 # Pin Python developer utilities; install outside the persisted developer home.
 # renovate: datasource=pypi depName=uv
-ARG UV_VERSION=0.12.23
+ARG UV_VERSION=0.13.0
 # renovate: datasource=pypi depName=conan
 ARG CONAN_VERSION=2.33.0
 # renovate: datasource=npm depName=pnpm
 ARG PNPM_VERSION=12.10.1
 # renovate: datasource=npm depName=bun
-ARG BUN_VERSION=1.4.2
+ARG BUN_VERSION=1.4.3
 RUN python3 -m venv /opt/dev-tools && \
     /opt/dev-tools/bin/pip install --no-cache-dir "uv==$UV_VERSION" "conan==$CONAN_VERSION" && \
     npm install -g "pnpm@$PNPM_VERSION" "bun@$BUN_VERSION" && \
     mkdir -p /usr/local/lib/docker/cli-plugins
 # AI agent runtimes. Authentication and mutable settings stay under /home/coder.
 # renovate: datasource=npm depName=@openai/codex
-ARG CODEX_VERSION=0.161.0
+ARG CODEX_VERSION=0.162.1
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.293
+ARG CLAUDE_CODE_VERSION=2.1.296
 # renovate: datasource=npm depName=opencode-ai
 ARG OPENCODE_VERSION=1.18.35
 # renovate: datasource=pypi depName=omnigent
 ARG OMNIGENT_VERSION=0.17.0
 # renovate: datasource=npm depName=@oh-my-pi/pi-coding-agent
-ARG OMP_VERSION=18.8.4
+ARG OMP_VERSION=18.8.7
 # renovate: datasource=pypi depName=mistral-vibe
-ARG VIBE_VERSION=2.26.0
+ARG VIBE_VERSION=2.26.1
 ARG ENABLE_AI_AGENTS=true
 RUN if [ "$ENABLE_AI_AGENTS" = true ]; then \
       npm install -g "@openai/codex@$CODEX_VERSION" "@anthropic-ai/claude-code@$CLAUDE_CODE_VERSION" "opencode-ai@$OPENCODE_VERSION" && \

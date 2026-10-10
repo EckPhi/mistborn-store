@@ -197,7 +197,7 @@ resource "docker_volume" "docker_data" {
 }
 resource "docker_image" "docker_development" {
   count        = data.coder_parameter.docker_development.value == "true" && data.coder_workspace.me.start_count > 0 ? 1 : 0
-  name         = "docker:29.8.2-dind-rootless"
+  name         = "docker:29.9.0-dind-rootless"
   keep_locally = true
 }
 # Fresh named socket volumes otherwise belong to root, preventing UID 1000
