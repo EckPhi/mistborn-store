@@ -66,6 +66,16 @@
   ],
   "packageRules": [
     {
+      "description": "Keep Coder's Python runtime on 3.14 until Omnigent's google-re2 dependency supports Python 3.15",
+      "matchFileNames": [
+        "apps/coder-dev/template/image/Dockerfile"
+      ],
+      "matchPackageNames": [
+        "python"
+      ],
+      "allowedVersions": "<3.15"
+    },
+    {
       "description": "The dashboard version is the verified release zip; update its checksum and Nginx image together by hand",
       "matchFileNames": [
         "apps/yet-another-rclone-dashboard/docker-compose.yml"
