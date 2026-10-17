@@ -3,7 +3,7 @@ x-runtipi:
 
 services:
   scryer:
-    image: ghcr.io/scryer-media/scryer:0.21.16
+    image: ghcr.io/scryer-media/scryer:0.21.17
     environment:
       PUID: ${UID:-0}
       PGID: ${GID:-0}
