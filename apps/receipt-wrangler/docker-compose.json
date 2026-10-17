@@ -66,7 +66,7 @@
     },
     {
       "name": "receipt-wrangler",
-      "image": "noah231515/receipt-wrangler:v7.1.0",
+      "image": "noah231515/receipt-wrangler:v7.2.0",
       "isMain": true,
       "internalPort": 80,
       "environment": [
