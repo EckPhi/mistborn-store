@@ -3,7 +3,7 @@ x-runtipi:
 
 services:
   weaver:
-    image: ghcr.io/scryer-media/weaver:0.15.0
+    image: ghcr.io/scryer-media/weaver:0.16.0
     environment:
       PUID: ${UID:-0}
       PGID: ${GID:-0}
