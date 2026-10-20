@@ -55,7 +55,7 @@ ARG OMNIGENT_VERSION=0.17.0
 # renovate: datasource=npm depName=@oh-my-pi/pi-coding-agent
 ARG OMP_VERSION=18.8.4
 # renovate: datasource=pypi depName=mistral-vibe
-ARG VIBE_VERSION=2.26.0
+ARG VIBE_VERSION=3.0.0
 ARG ENABLE_AI_AGENTS=true
 RUN if [ "$ENABLE_AI_AGENTS" = true ]; then \
       npm install -g "@openai/codex@$CODEX_VERSION" "@anthropic-ai/claude-code@$CLAUDE_CODE_VERSION" "opencode-ai@$OPENCODE_VERSION" && \
