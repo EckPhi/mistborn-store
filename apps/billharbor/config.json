@@ -1,0 +1,72 @@
+{
+  "name": "BillHarbor (Dev)",
+  "id": "billharbor",
+  "available": true,
+  "short_desc": "Development receipt acquisition and authenticated delivery control plane",
+  "author": "EckPhi",
+  "port": 8105,
+  "categories": [
+    "finance",
+    "automation"
+  ],
+  "description": "Vendor-independent receipt and bill acquisition with immutable originals, OIDC sign-in and installable connector plugins. Development release; starts without vendors.",
+  "tipi_version": 1,
+  "version": "0.5.0.dev3",
+  "source": "https://github.com/EckPhi/billharbor",
+  "website": "https://github.com/EckPhi/billharbor",
+  "exposable": true,
+  "dynamic_config": true,
+  "min_tipi_version": "4.10.1",
+  "supported_architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Public HTTPS origin",
+      "env_variable": "BILLHARBOR_PUBLIC_ORIGIN",
+      "required": true,
+      "hint": "Exact browser origin without trailing slash, e.g. https://bills.example.com. HTTPS exposure is required."
+    },
+    {
+      "type": "text",
+      "label": "OIDC issuer",
+      "env_variable": "BILLHARBOR_OIDC_ISSUER",
+      "required": true,
+      "hint": "Exact HTTPS issuer URL from your identity provider."
+    },
+    {
+      "type": "text",
+      "label": "OIDC client ID",
+      "env_variable": "BILLHARBOR_OIDC_CLIENT_ID",
+      "required": true,
+      "hint": "Register a confidential authorization-code client with callback <public origin>/auth/callback."
+    },
+    {
+      "type": "text",
+      "label": "Administrator subject",
+      "env_variable": "BILLHARBOR_ADMIN_SUBJECT",
+      "required": true,
+      "hint": "OIDC sub claim for the initial administrator, not an email address unless your provider uses it as sub."
+    },
+    {
+      "type": "password",
+      "label": "OIDC client secret",
+      "env_variable": "BILLHARBOR_OIDC_CLIENT_SECRET",
+      "required": true,
+      "hint": "Client secret from your identity provider. For values containing dollar signs use secrets/oidc-client-secret as documented."
+    },
+    {
+      "type": "random",
+      "label": "Credential encryption key",
+      "env_variable": "BILLHARBOR_ENCRYPTION_KEY",
+      "required": false,
+      "min": 64,
+      "encoding": "hex",
+      "hint": "Generated once. Back up with secrets and state; do not change after initialization."
+    }
+  ],
+  "created_at": 1791391518209,
+  "updated_at": 1792598314524
+}

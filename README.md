@@ -39,6 +39,7 @@ pending; the experimental Coder provisioning bridge is separate from the core.
 | <img src="apps/appdaemon/metadata/logo.jpg" width="32"> | [AppDaemon](https://github.com/AppDaemon/appdaemon) | Python apps and HADashboard for Home Assistant |
 | <img src="apps/arcane/metadata/logo.jpg" width="32"> | [Arcane](https://github.com/getarcaneapp/arcane) | Modern Docker container and Compose project management |
 | <img src="apps/bambuddy/metadata/logo.jpg" width="32"> | [Bambuddy](https://github.com/maziggy/bambuddy) | Self-hosted command center for Bambu Lab 3D printers |
+| <img src="apps/billharbor/metadata/logo.jpg" width="32"> | [BillHarbor (Dev)](https://github.com/EckPhi/billharbor) | Development receipt acquisition and authenticated delivery control plane |
 | <img src="apps/coder-dev/metadata/logo.jpg" width="32"> | [Coder Development Environment](https://github.com/coder/coder) | Persistent remote development workspaces with automatic Coder setup |
 | <img src="apps/decypharr/metadata/logo.jpg" width="32"> | [Decypharr](https://github.com/sirrobot01/decypharr) | Debrid and Usenet downloader for media automation |
 | <img src="apps/diyhue/metadata/logo.jpg" width="32"> | [diyHue](https://github.com/diyhue/diyHue) | Open-source Philips Hue bridge emulator |

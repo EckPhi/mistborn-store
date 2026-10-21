@@ -1,0 +1,140 @@
+x-runtipi:
+  schema_version: 2
+services:
+  billharbor-init:
+    image: eckphi/billharbor:0.5.0.dev3
+    user: "0:0"
+    entrypoint:
+      - python
+      - -c
+      - |
+        import hashlib, json, os, subprocess, time
+        from pathlib import Path
+        os.umask(0o077)
+        Path('/tmp/ready').unlink(missing_ok=True)
+        for name in ('state', 'config', 'secrets'):
+            root = Path('/') / name
+            root.mkdir(exist_ok=True)
+            os.chown(root, 10001, 10001)
+            for directory, children, files in os.walk(root, followlinks=False):
+                for item in children + files:
+                    os.chown(Path(directory) / item, 10001, 10001, follow_symlinks=False)
+        key = Path('/secrets/credential-key')
+        if not key.exists():
+            key.write_bytes(bytes.fromhex(os.environ['BILLHARBOR_ENCRYPTION_KEY']))
+        secret = Path('/secrets/oidc-client-secret')
+        if not secret.exists():
+            secret.write_text(os.environ['BILLHARBOR_OIDC_CLIENT_SECRET'])
+        for path in (key, secret):
+            path.chmod(0o600)
+            os.chown(path, 10001, 10001)
+        config = Path('/config/service.json')
+        if not config.exists():
+            issuer = os.environ['BILLHARBOR_OIDC_ISSUER']
+            subject = os.environ['BILLHARBOR_ADMIN_SUBJECT']
+            config.write_text(json.dumps({
+                'public_origin': os.environ['BILLHARBOR_PUBLIC_ORIGIN'],
+                'state_dir': '/state',
+                'key_files': {'initial': '/secrets/credential-key'},
+                'current_key_id': 'initial',
+                'accounts': [],
+                'grants': [{'issuer_subject': issuer + '|' + subject,
+                            'tenant_id': 'default', 'role': 'admin'}],
+                'destinations': [],
+                'plugins': {'administrators': [hashlib.sha256((issuer + '\0' + subject).encode()).hexdigest()]}
+            }, indent=2))
+            os.chown(config, 10001, 10001)
+        def drop_privileges():
+            os.setgroups([])
+            os.setgid(10001)
+            os.setuid(10001)
+        subprocess.run(['billharbor-service', '--config', str(config), 'check'], check=True, preexec_fn=drop_privileges)
+        marker = Path('/state/.runtipi-provisioned')
+        if not marker.exists():
+            subprocess.run(['billharbor-service', '--config', str(config), 'provision'], check=True, preexec_fn=drop_privileges)
+            marker.touch()
+            os.chown(marker, 10001, 10001)
+        Path('/tmp/ready').touch()
+        while True:
+            time.sleep(3600)
+    environment:
+      BILLHARBOR_PUBLIC_ORIGIN: ${BILLHARBOR_PUBLIC_ORIGIN}
+      BILLHARBOR_OIDC_ISSUER: ${BILLHARBOR_OIDC_ISSUER}
+      BILLHARBOR_ADMIN_SUBJECT: ${BILLHARBOR_ADMIN_SUBJECT}
+      BILLHARBOR_OIDC_CLIENT_SECRET: ${BILLHARBOR_OIDC_CLIENT_SECRET}
+      BILLHARBOR_ENCRYPTION_KEY: ${BILLHARBOR_ENCRYPTION_KEY}
+    volumes:
+      - ${APP_DATA_DIR}/state:/state
+      - ${APP_DATA_DIR}/config:/config
+      - ${APP_DATA_DIR}/secrets:/secrets
+    healthcheck:
+      test: test -f /tmp/ready || exit 1
+      interval: 5s
+      timeout: 3s
+      start_period: 5s
+      retries: 12
+  billharbor:
+    image: eckphi/billharbor:0.5.0.dev3
+    user: "10001:10001"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    init: true
+    pids_limit: 128
+    mem_limit: 1g
+    cpus: 1.0
+    tmpfs:
+      - /tmp:size=268435456,mode=1777,nosuid,nodev
+    entrypoint: [gunicorn]
+    command: ["billharbor.service.app:create_app()", "--bind=0.0.0.0:8080", "--workers=2", "--worker-class=gthread", "--threads=4", "--timeout=30", "--graceful-timeout=30", "--limit-request-line=4096", "--limit-request-fields=40", "--limit-request-field_size=4096", "--forwarded-allow-ips="]
+    environment:
+      BILLHARBOR_CONFIG: /config/service.json
+      BILLHARBOR_OIDC_ISSUER: ${BILLHARBOR_OIDC_ISSUER}
+      BILLHARBOR_OIDC_CLIENT_ID: ${BILLHARBOR_OIDC_CLIENT_ID}
+      BILLHARBOR_OIDC_ALLOWED_SUBJECTS: ${BILLHARBOR_OIDC_ISSUER}|${BILLHARBOR_ADMIN_SUBJECT}
+      BILLHARBOR_OIDC_CLIENT_SECRET_FILE: /secrets/oidc-client-secret
+    volumes:
+      - ${APP_DATA_DIR}/state:/state
+      - ${APP_DATA_DIR}/config:/config:ro
+      - ${APP_DATA_DIR}/secrets:/secrets:ro
+    depends_on:
+      billharbor-init:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health/ready', timeout=3).close()"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    x-runtipi:
+      is_main: true
+      internal_port: 8080
+  billharbor-worker:
+    image: eckphi/billharbor:0.5.0.dev3
+    user: "10001:10001"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    init: true
+    network_mode: none
+    pids_limit: 128
+    mem_limit: 1g
+    cpus: 1.0
+    tmpfs:
+      - /tmp:size=268435456,mode=1777,nosuid,nodev
+    command: [worker]
+    environment:
+      BILLHARBOR_CONFIG: /config/service.json
+    volumes:
+      - ${APP_DATA_DIR}/state:/state
+      - ${APP_DATA_DIR}/config:/config:ro
+      - ${APP_DATA_DIR}/secrets:/secrets:ro
+    depends_on:
+      billharbor-init:
+        condition: service_healthy
+    stop_grace_period: 15s
+    healthcheck:
+      test: [CMD, billharbor-service, worker-health]
+      interval: 10s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
