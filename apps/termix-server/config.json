@@ -1,0 +1,27 @@
+{
+  "name": "Termix Server",
+  "id": "termix-server",
+  "available": true,
+  "short_desc": "Self-hosted SSH terminal and server management platform",
+  "author": "Termix-SSH",
+  "port": 8106,
+  "categories": [
+    "network",
+    "utilities",
+    "development"
+  ],
+  "description": "Termix is a self-hosted server management platform with an SSH terminal, file management, host metrics and extensible plugins, accessible from a browser or the Termix desktop and mobile apps.",
+  "tipi_version": 1,
+  "version": "26.10.4",
+  "source": "https://github.com/Termix-SSH/Termix",
+  "website": "https://termix.site",
+  "exposable": true,
+  "supported_architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "dynamic_config": true,
+  "created_at": 1792046323369,
+  "updated_at": 1792046323369,
+  "form_fields": []
+}
