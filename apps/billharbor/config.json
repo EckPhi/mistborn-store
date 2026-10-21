@@ -9,9 +9,9 @@
     "finance",
     "automation"
   ],
-  "description": "Vendor-independent receipt and bill acquisition with immutable originals, OIDC sign-in and installable connector plugins. Development release; starts without vendors.",
-  "tipi_version": 1,
-  "version": "0.5.0.dev3",
+  "description": "Vendor-independent receipt and bill acquisition with immutable originals, local user sign-in and installable connector plugins. Development release; starts without vendors.",
+  "tipi_version": 3,
+  "version": "0.5.0.dev4",
   "source": "https://github.com/EckPhi/billharbor",
   "website": "https://github.com/EckPhi/billharbor",
   "exposable": true,
@@ -24,38 +24,20 @@
   "form_fields": [
     {
       "type": "text",
-      "label": "Public HTTPS origin",
-      "env_variable": "BILLHARBOR_PUBLIC_ORIGIN",
-      "required": true,
-      "hint": "Exact browser origin without trailing slash, e.g. https://bills.example.com. HTTPS exposure is required."
-    },
-    {
-      "type": "text",
-      "label": "OIDC issuer",
-      "env_variable": "BILLHARBOR_OIDC_ISSUER",
-      "required": true,
-      "hint": "Exact HTTPS issuer URL from your identity provider."
-    },
-    {
-      "type": "text",
-      "label": "OIDC client ID",
-      "env_variable": "BILLHARBOR_OIDC_CLIENT_ID",
-      "required": true,
-      "hint": "Register a confidential authorization-code client with callback <public origin>/auth/callback."
-    },
-    {
-      "type": "text",
-      "label": "Administrator subject",
-      "env_variable": "BILLHARBOR_ADMIN_SUBJECT",
-      "required": true,
-      "hint": "OIDC sub claim for the initial administrator, not an email address unless your provider uses it as sub."
+      "label": "Initial administrator username",
+      "env_variable": "BILLHARBOR_ADMIN_USERNAME",
+      "required": false,
+      "default": "admin",
+      "regex": "^[A-Za-z0-9][A-Za-z0-9._@+-]{0,127}$",
+      "hint": "Used only when no local users exist. Manage users in the app after first login."
     },
     {
       "type": "password",
-      "label": "OIDC client secret",
-      "env_variable": "BILLHARBOR_OIDC_CLIENT_SECRET",
+      "label": "Initial administrator password",
+      "env_variable": "BILLHARBOR_ADMIN_PASSWORD",
       "required": true,
-      "hint": "Client secret from your identity provider. For values containing dollar signs use secrets/oidc-client-secret as documented."
+      "regex": "^.{15,1024}$",
+      "hint": "15\u20131024 characters. Used only for first bootstrap; later changes belong in the app. See documentation for passwords containing dollar signs."
     },
     {
       "type": "random",
@@ -68,5 +50,5 @@
     }
   ],
   "created_at": 1791391518209,
-  "updated_at": 1792598314524
+  "updated_at": 1792606404076
 }
