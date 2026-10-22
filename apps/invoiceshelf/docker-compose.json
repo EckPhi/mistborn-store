@@ -32,7 +32,7 @@
     },
     {
       "name": "invoiceshelf",
-      "image": "invoiceshelf/invoiceshelf:2.4.6",
+      "image": "invoiceshelf/invoiceshelf:2.4.7",
       "isMain": true,
       "internalPort": 8080,
       "dependsOn": {
