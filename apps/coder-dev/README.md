@@ -227,7 +227,7 @@ created on the production daemon untouched; review those separately on the host.
 
 ## Persistence, upgrades and deletion
 
-Control-plane files and snapshots live under RunTipi's `${APP_DATA_DIR}`; live workspace files use named volumes:
+Control-plane files live under RunTipi's `${APP_DATA_DIR}`; workspace files use named volumes and are backed up separately by Kopia:
 
 | Path | Purpose | Backup importance |
 | --- | --- | --- |
@@ -243,7 +243,7 @@ The image filesystem is disposable. Source and home are directories within a
 Compose-owned named volume, so deleting a Coder workspace leaves them on disk.
 A new workspace with the same name gets a new UUID and fresh storage. Restoring
 old data requires explicitly copying the retained directory; no automatic
-cross-workspace reuse occurs. Removing the named volume deletes live source; removing app-data deletes snapshots.
+cross-workspace reuse occurs. Removing the named volume deletes live source.
 Deleting caches is optional; ccache is capped at 10 GB per workspace.
 
 Upgrades publish a new default template version only when bundled template or
@@ -271,67 +271,25 @@ volume pruning. This layout requires Docker Engine 26+ (API 1.45+) for volume
 subpath mounts and supports one Coder installation per Docker daemon because
 the shared volume names are fixed.
 
-RunTipi's Backup button stops the app before copying app-data. During that stop,
-the bootstrap helper records running workspaces, stops them through Coder,
-and creates a filtered file snapshot from the named volume. Normal startup
-resumes only the recorded workspaces with their existing template versions.
-Every app stop, including an update or manual stop, creates a snapshot. The
-helper has a 30-minute shutdown allowance; large data sets may exceed it.
+RunTipi backups cover PostgreSQL, Coder configuration, bootstrap state and
+installation secrets. Workspace contents are excluded: shutdown no longer copies
+them into app-data. Graceful shutdown still stops running workspaces and startup
+resumes that recorded set. Install the separate **Kopia Workspace Backups** app
+on the same host to back up the workspace volume read-only. Use separate domains
+such as `coder.example.com` and `kopia.example.com`; RunTipi provides both proxies.
+Coder does not support hosting under `/coder`.
 
-Snapshots are ordinary files at `${APP_DATA_DIR}/snapshots/`:
+Configure Kopia's repository, schedule and retention, then verify a restore. For a
+consistent recovery point, stop workspaces in Coder before snapshotting and start
+them afterward. Kopia does not automate this. Running-workspace snapshots may
+contain files from different moments. See the [Kopia operator guide](../kopia/README.md)
+for rclone setup, restoration and backup boundaries. Retain a matching RunTipi
+control-plane backup for disaster recovery.
 
-```text
-snapshots/
-  latest.json                 # completed directory name and timestamp
-  status.json                 # most recent snapshot/shutdown success or failure
-  2026-10-08T183000.000000Z/
-    manifest.json             # completion time and workspace identity
-    workspaces/<uuid>/home/
-    workspaces/<uuid>/source/
-```
-
-The last three completed snapshots are retained. Unchanged regular files share
-hard links locally; changed files get new copies, and deleted files remain in
-older snapshots. Copying uses a temporary directory and publishes only after
-success. A failed copy keeps the previous snapshot. Treat completed snapshots
-as read-only: **copy a file elsewhere before editing it**, since editing a shared
-inode changes multiple snapshots. VS Code Remote SSH can browse the host's
-snapshot directory directly; the manifest maps workspace UUIDs to names.
-
-Caches in the separate cache volume are omitted, along with sockets, FIFOs and
-device nodes. Inside Git repositories, snapshots exclude ignored **untracked**
-files using Git's own rules: nested `.gitignore` files, negations and
-`.git/info/exclude`. Tracked files (including modified/staged files) and untracked
-files that are not ignored are kept, as is `.git` metadata. A tracked file is
-kept even if it matches an ignore pattern or has a cache-directory name.
-Global ignore settings from the bootstrap container are disabled. Standalone
-`.gitignore` files outside repositories are not applied.
-
-Outside repositories, directories named `.cache`, `__pycache__`, `.npm`,
-`.yarn-cache`, `.pnpm-store` and `.uv-cache` are omitted. Other build outputs,
-virtual environments and `node_modules` are retained unless Git ignores them.
-Ignored local configuration, such as an untracked `.env`, is omitted too; keep
-important ignored files in separate backup storage or track them appropriately.
-A Git evaluation failure leaves the previous snapshot and reports failure rather
-than silently making an incomplete snapshot. Linked worktrees require their
-referenced Git metadata to be accessible to the snapshot helper.
-Symbolic links, including broken links, are copied without following targets;
-external targets are not included automatically.
-
-Native RunTipi backups include snapshots, PostgreSQL, Coder configuration,
-bootstrap state and installation secrets. RunTipi's copy does not preserve
-hard-link deduplication, so archives can contain three full copies of unchanged
-files. Its pinned 4.10.1 implementation can rewrite relative symlink targets
-and reject symlink entries during native restore. This feature targets manual
-file recovery; automatic named-volume restore is not implemented.
-
-**A successful RunTipi backup does not prove a current workspace snapshot.**
-RunTipi continues even when Compose stop fails. Check bootstrap logs for
-`Workspace snapshot complete` and check `snapshots/status.json` is `ok: true`
-with a current timestamp before relying on the archive. An interrupted shutdown leaves an `in_progress` status; always check the date
-as power loss before the handler starts can leave older metadata. Power loss bypasses the handler.
-Live shutdown ordering and native backup acceptance remain unverified locally.
-Encrypt archives: homes and configuration contain credentials and SSH keys.
+Old `snapshots/`, `workspaces/` and `caches/` files under app-data are **not deleted
+by this update**. They remain in RunTipi archives until you move them outside
+app-data after verifying migration and Kopia recovery. No workspace files are
+served by a web file browser.
 
 ### Existing installation migration
 
@@ -344,14 +302,14 @@ bind files are deliberately retained for rollback; switching to an old template
 uses those original files and will not include edits made after migration.
 
 Verify each migrated workspace's projects/configuration and make a successful
-snapshot. **After all workspaces have migrated**, move the old host
-`${APP_DATA_DIR}/workspaces` and `${APP_DATA_DIR}/caches` directories to a safe
+Kopia backup and test restore. **After all workspaces have migrated**, move the old host
+`${APP_DATA_DIR}/workspaces`, `${APP_DATA_DIR}/caches` and old `${APP_DATA_DIR}/snapshots` directories to a safe
 location outside app-data, retaining them until recovery has been checked.
 Stop the app first, and recreate empty directories at the original paths before
 restarting. Do not move them while an old template still uses them. Old cache
 files remain part of native backups until relocated and can still trigger the
-original backup error. The helper marks snapshots failed when legacy workspace
-home/source directories have no corresponding migrated storage.
+original backup error. The offline storage initializer keeps read-only legacy access for migration;
+running workspace containers use only named-volume subpaths.
 
 Restore a matching PostgreSQL + bootstrap + source/home set. Restore on the same
 host path whenever possible; Coder's stored template/Terraform paths reference

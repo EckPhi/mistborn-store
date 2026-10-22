@@ -10,10 +10,10 @@ services:
     command:
       - |
         rm -f /tmp/ready
-        mkdir -p /data/runtime /data/coder /data/bootstrap /data/workspaces /data/caches /data/snapshots
+        mkdir -p /data/runtime /data/coder /data/bootstrap
         mkdir -p /workspaces /caches
         printf '%s' '@BUNDLE@' | base64 -d | tar -xz -C /data/runtime
-        chown 1000:1000 /data/coder /data/bootstrap /data/snapshots /workspaces /caches
+        chown 1000:1000 /data/coder /data/bootstrap /workspaces /caches
         chmod 700 /data/bootstrap
         touch /tmp/ready
         while :; do sleep 3600; done
@@ -96,8 +96,6 @@ services:
       - ${APP_DATA_DIR}/runtime:/runtime:ro
       - ${APP_DATA_DIR}/bootstrap:/state
       - workspace-data:/workspaces
-      - ${APP_DATA_DIR}/workspaces:/legacy-workspaces:ro
-      - ${APP_DATA_DIR}/snapshots:/snapshots
     depends_on:
       coder-dev:
         condition: service_healthy

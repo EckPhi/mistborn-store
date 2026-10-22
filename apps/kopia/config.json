@@ -1,0 +1,44 @@
+{
+  "name": "Kopia Workspace Backups",
+  "id": "kopia",
+  "available": true,
+  "short_desc": "Encrypted Coder workspace backups with Kopia and rclone",
+  "author": "Kopia",
+  "port": 51515,
+  "categories": [
+    "utilities",
+    "development"
+  ],
+  "description": "Kopia web UI for encrypted, deduplicated backups of Coder workspace home and source data to remote storage, including rclone remotes.",
+  "tipi_version": 1,
+  "version": "0.23.1",
+  "source": "https://github.com/kopia/kopia",
+  "website": "https://kopia.io",
+  "exposable": true,
+  "dynamic_config": true,
+  "min_tipi_version": "4.10.1",
+  "supported_architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "form_fields": [
+    {
+      "type": "password",
+      "label": "Kopia web UI password",
+      "env_variable": "KOPIA_UI_PASSWORD",
+      "required": true,
+      "regex": "^[^$\\r\\n]{12,}$",
+      "hint": "Log in as kopia. At least 12 characters; avoid dollar signs (Compose interpolation). Use HTTPS when exposed."
+    },
+    {
+      "type": "password",
+      "label": "Repository encryption password",
+      "env_variable": "KOPIA_REPOSITORY_PASSWORD",
+      "required": true,
+      "regex": "^[^$\\r\\n]{12,}$",
+      "hint": "Use this same password when creating or connecting the repository. Back it up separately: losing it makes recovery impossible. Changing this field does not rotate the repository password."
+    }
+  ],
+  "created_at": 1791539936946,
+  "updated_at": 1791539936946
+}

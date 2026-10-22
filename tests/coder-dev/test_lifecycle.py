@@ -165,8 +165,6 @@ bootstrap.main()
                     self.assertEqual({key for key, body in calls}, {'one', 'two'})
                     self.assertTrue(all(body['transition'] == 'stop' for key, body in calls))
                     self.assertFalse((root / 'tmp/ready').exists())
-                    self.assertTrue(json.loads((root / 'snapshots/status.json').read_text())['ok'])
-                    latest = json.loads((root / 'snapshots/latest.json').read_text())['directory']
-                    self.assertTrue((root / 'snapshots' / latest / 'manifest.json').exists())
+                    self.assertFalse((root / 'snapshots').exists())
                 finally:
                     if process.poll() is None: process.kill(); process.wait()

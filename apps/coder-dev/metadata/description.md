@@ -56,16 +56,16 @@ remove that data. Keep the generated database password unchanged. After changing
 the Coder administrator password, update the installer credential so bootstrap
 can sign in when its saved session expires.
 
-Back up PostgreSQL, Coder/bootstrap state and workspace source/home together.
-Graceful app shutdown records and stops running workspaces via Coder; startup
-resumes only that set. Verify shutdown completion before a backup/restore. A
-forced shutdown or hook failure requires stopping workspaces manually. Workspace homes and source now use retained named volumes (Docker 26+). On app
-shutdown, the helper creates dated, filtered snapshots under app-data; native
-backups include the last three snapshots and exclude the live cache volume.
-Existing installations must migrate each stopped workspace to the new template
-and relocate old bind directories after verification. Check snapshot status and
-freshness before relying on a native backup. Treat archives as
-secret-bearing. See the [full installation, IDE, backup and troubleshooting guide](https://github.com/EckPhi/mistborn-store/blob/main/apps/coder-dev/README.md).
+Back up PostgreSQL and Coder/bootstrap state with RunTipi. Install **Kopia
+Workspace Backups** separately on the same host for workspace home/source backups.
+Kopia reads the retained named volume read-only; workspace caches are excluded.
+Configure its repository and schedule, then verify a restore. Stop workspaces for
+consistent snapshots. Graceful Coder shutdown still stops and later resumes the
+previously running workspaces, but no longer copies workspace data into app-data.
+Move old snapshots and legacy workspace/cache directories outside app-data only
+after verifying migration and recovery; otherwise RunTipi still backs them up.
+Use `coder.example.com` and `kopia.example.com` with RunTipi's reverse proxies;
+Coder does not support `/coder`. See the [full installation, IDE, backup and troubleshooting guide](https://github.com/EckPhi/mistborn-store/blob/main/apps/coder-dev/README.md).
 
 ## Modular agent and tracking integrations
 

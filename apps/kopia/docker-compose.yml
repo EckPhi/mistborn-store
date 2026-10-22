@@ -1,0 +1,36 @@
+x-runtipi:
+  schema_version: 2
+services:
+  kopia:
+    image: kopia/kopia:0.23.1
+    hostname: coder-workspace-backup
+    command:
+      - server
+      - start
+      - --insecure
+      - --address=0.0.0.0:51515
+      - --server-username=kopia
+      - --server-password=${KOPIA_UI_PASSWORD}
+    environment:
+      KOPIA_PASSWORD: ${KOPIA_REPOSITORY_PASSWORD}
+      KOPIA_CONFIG_PATH: /app/config/repository.config
+      KOPIA_CACHE_DIRECTORY: /app/cache
+      KOPIA_LOG_DIR: /app/logs
+      RCLONE_CONFIG: /app/rclone/rclone.conf
+      TZ: ${TZ}
+    volumes:
+      - ${APP_DATA_DIR}/config:/app/config
+      - ${APP_DATA_DIR}/rclone:/app/rclone
+      - ${APP_DATA_DIR}/logs:/app/logs
+      - kopia-cache:/app/cache
+      - workspace-data:/data/workspaces:ro
+      - restore-data:/restore
+    x-runtipi:
+      is_main: true
+      internal_port: 51515
+volumes:
+  workspace-data:
+    external: true
+    name: coder-dev-workspaces
+  kopia-cache:
+  restore-data:
