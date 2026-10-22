@@ -10,8 +10,8 @@
     "media"
   ],
   "description": "RClone Manager provides a web interface for the existing host rclone service, with remote configuration, file management, transfers, scheduling and host mounts. The host backend is selected automatically on first startup.",
-  "tipi_version": 3,
-  "version": "1.31.7",
+  "tipi_version": 4,
+  "version": "1.31.8",
   "source": "https://github.com/Zarestia-Dev/rclone-manager",
   "website": "https://hakanismail.info/zarestia/rclone-manager/",
   "exposable": true,
@@ -60,5 +60,5 @@
       "hint": "Generated once for Manager's saved credentials. Back up this secret with app data; changing it can make saved credentials unreadable."
     }
   ],
-  "updated_at": 1792046430972
+  "updated_at": 1792688628982
 }

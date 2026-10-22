@@ -3,7 +3,7 @@ x-runtipi:
 
 services:
   rclone-proxy:
-    image: nginx:1.31.7-alpine
+    image: nginx:1.31.8-alpine
     depends_on:
       rclone-ui:
         condition: service_started
