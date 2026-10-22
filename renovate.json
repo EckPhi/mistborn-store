@@ -50,7 +50,7 @@
         "/^apps/coder-dev/template/image/Dockerfile$/"
       ],
       "matchStrings": [
-        "# renovate: datasource=(?<datasource>[^ ]+) depName=(?<depName>[^\\r\\n]+)\\r?\\nARG [A-Z0-9_]+=(?<currentValue>[^\\r\\n]+)"
+        "# renovate: datasource=(?<datasource>[^ ]+) depName=(?<depName>[^\\s]+)\\r?\\nARG [A-Z0-9_]+=(?<currentValue>[^\\r\\n]+)"
       ]
     },
     {
@@ -62,9 +62,30 @@
         "name\\s*=\\s*\"(?<depName>docker):(?<currentValue>[^\"\\r\\n]+)\""
       ],
       "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/^apps/coder-dev/template/image/Dockerfile$/"
+      ],
+      "matchStrings": [
+        "# renovate: datasource=git-refs depName=(?<depName>[^ ]+) ref=(?<currentValue>[^\\r\\n]+)\\r?\\nARG [A-Z0-9_]+=(?<currentDigest>[a-f0-9]{40})"
+      ],
+      "packageNameTemplate": "https://github.com/{{{depName}}}",
+      "datasourceTemplate": "git-refs"
     }
   ],
   "packageRules": [
+    {
+      "description": "Solid Edge uses a locally built image, not a Docker Hub repository",
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "solid-edge-webtop"
+      ],
+      "enabled": false
+    },
     {
       "description": "Keep Coder's Python runtime on 3.14 until Omnigent's google-re2 dependency supports Python 3.15",
       "matchFileNames": [

@@ -17,9 +17,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     groupmod -n coder node && mkdir -p /home/coder && chown coder:coder /home/coder && \
     ln -s /usr/bin/fdfind /usr/local/bin/fd
 # Install the shell framework and theme in the image, outside persistent home.
-# renovate: datasource=github-commits depName=ohmyzsh/ohmyzsh
+# renovate: datasource=git-refs depName=ohmyzsh/ohmyzsh ref=master
 ARG OH_MY_ZSH_COMMIT=4d4cfc287e9d887b81242c0e431b5f49f9cec5c1
-# renovate: datasource=github-commits depName=romkatv/powerlevel10k
+# renovate: datasource=git-refs depName=romkatv/powerlevel10k ref=master
 ARG POWERLEVEL10K_COMMIT=d05a1b00f9a61f9578bf9dc19b8451942dde8734
 RUN git clone https://github.com/ohmyzsh/ohmyzsh.git /opt/oh-my-zsh && \
     git -C /opt/oh-my-zsh checkout "$OH_MY_ZSH_COMMIT" && \

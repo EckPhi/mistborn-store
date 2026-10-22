@@ -74,3 +74,20 @@ test("native Compose files avoid runtime variables omitted from generated app.en
     expect(source).not.toMatch(/\$\{(?:RUNTIPI_MEDIA_DIR|UID|GID)\}/);
   }
 });
+
+test("Renovate skips local images and tracks shell commits as Git digests", () => {
+  const config = JSON.parse(fs.readFileSync("renovate.json", "utf8"));
+  const localRule = config.packageRules.find((rule: { matchPackageNames?: string[] }) => rule.matchPackageNames?.includes("solid-edge-webtop"));
+  expect(localRule.enabled).toBe(false);
+  const source = fs.readFileSync("apps/coder-dev/template/image/Dockerfile", "utf8");
+  const manager = config.customManagers.find((manager: { datasourceTemplate?: string }) => manager.datasourceTemplate === "git-refs");
+  const matches = [...source.matchAll(new RegExp(manager.matchStrings[0], "g"))];
+  expect(matches.map((match) => match.groups?.depName)).toEqual(["ohmyzsh/ohmyzsh", "romkatv/powerlevel10k"]);
+  for (const match of matches) {
+    expect(match.groups?.currentValue).toBe("master");
+    expect(match.groups?.currentDigest).toMatch(/^[a-f0-9]{40}$/);
+  }
+  const generic = config.customManagers.find((manager: { matchStrings: string[] }) => manager.matchStrings[0].startsWith("# renovate: datasource=("));
+  expect([...source.matchAll(new RegExp(generic.matchStrings[0], "g"))].some((match) => match.groups?.datasource === "git-refs")).toBe(false);
+  expect(source).not.toContain("github-commits");
+});
