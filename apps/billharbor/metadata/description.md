@@ -1,6 +1,6 @@
 # BillHarbor (Development)
 
-BillHarbor acquires receipts and bills, preserves immutable originals, and tracks authenticated delivery. This entry packages **0.5.0.dev4**, with local user authentication, from commit `0d4f661596cb98b2349f8d02ac7872bd9c6327c5`. The image supports **AMD64 and ARM64**.
+BillHarbor acquires receipts and bills, preserves immutable originals, and tracks authenticated delivery. This entry packages **0.5.0.dev7**, with local user authentication, from commit `70c89632d03c9a60fe73706e98a07eab14f28d2f`. The image supports **AMD64 and ARM64**.
 
 ## Installation and sign-in
 
@@ -20,6 +20,6 @@ Back up `state` (SQLite, password verifiers and original documents), `config`, t
 
 ## Development scope
 
-The app starts with **zero vendors and accounts**. Configure trusted plugin stores and reviewed immutable plugins in the UI; account/destination provisioning remains deployment configuration. See [plugin operations](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev4/docs/operations/plugin-stores.md) and [local-user operations](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev4/docs/operations/local-users.md).
+The app starts with **zero vendors and accounts**. Configure trusted plugin stores and reviewed immutable plugins in the UI; account/destination provisioning remains deployment configuration. See [plugin operations](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev7/docs/operations/plugin-stores.md) and [local-user operations](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev7/docs/operations/local-users.md).
 
 The acquisition worker runs without network access for offline development fixtures. No delivery sender is started. Live vendor acquisition and delivery require separate upstream acceptance and deployment configuration. This is a development build, not an accepted production deployment.

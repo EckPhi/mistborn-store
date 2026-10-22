@@ -10,8 +10,8 @@
     "automation"
   ],
   "description": "Vendor-independent receipt and bill acquisition with immutable originals, local user sign-in and installable connector plugins. Development release; starts without vendors.",
-  "tipi_version": 3,
-  "version": "0.5.0.dev4",
+  "tipi_version": 4,
+  "version": "0.5.0.dev7",
   "source": "https://github.com/EckPhi/billharbor",
   "website": "https://github.com/EckPhi/billharbor",
   "exposable": true,
@@ -37,7 +37,7 @@
       "env_variable": "BILLHARBOR_ADMIN_PASSWORD",
       "required": true,
       "regex": "^.{15,1024}$",
-      "hint": "15\u20131024 characters. Used only for first bootstrap; later changes belong in the app. See documentation for passwords containing dollar signs."
+      "hint": "15–1024 characters. Used only for first bootstrap; later changes belong in the app. See documentation for passwords containing dollar signs."
     },
     {
       "type": "random",
@@ -50,5 +50,5 @@
     }
   ],
   "created_at": 1791391518209,
-  "updated_at": 1792606404076
+  "updated_at": 1792666823457
 }
