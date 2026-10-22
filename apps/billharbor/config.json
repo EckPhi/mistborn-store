@@ -10,7 +10,7 @@
     "automation"
   ],
   "description": "Vendor-independent receipt and bill acquisition with immutable originals, local user sign-in and installable connector plugins. Development release; starts without vendors.",
-  "tipi_version": 4,
+  "tipi_version": 5,
   "version": "0.5.0.dev7",
   "source": "https://github.com/EckPhi/billharbor",
   "website": "https://github.com/EckPhi/billharbor",
@@ -50,5 +50,5 @@
     }
   ],
   "created_at": 1791391518209,
-  "updated_at": 1792666823457
+  "updated_at": 1792666864954
 }
