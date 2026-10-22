@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
+import { gunzipSync } from "node:zlib";
 import { readCompose } from "../scripts/compose";
 
 const root = "apps/coder-dev";
@@ -54,7 +55,16 @@ describe("Coder development deployment", () => {
       encoding: "utf8",
     });
     expect(result.status).toBe(0);
-    expect(result.stdout).toBe(fs.readFileSync(`${root}/docker-compose.yml`, "utf8"));
+    const packaged = fs.readFileSync(`${root}/docker-compose.yml`, "utf8");
+    // Compression output varies across Python/zlib versions; compare archive bytes.
+    const bundlePattern = /printf '%s' '([A-Za-z0-9+/=]+)' \| base64 -d/;
+    const generatedBundle = result.stdout.match(bundlePattern)?.[1];
+    const packagedBundle = packaged.match(bundlePattern)?.[1];
+    expect(generatedBundle).toBeDefined();
+    expect(packagedBundle).toBeDefined();
+    if (!generatedBundle || !packagedBundle) throw new Error("Missing embedded runtime bundle");
+    expect(gunzipSync(Buffer.from(generatedBundle, "base64"))).toEqual(gunzipSync(Buffer.from(packagedBundle, "base64")));
+    expect(result.stdout.replace(bundlePattern, "@BUNDLE@")).toBe(packaged.replace(bundlePattern, "@BUNDLE@"));
   });
   test("runs bootstrap, lifecycle and provider-plan regression scenarios", () => {
     const result = spawnSync("python3", ["-m", "unittest", "discover", "-s", "tests/coder-dev"], {
