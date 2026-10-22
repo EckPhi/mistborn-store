@@ -1,6 +1,6 @@
 # BillHarbor (Development)
 
-BillHarbor acquires receipts and bills, preserves immutable originals, and tracks authenticated delivery. This entry packages **0.5.0.dev8**, with local user authentication, from commit `caf5bd5d4cbce618feab18bf5a13583c1ba80c5a`. The image supports **AMD64 and ARM64**.
+BillHarbor acquires receipts and bills, preserves immutable originals, and tracks authenticated delivery. This entry packages **0.5.0.dev9**, with local user authentication, from commit `7d7b2979af611fd22101dcb3854fe5d8003bcbc0`. The image supports **AMD64 and ARM64**.
 
 ## Installation and sign-in
 
@@ -20,6 +20,14 @@ Back up `state` (SQLite, password verifiers and original documents), `config`, t
 
 ## Development scope
 
-The app starts with **zero vendors and accounts**. Configure trusted plugin stores and reviewed immutable plugins in the UI, then create accounts and optional destinations through **Account setup**. Download-only operation does not require a receiver. See [plugin operations](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev8/docs/operations/plugin-stores.md), [UI setup](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev8/docs/operations/ui-setup.md) and [local-user operations](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev8/docs/operations/local-users.md).
+The app starts with **zero vendors and accounts**. Configure trusted plugin stores and reviewed immutable plugins in the UI, then create accounts and optional destinations through **Account setup**. Download-only operation does not require a receiver. See [plugin operations](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev9/docs/operations/plugin-stores.md), [UI setup](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev9/docs/operations/ui-setup.md) and [local-user operations](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev9/docs/operations/local-users.md).
 
 The acquisition worker runs without network access for offline development fixtures. No delivery sender is started. Live vendor acquisition and delivery require separate upstream acceptance and deployment configuration. This is a development build, not an accepted production deployment.
+
+## Web UI and live debugging
+
+The React/TypeScript/Vite assets are built into the image. No Node runtime, npm install or separate frontend service is needed. UI and API share the same HTTPS origin through Runtipi, with the public origin derived automatically. Hash navigation such as `/#/collections` requires no SPA fallback configuration. Keep the application's cookies, CSRF checks, security headers and `Cache-Control: no-store` responses intact.
+
+Live debugging is opt-in, read-only and currently synthetic-only. It uses authenticated HTTP polling and JPEG responses through the main API; no WebSocket, VNC or debugging port is exposed. Browser feeds require connector instrumentation. Frames and action logs are ephemeral and are not persisted.
+
+API and acquisition worker share the same writable `state` mount and UID/GID 10001:10001. The ephemeral debug broker uses a private Unix socket in this directory, including when the worker has no network access. Keep this shared mount writable and preserve the existing configuration and separate encryption-key mounts.
