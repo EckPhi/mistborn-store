@@ -1,6 +1,6 @@
 # BillHarbor (Development)
 
-BillHarbor acquires receipts and bills, preserves immutable originals, and tracks authenticated delivery. This entry packages **0.5.0.dev7**, with local user authentication, from commit `70c89632d03c9a60fe73706e98a07eab14f28d2f`. The image supports **AMD64 and ARM64**.
+BillHarbor acquires receipts and bills, preserves immutable originals, and tracks authenticated delivery. This entry packages **0.5.0.dev8**, with local user authentication, from commit `caf5bd5d4cbce618feab18bf5a13583c1ba80c5a`. The image supports **AMD64 and ARM64**.
 
 ## Installation and sign-in
 
@@ -14,12 +14,12 @@ For an initial password containing `$`, pre-create `secrets/bootstrap-password` 
 
 Initialization creates `config/service.json` and `secrets/credential-key`, fixes bind-mount ownership for UID/GID 10001, and provisions state. The initialization sidecar stays running so Runtipi can gate startup on its health. Existing configurations retain their account/destination policies and encryption keys; this package sets authentication to `local` and synchronizes the public origin at each start. Upgrading an OIDC-only installation creates the first local administrator using the new form credentials. Existing OIDC users can no longer sign in through this package.
 
-Stop the app before deliberately editing `config/service.json` for accounts, tenant grants, destinations and plugin policies. Apply intentional account/grant changes with `billharbor-service --config /config/service.json provision` as UID 10001 in the API container. Startup does not restore revoked grants. Local users are managed in the UI; local-user administration and plugin trust permissions are separate.
+Use **Account setup** to create vendor accounts from installed plugins and choose download-only operation or an optional HTTPS destination. Select self-access explicitly when creating an account. Local user administrators can manage setup; plugin trust permissions remain separate. UI settings are stored in SQLite, survive restarts and supersede deployment seeds. Startup does not restore revoked grants. Advanced deployment configuration and plugin trust policy remain in `config/service.json`; stop the app before editing that file.
 
-Back up `state` (SQLite, password verifiers and original documents), `config`, the generated encryption form value and `secrets`. Keep a separately protected backup of the 32-byte encryption key: losing it makes stored vendor credentials unreadable. Changing the form key does not rotate existing credentials; use upstream's explicit key-rotation procedure. Take consistent SQLite backups with the app stopped or SQLite's backup API.
+Back up `state` (SQLite, password verifiers and original documents), `config`, the generated encryption form value and `secrets`. Keep a separately protected backup of the 32-byte encryption key: losing it makes stored vendor credentials unreadable. Changing the form key does not rotate existing credentials; use upstream's explicit key-rotation procedure. Before rotation, stage both old and new keys in both configurations; retain old keys for historical callback revisions. Older images do not support UI-created accounts or encrypted callback tokens, so rollback requires a compatible database/key backup. Take consistent SQLite backups with the app stopped or SQLite's backup API.
 
 ## Development scope
 
-The app starts with **zero vendors and accounts**. Configure trusted plugin stores and reviewed immutable plugins in the UI; account/destination provisioning remains deployment configuration. See [plugin operations](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev7/docs/operations/plugin-stores.md) and [local-user operations](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev7/docs/operations/local-users.md).
+The app starts with **zero vendors and accounts**. Configure trusted plugin stores and reviewed immutable plugins in the UI, then create accounts and optional destinations through **Account setup**. Download-only operation does not require a receiver. See [plugin operations](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev8/docs/operations/plugin-stores.md), [UI setup](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev8/docs/operations/ui-setup.md) and [local-user operations](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev8/docs/operations/local-users.md).
 
 The acquisition worker runs without network access for offline development fixtures. No delivery sender is started. Live vendor acquisition and delivery require separate upstream acceptance and deployment configuration. This is a development build, not an accepted production deployment.
