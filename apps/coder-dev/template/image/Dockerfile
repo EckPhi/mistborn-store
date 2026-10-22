@@ -1,11 +1,11 @@
 # renovate: datasource=docker depName=docker
-FROM docker:29.8.2-cli AS docker-cli
+FROM docker:29.9.2-cli AS docker-cli
 # renovate: datasource=docker depName=python
 FROM python:3.14.8-bookworm AS python-runtime
 # renovate: datasource=docker depName=rust
-FROM rust:1.99.0-bookworm AS rust-runtime
+FROM rust:1.99.1-bookworm AS rust-runtime
 # renovate: datasource=docker depName=node
-FROM node:24.21.0-bookworm AS base
+FROM node:24.22.1-bookworm AS base
 USER root
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git git-lfs curl wget ca-certificates openssh-client rsync bash zsh jq \
@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ln -s /usr/bin/fdfind /usr/local/bin/fd
 # Install the shell framework and theme in the image, outside persistent home.
 # renovate: datasource=git-refs depName=ohmyzsh/ohmyzsh ref=master
-ARG OH_MY_ZSH_COMMIT=4d4cfc287e9d887b81242c0e431b5f49f9cec5c1
+ARG OH_MY_ZSH_COMMIT=2100c630ba4bd67bb48802c3e7da893a4fdaa1a0
 # renovate: datasource=git-refs depName=romkatv/powerlevel10k ref=master
 ARG POWERLEVEL10K_COMMIT=d05a1b00f9a61f9578bf9dc19b8451942dde8734
 RUN git clone https://github.com/ohmyzsh/ohmyzsh.git /opt/oh-my-zsh && \
@@ -32,30 +32,30 @@ COPY zshrc /etc/skel/.zshrc
 COPY --from=python-runtime /usr/local /usr/local
 # Pin Python developer utilities; install outside the persisted developer home.
 # renovate: datasource=pypi depName=uv
-ARG UV_VERSION=0.12.23
+ARG UV_VERSION=0.13.5
 # renovate: datasource=pypi depName=conan
 ARG CONAN_VERSION=2.33.0
 # renovate: datasource=npm depName=pnpm
-ARG PNPM_VERSION=12.10.1
+ARG PNPM_VERSION=12.15.0
 # renovate: datasource=npm depName=bun
-ARG BUN_VERSION=1.4.2
+ARG BUN_VERSION=1.4.4
 RUN python3 -m venv /opt/dev-tools && \
     /opt/dev-tools/bin/pip install --no-cache-dir "uv==$UV_VERSION" "conan==$CONAN_VERSION" && \
     npm install -g "pnpm@$PNPM_VERSION" "bun@$BUN_VERSION" && \
     mkdir -p /usr/local/lib/docker/cli-plugins
 # AI agent runtimes. Authentication and mutable settings stay under /home/coder.
 # renovate: datasource=npm depName=@openai/codex
-ARG CODEX_VERSION=0.161.0
+ARG CODEX_VERSION=0.163.0
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.293
+ARG CLAUDE_CODE_VERSION=2.1.308
 # renovate: datasource=npm depName=opencode-ai
-ARG OPENCODE_VERSION=1.18.35
+ARG OPENCODE_VERSION=1.19.4
 # renovate: datasource=pypi depName=omnigent
-ARG OMNIGENT_VERSION=0.17.0
+ARG OMNIGENT_VERSION=0.19.1
 # renovate: datasource=npm depName=@oh-my-pi/pi-coding-agent
-ARG OMP_VERSION=18.8.4
+ARG OMP_VERSION=18.12.6
 # renovate: datasource=pypi depName=mistral-vibe
-ARG VIBE_VERSION=2.26.0
+ARG VIBE_VERSION=2.26.1
 ARG ENABLE_AI_AGENTS=true
 RUN if [ "$ENABLE_AI_AGENTS" = true ]; then \
       npm install -g "@openai/codex@$CODEX_VERSION" "@anthropic-ai/claude-code@$CLAUDE_CODE_VERSION" "opencode-ai@$OPENCODE_VERSION" && \
