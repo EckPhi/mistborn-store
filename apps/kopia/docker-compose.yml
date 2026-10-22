@@ -2,7 +2,7 @@ x-runtipi:
   schema_version: 2
 services:
   kopia:
-    image: kopia/kopia:0.23.1
+    image: kopia/kopia:20261020.0.33011
     hostname: coder-workspace-backup
     command:
       - server
