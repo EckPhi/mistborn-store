@@ -11,8 +11,8 @@
     "development"
   ],
   "description": "Termix is a self-hosted server management platform with an SSH terminal, file management, host metrics and extensible plugins, accessible from a browser or the Termix desktop and mobile apps.",
-  "tipi_version": 1,
-  "version": "26.10.4",
+  "tipi_version": 2,
+  "version": "26.10.5",
   "source": "https://github.com/Termix-SSH/Termix",
   "website": "https://termix.site",
   "exposable": true,
@@ -22,6 +22,6 @@
   ],
   "dynamic_config": true,
   "created_at": 1792046323369,
-  "updated_at": 1792046323369,
+  "updated_at": 1792737675005,
   "form_fields": []
 }
