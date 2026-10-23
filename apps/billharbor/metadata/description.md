@@ -1,6 +1,6 @@
 # BillHarbor (Development)
 
-BillHarbor acquires receipts and bills, preserves immutable originals, and tracks authenticated delivery. This entry packages **0.5.0.dev9**, with local user authentication, from commit `7d7b2979af611fd22101dcb3854fe5d8003bcbc0`. The image supports **AMD64 and ARM64**.
+BillHarbor acquires receipts and bills, preserves immutable originals, and tracks authenticated delivery. This entry packages **0.5.0.dev11**, with local user authentication, from commit `cc51a46ca99d95047ff56b2f8c51308694db0c2c`. The image supports **AMD64 and ARM64**.
 
 ## Installation and sign-in
 
@@ -20,7 +20,7 @@ Back up `state` (SQLite, password verifiers and original documents), `config`, t
 
 ## Development scope
 
-The app starts with **zero vendors and accounts**. Configure trusted plugin stores and reviewed immutable plugins in the UI, then create accounts and optional destinations through **Account setup**. Download-only operation does not require a receiver. See [plugin operations](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev9/docs/operations/plugin-stores.md), [UI setup](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev9/docs/operations/ui-setup.md) and [local-user operations](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev9/docs/operations/local-users.md).
+The app starts with **zero vendors and accounts**. Configure trusted plugin stores and reviewed immutable plugins in the UI, then create accounts and optional destinations through **Account setup**. Download-only operation does not require a receiver. See [plugin operations](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev11/docs/operations/plugin-stores.md), [UI setup](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev11/docs/operations/ui-setup.md) and [local-user operations](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev11/docs/operations/local-users.md).
 
 The acquisition worker runs without network access for offline development fixtures. No delivery sender is started. Live vendor acquisition and delivery require separate upstream acceptance and deployment configuration. This is a development build, not an accepted production deployment.
 
@@ -31,3 +31,9 @@ The React/TypeScript/Vite assets are built into the image. No Node runtime, npm 
 Live debugging is opt-in, read-only and currently synthetic-only. It uses authenticated HTTP polling and JPEG responses through the main API; no WebSocket, VNC or debugging port is exposed. Browser feeds require connector instrumentation. Frames and action logs are ephemeral and are not persisted.
 
 API and acquisition worker share the same writable `state` mount and UID/GID 10001:10001. The ephemeral debug broker uses a private Unix socket in this directory, including when the worker has no network access. Keep this shared mount writable and preserve the existing configuration and separate encryption-key mounts.
+
+## Credential recovery
+
+Updates preserve the existing encrypted state and separate key files. Restore matching key bytes from backup; never regenerate a key to resolve a missing-key or integrity error. Keep restored secrets readable only by UID/GID 10001:10001, with mode 0400 or 0600, and retain the read-only secret mounts on API and worker containers.
+
+After restoring a backup, run `billharbor-service --config /config/service.json check --verify-stored` as UID 10001 in an isolated restore before resuming work. This verifies all stored vendor and callback credential revisions and reports counts without printing secrets or making vendor/callback requests. A valid-length key can still contain the wrong bytes, so ordinary `check` is insufficient for restore verification. See [upstream restore guidance](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev11/docs/operations/service-candidate.md#restored-secret-file-permissions-and-updates).
