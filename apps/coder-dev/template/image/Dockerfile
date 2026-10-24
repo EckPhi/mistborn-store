@@ -47,7 +47,7 @@ RUN python3 -m venv /opt/dev-tools && \
 # renovate: datasource=npm depName=@openai/codex
 ARG CODEX_VERSION=0.164.0
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.309
+ARG CLAUDE_CODE_VERSION=2.1.310
 # renovate: datasource=npm depName=opencode-ai
 ARG OPENCODE_VERSION=1.19.4
 # renovate: datasource=pypi depName=omnigent
