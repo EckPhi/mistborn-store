@@ -8,7 +8,8 @@
     "test": "bun test",
     "lint": "biome check",
     "lint:ci": "biome ci",
-    "update:apps": "bash ./scripts/update-apps.sh"
+    "update:apps": "bash ./scripts/update-apps.sh",
+    "tui": "cargo run --locked --manifest-path tools/store-tui/Cargo.toml --"
   },
   "keywords": [],
   "author": "",

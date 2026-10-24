@@ -39,3 +39,21 @@ jobs:
           python3 -m venv /tmp/mlflow-smoke
           /tmp/mlflow-smoke/bin/python -c 'import json, subprocess; version = json.load(open("apps/mlflow/config.json"))["version"].removeprefix("v").removesuffix("-full"); subprocess.check_call(["/tmp/mlflow-smoke/bin/pip", "install", "mlflow[auth,db]==" + version])'
           /tmp/mlflow-smoke/bin/python tests/platform/mlflow_local.py
+
+  store-tui:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install store validation dependencies
+        run: bun install --frozen-lockfile
+      - name: Set up Rust
+        run: |
+          rustup toolchain install stable --profile minimal --component clippy,rustfmt
+          rustup default stable
+      - name: Check Rust formatting
+        run: cargo fmt --manifest-path tools/store-tui/Cargo.toml --check
+      - name: Lint Rust
+        run: cargo clippy --manifest-path tools/store-tui/Cargo.toml --locked --all-targets -- -D warnings
+      - name: Test terminal app and repository workflows
+        run: cargo test --manifest-path tools/store-tui/Cargo.toml --locked

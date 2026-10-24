@@ -15,6 +15,13 @@ Add this repository as a custom app store in your Runtipi instance:
 
 See the [Runtipi custom app store guide](https://runtipi.io/docs/guides/create-your-own-app-store) for details.
 
+## Maintaining apps in a terminal
+
+Run `bun install` and `bun run tui` to open the Rust terminal UI. Browse apps,
+create a simple app, edit metadata, verify published image updates, import icons,
+and review changes before applying and committing them. See the
+[TUI guide](tools/store-tui/README.md) for installation, controls and limits.
+
 ## Remote development platform
 
 Install `coder-dev` for persistent remote workspaces with C++/Python/Node tooling,

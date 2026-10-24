@@ -1,0 +1,17 @@
+[package]
+name = "runtipi-store-tui"
+version = "0.1.0"
+edition = "2024"
+license = "ISC"
+description = "Terminal editor for a Runtipi app store"
+
+[dependencies]
+anyhow = "1"
+crossterm = "0.29"
+ratatui = "0.29"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "json", "rustls-tls"] }
+image = { version = "0.25", default-features = false, features = ["png", "jpeg", "webp", "ico"] }
+tempfile = "3"
+similar = "2"
