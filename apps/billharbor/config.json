@@ -10,8 +10,8 @@
     "automation"
   ],
   "description": "Vendor-independent receipt and bill acquisition with immutable originals, local user sign-in and installable connector plugins. Development release; starts without vendors.",
-  "tipi_version": 10,
-  "version": "0.5.0a19001",
+  "tipi_version": 11,
+  "version": "0.5.0a21001",
   "source": "https://github.com/EckPhi/billharbor",
   "website": "https://github.com/EckPhi/billharbor",
   "exposable": true,
@@ -21,17 +21,7 @@
     "amd64",
     "arm64"
   ],
-  "form_fields": [
-    {
-      "type": "random",
-      "label": "First-run setup token",
-      "env_variable": "BILLHARBOR_SETUP_TOKEN",
-      "required": false,
-      "min": 64,
-      "encoding": "hex",
-      "hint": "Copy this private token into BillHarbor\u2019s welcome screen. Create your administrator and download the encryption-key backup in the app. Existing installations keep their users and keys."
-    }
-  ],
+  "form_fields": [],
   "created_at": 1791391518209,
-  "updated_at": 1792834551029
+  "updated_at": 1792870930115
 }
