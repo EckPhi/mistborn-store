@@ -10,8 +10,8 @@
     "automation"
   ],
   "description": "Vendor-independent receipt and bill acquisition with immutable originals, local user sign-in and installable connector plugins. Development release; starts without vendors.",
-  "tipi_version": 9,
-  "version": "0.5.0b17001",
+  "tipi_version": 10,
+  "version": "0.5.0a19001",
   "source": "https://github.com/EckPhi/billharbor",
   "website": "https://github.com/EckPhi/billharbor",
   "exposable": true,
@@ -23,30 +23,13 @@
   ],
   "form_fields": [
     {
-      "type": "text",
-      "label": "Initial administrator username",
-      "env_variable": "BILLHARBOR_ADMIN_USERNAME",
-      "required": false,
-      "default": "admin",
-      "regex": "^[A-Za-z0-9][A-Za-z0-9._@+-]{0,127}$",
-      "hint": "Used only when no local users exist. Manage users in the app after first login."
-    },
-    {
-      "type": "password",
-      "label": "Initial administrator password",
-      "env_variable": "BILLHARBOR_ADMIN_PASSWORD",
-      "required": true,
-      "regex": "^.{15,1024}$",
-      "hint": "15–1024 characters. Used only for first bootstrap; later changes belong in the app. See documentation for passwords containing dollar signs."
-    },
-    {
       "type": "random",
-      "label": "Credential encryption key",
-      "env_variable": "BILLHARBOR_ENCRYPTION_KEY",
+      "label": "First-run setup token",
+      "env_variable": "BILLHARBOR_SETUP_TOKEN",
       "required": false,
       "min": 64,
       "encoding": "hex",
-      "hint": "Generated once. Back up with secrets and state; do not change after initialization."
+      "hint": "Copy this private token into BillHarbor\u2019s welcome screen. Create your administrator and download the encryption-key backup in the app. Existing installations keep their users and keys."
     }
   ],
   "created_at": 1791391518209,

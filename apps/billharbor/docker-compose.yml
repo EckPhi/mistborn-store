@@ -2,13 +2,13 @@ x-runtipi:
   schema_version: 2
 services:
   billharbor-init:
-    image: eckphi/billharbor:0.5.0b17001
+    image: eckphi/billharbor:0.5.0a19001
     user: "0:0"
     entrypoint:
       - python
       - -c
       - |
-        import json, os, time
+        import json, os, re, time
         from pathlib import Path
         os.umask(0o077)
         Path('/tmp/ready').unlink(missing_ok=True)
@@ -19,62 +19,51 @@ services:
             for directory, children, files in os.walk(root, followlinks=False):
                 for item in children + files:
                     os.chown(Path(directory) / item, 10001, 10001, follow_symlinks=False)
-        key = Path('/secrets/credential-key')
-        if not key.exists():
-            key.write_bytes(bytes.fromhex(os.environ['BILLHARBOR_ENCRYPTION_KEY']))
-        key.chmod(0o600)
-        os.chown(key, 10001, 10001)
+        Path('/secrets').chmod(0o700)
         os.setgroups([])
         os.setgid(10001)
         os.setuid(10001)
         from billharbor.service.config import ServiceConfig
-        from billharbor.service.cli import provision
-        from billharbor.local_users import LocalUsers
-        from billharbor.access import AccessControl
+        from billharbor.service.app import Application
         config = Path('/config/service.json')
         if not config.exists():
+            # Never reinterpret lost deployment metadata as a fresh installation.
+            if any(Path('/state').iterdir()) or any(Path('/secrets').iterdir()):
+                raise RuntimeError('Existing state or secrets require deployment recovery.')
+            token_value = os.environ['BILLHARBOR_SETUP_TOKEN']
+            if not re.fullmatch(r'[0-9a-f]{64}', token_value):
+                raise RuntimeError('A generated private setup token is required.')
+            token = Path('/secrets/installation-token')
+            token.write_text(token_value)
             config.write_text(json.dumps({
                 'public_origin': os.environ['BILLHARBOR_PUBLIC_ORIGIN'],
                 'state_dir': '/state',
                 'key_files': {'initial': '/secrets/credential-key'},
                 'current_key_id': 'initial',
                 'authentication': {'mode': 'local'},
+                'setup': {'token_file': '/secrets/installation-token'},
                 'accounts': [], 'grants': [], 'destinations': [],
                 'plugins': {'administrators': []}
             }, indent=2))
+        elif not Path('/state/state.sqlite3').is_file():
+            raise RuntimeError('Existing configuration without its database requires recovery.')
         value = json.loads(config.read_text())
         value['public_origin'] = os.environ['BILLHARBOR_PUBLIC_ORIGIN']
-        value['authentication'] = {'mode': 'local'}
         config.write_text(json.dumps(value, indent=2))
         settings = ServiceConfig.load(config)
-        store = settings.open_store()
-        settings.vault(store)
-        marker = Path('/state/.runtipi-provisioned')
-        if not marker.exists():
-            provision(settings)
-            marker.touch()
-        with store._connection() as connection:
-            has_users = connection.execute('SELECT 1 FROM local_users LIMIT 1').fetchone()
-        if not has_users:
-            password_file = Path('/secrets/bootstrap-password')
-            if password_file.exists():
-                from billharbor.auth import _read_secret_file
-                password = _read_secret_file(password_file)
-            else:
-                password = os.environ['BILLHARBOR_ADMIN_PASSWORD']
-            user = LocalUsers(store).bootstrap(os.environ['BILLHARBOR_ADMIN_USERNAME'], password)
-            AccessControl(store).grant(user['subject_id'], 'default', 'admin', actor_id='deployment')
-            admins = value.setdefault('plugins', {}).setdefault('administrators', [])
-            admins.append(user['subject_id'])
-            config.write_text(json.dumps(value, indent=2))
+        # Initialize the installation exactly once before API workers can race
+        # to create a fresh database. Existing users/policies/keys are untouched.
+        application = Application(settings)
+        if application.installation.status()['stage'] == 'blocked':
+            raise RuntimeError('Installation state requires deployment recovery.')
+        if not settings.setup_token_file:
+            settings.vault(application.store)
         Path('/tmp/ready').touch()
         while True:
             time.sleep(3600)
     environment:
       BILLHARBOR_PUBLIC_ORIGIN: ${APP_PROTOCOL}://${APP_DOMAIN}
-      BILLHARBOR_ADMIN_USERNAME: ${BILLHARBOR_ADMIN_USERNAME}
-      BILLHARBOR_ADMIN_PASSWORD: ${BILLHARBOR_ADMIN_PASSWORD}
-      BILLHARBOR_ENCRYPTION_KEY: ${BILLHARBOR_ENCRYPTION_KEY}
+      BILLHARBOR_SETUP_TOKEN: ${BILLHARBOR_SETUP_TOKEN}
     volumes:
       - ${APP_DATA_DIR}/state:/state
       - ${APP_DATA_DIR}/config:/config
@@ -86,7 +75,7 @@ services:
       start_period: 5s
       retries: 12
   billharbor:
-    image: eckphi/billharbor:0.5.0b17001
+    image: eckphi/billharbor:0.5.0a19001
     user: "10001:10001"
     read_only: true
     cap_drop: [ALL]
@@ -104,7 +93,7 @@ services:
     volumes:
       - ${APP_DATA_DIR}/state:/state
       - ${APP_DATA_DIR}/config:/config:ro
-      - ${APP_DATA_DIR}/secrets:/secrets:ro
+      - ${APP_DATA_DIR}/secrets:/secrets
     depends_on:
       billharbor-init:
         condition: service_healthy
@@ -117,7 +106,7 @@ services:
       is_main: true
       internal_port: 8080
   billharbor-worker:
-    image: eckphi/billharbor:0.5.0b17001
+    image: eckphi/billharbor:0.5.0a19001
     user: "10001:10001"
     read_only: true
     cap_drop: [ALL]
@@ -129,7 +118,20 @@ services:
     cpus: 1.0
     tmpfs:
       - /tmp:size=268435456,mode=1777,nosuid,nodev
-    command: [worker]
+    entrypoint: [python, -c]
+    command:
+      - |
+        import os, time
+        from billharbor.service.config import ServiceConfig
+        settings = ServiceConfig.load('/config/service.json')
+        store = settings.open_store()
+        while True:
+            with store._connection() as connection:
+                row = connection.execute('SELECT stage FROM installation_setup WHERE id=1').fetchone()
+            if row is None or row['stage'] == 'complete':
+                break
+            time.sleep(5)
+        os.execvp('billharbor-service', ['billharbor-service', 'worker'])
     environment:
       BILLHARBOR_CONFIG: /config/service.json
     volumes:
