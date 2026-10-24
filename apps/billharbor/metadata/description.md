@@ -1,6 +1,6 @@
 # BillHarbor (Development)
 
-BillHarbor acquires receipts and bills, preserves immutable originals, and tracks authenticated delivery. This entry packages **0.5.0.dev11**, with local user authentication, from commit `cc51a46ca99d95047ff56b2f8c51308694db0c2c`. The image supports **AMD64 and ARM64**.
+BillHarbor acquires receipts and bills, preserves immutable originals, and tracks authenticated delivery. This entry packages **0.5.0b17001**, with local user authentication, from commit `975bd928fa95fcc399d754b371a6b1e8c1129198`. The image supports **AMD64 and ARM64**.
 
 ## Installation and sign-in
 
@@ -20,7 +20,7 @@ Back up `state` (SQLite, password verifiers and original documents), `config`, t
 
 ## Development scope
 
-The app starts with **zero vendors and accounts**. Configure trusted plugin stores and reviewed immutable plugins in the UI, then create accounts and optional destinations through **Account setup**. Download-only operation does not require a receiver. See [plugin operations](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev11/docs/operations/plugin-stores.md), [UI setup](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev11/docs/operations/ui-setup.md) and [local-user operations](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev11/docs/operations/local-users.md).
+The app starts with **zero vendors and accounts**. Configure trusted plugin stores and reviewed immutable plugins in the UI, then create accounts and optional destinations through **Account setup**. Download-only operation does not require a receiver. See [plugin operations](https://github.com/EckPhi/billharbor/blob/v0.5.0b17001/docs/operations/plugin-stores.md), [UI setup](https://github.com/EckPhi/billharbor/blob/v0.5.0b17001/docs/operations/ui-setup.md) and [local-user operations](https://github.com/EckPhi/billharbor/blob/v0.5.0b17001/docs/operations/local-users.md).
 
 The acquisition worker runs without network access for offline development fixtures. No delivery sender is started. Live vendor acquisition and delivery require separate upstream acceptance and deployment configuration. This is a development build, not an accepted production deployment.
 
@@ -36,4 +36,4 @@ API and acquisition worker share the same writable `state` mount and UID/GID 100
 
 Updates preserve the existing encrypted state and separate key files. Restore matching key bytes from backup; never regenerate a key to resolve a missing-key or integrity error. Keep restored secrets readable only by UID/GID 10001:10001, with mode 0400 or 0600, and retain the read-only secret mounts on API and worker containers.
 
-After restoring a backup, run `billharbor-service --config /config/service.json check --verify-stored` as UID 10001 in an isolated restore before resuming work. This verifies all stored vendor and callback credential revisions and reports counts without printing secrets or making vendor/callback requests. A valid-length key can still contain the wrong bytes, so ordinary `check` is insufficient for restore verification. See [upstream restore guidance](https://github.com/EckPhi/billharbor/blob/v0.5.0.dev11/docs/operations/service-candidate.md#restored-secret-file-permissions-and-updates).
+After restoring a backup, run `billharbor-service --config /config/service.json check --verify-stored` as UID 10001 in an isolated restore before resuming work. This verifies all stored vendor and callback credential revisions and reports counts without printing secrets or making vendor/callback requests. A valid-length key can still contain the wrong bytes, so ordinary `check` is insufficient for restore verification. See [upstream restore guidance](https://github.com/EckPhi/billharbor/blob/v0.5.0b17001/docs/operations/service-candidate.md#restored-secret-file-permissions-and-updates).
