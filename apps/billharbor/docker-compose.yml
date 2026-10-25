@@ -2,7 +2,7 @@ x-runtipi:
   schema_version: 2
 services:
   billharbor-init:
-    image: eckphi/billharbor:0.5.0b17001
+    image: eckphi/billharbor:0.5.0a22001
     user: "0:0"
     entrypoint:
       - python
@@ -77,7 +77,7 @@ services:
       start_period: 5s
       retries: 12
   billharbor:
-    image: eckphi/billharbor:0.5.0b17001
+    image: eckphi/billharbor:0.5.0a22001
     user: "10001:10001"
     read_only: true
     cap_drop: [ALL]
@@ -108,7 +108,7 @@ services:
       is_main: true
       internal_port: 8080
   billharbor-worker:
-    image: eckphi/billharbor:0.5.0b17001
+    image: eckphi/billharbor:0.5.0a22001
     user: "10001:10001"
     read_only: true
     cap_drop: [ALL]
