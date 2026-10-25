@@ -10,8 +10,8 @@
     "utilities"
   ],
   "description": "Receipt Wrangler is a self-hosted receipt manager. Upload a receipt from the web app, an email inbox or the mobile app and it extracts the merchant, date and total with OCR or an AI model, categorises it and splits it between users of a group. It ships receipt workflows, custom fields, budgets and reports. This app bundles MariaDB and Redis; Redis backs the background job queue (OCR, email polling, scheduled tasks) and is required.",
-  "tipi_version": 2,
-  "version": "v7.2.0",
+  "tipi_version": 3,
+  "version": "v7.3.0",
   "source": "https://github.com/Receipt-Wrangler/receipt-wrangler",
   "website": "https://receiptwrangler.io",
   "exposable": true,
@@ -20,7 +20,7 @@
     "amd64"
   ],
   "created_at": 1785690668644,
-  "updated_at": 1792218297373,
+  "updated_at": 1792912128769,
   "dynamic_config": true,
   "form_fields": [
     {
