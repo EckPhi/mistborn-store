@@ -4,7 +4,7 @@
   "services": [
     {
       "name": "go2rtc",
-      "image": "alexxit/go2rtc:1.9.14",
+      "image": "alexxit/go2rtc:1.9.15",
       "networkMode": "host",
       "environment": [
         {
