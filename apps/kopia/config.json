@@ -10,8 +10,8 @@
     "development"
   ],
   "description": "Kopia web UI for encrypted, deduplicated backups of Coder workspace home and source data to remote storage, including rclone remotes.",
-  "tipi_version": 2,
-  "version": "20261020.0.33011",
+  "tipi_version": 3,
+  "version": "20261028.0.41131",
   "source": "https://github.com/kopia/kopia",
   "website": "https://kopia.io",
   "exposable": true,
@@ -40,5 +40,5 @@
     }
   ],
   "created_at": 1791539936946,
-  "updated_at": 1792688774472
+  "updated_at": 1793173622570
 }
