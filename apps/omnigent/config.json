@@ -10,8 +10,8 @@
     "development"
   ],
   "description": "Independent Omnigent service for a modular remote development platform.",
-  "tipi_version": 3,
-  "version": "v0.19.1",
+  "tipi_version": 4,
+  "version": "v0.20.0",
   "source": "https://github.com/omnigent-ai/omnigent",
   "exposable": true,
   "dynamic_config": true,
@@ -72,5 +72,5 @@
     }
   ],
   "created_at": 1790760001681,
-  "updated_at": 1792688721448
+  "updated_at": 1793173607807
 }
