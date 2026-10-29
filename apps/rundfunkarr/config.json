@@ -1,0 +1,37 @@
+{
+  "name": "RundfunkArr",
+  "id": "rundfunkarr",
+  "available": true,
+  "short_desc": "German public broadcasting indexer and downloader for Sonarr and Radarr",
+  "author": "rundfunkarr",
+  "port": 6767,
+  "categories": ["media"],
+  "description": "RundfunkArr searches public broadcaster media libraries and integrates with Sonarr, Radarr and Prowlarr through Newznab and SABnzbd-compatible APIs. Includes direct downloads, optional MKV conversion and scheduled searches.",
+  "tipi_version": 1,
+  "version": "1.4.0",
+  "source": "https://github.com/rundfunkarr/rundfunkarr",
+  "exposable": true,
+  "supported_architectures": ["amd64", "arm64"],
+  "dynamic_config": true,
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Public URL",
+      "env_variable": "RUNDFUNKARR_PUBLIC_URL",
+      "required": false,
+      "default": "http://localhost:6767",
+      "hint": "Match the browser origin, including scheme and port: http://<server-ip>:6767 for LAN access or https://rundfunkarr.example.com for domain access. No trailing path."
+    },
+    {
+      "type": "random",
+      "label": "Diagnostics admin key",
+      "env_variable": "RUNDFUNKARR_DIAGNOSTICS_ADMIN_KEY",
+      "required": false,
+      "min": 64,
+      "encoding": "hex",
+      "hint": "Enter this generated key on Diagnostics & Logs to unlock diagnostics. This is separate from the login password and integration API key."
+    }
+  ],
+  "created_at": 1792688507808,
+  "updated_at": 1792688507808
+}
