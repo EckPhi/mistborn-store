@@ -13,7 +13,7 @@
         { "key": "TZ", "value": "${TZ}" },
         { "key": "DATABASE_URL", "value": "file:/app/prisma/data/rundfunkarr.db" },
         { "key": "DOWNLOAD_FOLDER_PATH", "value": "/downloads" },
-        { "key": "AUTH_PUBLIC_URL", "value": "${RUNDFUNKARR_PUBLIC_URL}" },
+        { "key": "AUTH_PUBLIC_URL", "value": "${APP_PROTOCOL}://${APP_DOMAIN}" },
         { "key": "DIAGNOSTICS_ADMIN_KEY", "value": "${RUNDFUNKARR_DIAGNOSTICS_ADMIN_KEY}" }
       ],
       "volumes": [

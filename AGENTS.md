@@ -112,7 +112,7 @@ Each service object supports (subset most used):
 - `dependsOn` — `{ "<service>": { "condition": "service_started" | "service_healthy" | "service_completed_successfully" } }`
 - `command`, `entrypoint`, `user`, `hostname`, `networkMode`, `privileged`, `capAdd`, `capDrop`, `securityOpt`, `devices`, `sysctls`, `healthCheck`, `extraLabels`, `deploy` (resource limits), etc.
 
-Other runtipi variables usable as `${...}`: `${APP_DATA_DIR}`, `${APP_PORT}`, `${TZ}`, `${UID}`, plus any `env_variable` from `form_fields`.
+Other Runtipi variables usable as `${...}` include `${APP_DATA_DIR}`, `${APP_PORT}`, `${APP_PROTOCOL}`, `${APP_DOMAIN}`, `${APP_HOST}`, `${TZ}`, `${UID}`, plus any `env_variable` from `form_fields`. Prefer Runtipi-provided values over configuration input fields whenever available.
 
 ## Reverse proxy / networking
 
@@ -262,7 +262,7 @@ MariaDB and Redis with healthchecks the main service can gate on:
 
 ### URL settings
 
-Apps that build links, CORS origins or session cookies from a configured URL (`APP_URL`, `WF_CORS_ALLOW_ORIGINS`, `SESSION_DOMAIN`, `SANCTUM_STATEFUL_DOMAINS`) need it to match what the browser shows, down to scheme and port. Expose them as fields with a sane `http://localhost:<port>` default and spell out the LAN vs domain values in `description.md` — a mismatch shows up as broken assets, redirect loops or a `419` after login, none of which point at the real cause.
+Apps that build links, CORS origins or session cookies from a configured URL (`APP_URL`, `AUTH_PUBLIC_URL`, `WF_CORS_ALLOW_ORIGINS`, `SESSION_DOMAIN`, `SANCTUM_STATEFUL_DOMAINS`) should derive it from Runtipi's generated environment variables. Use `${APP_PROTOCOL}://${APP_DOMAIN}` for a full origin: `APP_DOMAIN` already includes the port for local IP access and selects the configured domain for public or local HTTPS exposure. Use `${APP_HOST}` when a hostname without a port is required. Do not ask users to manually enter a service's own domain or URL in `form_fields` when Runtipi already supplies it. Reserve input fields for values Runtipi cannot determine, such as external service endpoints. Verify variable availability in the supported Runtipi runtime. Reference: https://runtipi.io/docs/reference/environment-variables
 
 ## Adding an app — checklist
 

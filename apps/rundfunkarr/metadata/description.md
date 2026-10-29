@@ -6,7 +6,7 @@ RundfunkArr searches German public broadcaster media libraries, including ARD an
 
 Open `http://<your-server-ip>:6767` and complete the setup wizard. Keep the download directory set to `/downloads`. Optional metadata API keys and broadcaster settings can be configured in the application.
 
-Set the installation's **Public URL** to the exact origin shown in your browser, including scheme and port. Use `http://<your-server-ip>:6767` on your LAN or `https://rundfunkarr.example.com` when exposed through Runtipi. The default `http://localhost:6767` only matches a browser running on the server itself.
+The public URL is configured automatically from Runtipi's `APP_PROTOCOL` and `APP_DOMAIN` variables, covering LAN access, local HTTPS and public domain exposure. No manual domain or URL entry is needed.
 
 Login is disabled by default upstream. Enable a username and password under **Settings → General → Security** before exposing the app publicly, and use HTTPS. Enabling login generates an integration API key; copy it into all connected indexers and download clients. The generated **Diagnostics admin key** from the Runtipi installation settings unlocks **Diagnostics & Logs** and is separate from that integration key.
 
