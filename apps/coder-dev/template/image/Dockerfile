@@ -5,7 +5,7 @@ FROM python:3.14.8-bookworm AS python-runtime
 # renovate: datasource=docker depName=rust
 FROM rust:1.99.1-bookworm AS rust-runtime
 # renovate: datasource=docker depName=node
-FROM node:24.22.1-bookworm AS base
+FROM node:24.22.2-bookworm AS base
 USER root
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git git-lfs curl wget ca-certificates openssh-client rsync bash zsh jq \
@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ln -s /usr/bin/fdfind /usr/local/bin/fd
 # Install the shell framework and theme in the image, outside persistent home.
 # renovate: datasource=git-refs depName=ohmyzsh/ohmyzsh ref=master
-ARG OH_MY_ZSH_COMMIT=2100c630ba4bd67bb48802c3e7da893a4fdaa1a0
+ARG OH_MY_ZSH_COMMIT=17a2b4c3a5855524ad4772a17ada0dc474e2fdf3
 # renovate: datasource=git-refs depName=romkatv/powerlevel10k ref=master
 ARG POWERLEVEL10K_COMMIT=d05a1b00f9a61f9578bf9dc19b8451942dde8734
 RUN git clone https://github.com/ohmyzsh/ohmyzsh.git /opt/oh-my-zsh && \
@@ -32,11 +32,11 @@ COPY zshrc /etc/skel/.zshrc
 COPY --from=python-runtime /usr/local /usr/local
 # Pin Python developer utilities; install outside the persisted developer home.
 # renovate: datasource=pypi depName=uv
-ARG UV_VERSION=0.13.5
+ARG UV_VERSION=0.13.6
 # renovate: datasource=pypi depName=conan
-ARG CONAN_VERSION=2.33.0
+ARG CONAN_VERSION=2.34.0
 # renovate: datasource=npm depName=pnpm
-ARG PNPM_VERSION=12.15.0
+ARG PNPM_VERSION=12.16.1
 # renovate: datasource=npm depName=bun
 ARG BUN_VERSION=1.4.4
 RUN python3 -m venv /opt/dev-tools && \
@@ -45,15 +45,15 @@ RUN python3 -m venv /opt/dev-tools && \
     mkdir -p /usr/local/lib/docker/cli-plugins
 # AI agent runtimes. Authentication and mutable settings stay under /home/coder.
 # renovate: datasource=npm depName=@openai/codex
-ARG CODEX_VERSION=0.164.0
+ARG CODEX_VERSION=0.166.0
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.309
+ARG CLAUDE_CODE_VERSION=2.1.316
 # renovate: datasource=npm depName=opencode-ai
-ARG OPENCODE_VERSION=1.19.4
+ARG OPENCODE_VERSION=1.19.5
 # renovate: datasource=pypi depName=omnigent
-ARG OMNIGENT_VERSION=0.19.1
+ARG OMNIGENT_VERSION=0.20.0
 # renovate: datasource=npm depName=@oh-my-pi/pi-coding-agent
-ARG OMP_VERSION=18.12.6
+ARG OMP_VERSION=18.14.1
 # renovate: datasource=pypi depName=mistral-vibe
 ARG VIBE_VERSION=2.26.1
 ARG ENABLE_AI_AGENTS=true
