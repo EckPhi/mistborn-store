@@ -1,0 +1,41 @@
+{
+  "name": "JDownloader 2",
+  "id": "jdownloader",
+  "available": true,
+  "short_desc": "Download manager with a full browser-based desktop",
+  "author": "AppWork GmbH / jlesage",
+  "port": 5800,
+  "categories": [
+    "media",
+    "utilities"
+  ],
+  "description": "JDownloader 2 manages download queues, file-hosting accounts, link extraction and automatic archive extraction through a browser-accessible desktop.",
+  "tipi_version": 1,
+  "version": "v26.09.1",
+  "source": "https://github.com/jlesage/docker-jdownloader-2",
+  "website": "https://jdownloader.org",
+  "exposable": true,
+  "supported_architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "dynamic_config": true,
+  "created_at": 1790472900000,
+  "updated_at": 1790472900000,
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Web login username",
+      "env_variable": "JDOWNLOADER_WEB_USERNAME",
+      "required": false,
+      "default": "admin"
+    },
+    {
+      "type": "password",
+      "label": "Web login password",
+      "env_variable": "JDOWNLOADER_WEB_PASSWORD",
+      "required": true,
+      "hint": "Protects the browser desktop. Use Runtipi HTTPS exposure for encrypted access."
+    }
+  ]
+}

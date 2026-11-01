@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 2,
+  "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json",
+  "services": [
+    {
+      "name": "jdownloader",
+      "image": "jlesage/jdownloader-2:v26.09.1",
+      "isMain": true,
+      "internalPort": 5800,
+      "environment": [
+        {
+          "key": "TZ",
+          "value": "${TZ}"
+        },
+        {
+          "key": "WEB_AUTHENTICATION",
+          "value": "1"
+        },
+        {
+          "key": "WEB_AUTHENTICATION_ALLOW_INSECURE",
+          "value": "1"
+        },
+        {
+          "key": "WEB_AUTHENTICATION_USERNAME",
+          "value": "${JDOWNLOADER_WEB_USERNAME}"
+        },
+        {
+          "key": "WEB_AUTHENTICATION_PASSWORD",
+          "value": "${JDOWNLOADER_WEB_PASSWORD}"
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/config",
+          "containerPath": "/config"
+        },
+        {
+          "hostPath": "${APP_DATA_DIR}/downloads",
+          "containerPath": "/output"
+        }
+      ]
+    }
+  ]
+}
