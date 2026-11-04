@@ -10,8 +10,8 @@
     "development"
   ],
   "description": "Independent MLflow service for a modular remote development platform.",
-  "tipi_version": 3,
-  "version": "v3.17.2-full",
+  "tipi_version": 4,
+  "version": "v3.18.0-full",
   "source": "https://github.com/mlflow/mlflow",
   "exposable": true,
   "dynamic_config": true,
@@ -99,5 +99,5 @@
     }
   ],
   "created_at": 1790760001681,
-  "updated_at": 1792688475069
+  "updated_at": 1793780639668
 }
