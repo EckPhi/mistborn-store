@@ -1,0 +1,46 @@
+{
+  "name": "CLIProxyAPI",
+  "id": "cliproxyapi",
+  "available": true,
+  "short_desc": "OpenAI/Claude/Gemini-compatible API for CLI subscriptions",
+  "author": "router-for-me",
+  "port": 8317,
+  "categories": [
+    "ai",
+    "development"
+  ],
+  "description": "CLIProxyAPI turns OAuth logins of Codex (ChatGPT), Claude Code, Gemini CLI, Antigravity, Kimi and other CLI subscriptions into OpenAI-, Claude- and Gemini-compatible API endpoints, with multi-account round-robin, a web management panel and usage statistics. Use it as an upstream provider in LiteLLM through its OpenAI-compatible /v1 endpoint.",
+  "tipi_version": 1,
+  "version": "v8.0.56",
+  "source": "https://github.com/router-for-me/CLIProxyAPI",
+  "website": "https://help.router-for.me",
+  "exposable": true,
+  "dynamic_config": true,
+  "min_tipi_version": "4.10.1",
+  "supported_architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "created_at": 1793885118690,
+  "updated_at": 1793885118690,
+  "url_suffix": "/management.html",
+  "form_fields": [
+    {
+      "type": "password",
+      "label": "Management password",
+      "env_variable": "CLIPROXYAPI_MANAGEMENT_PASSWORD",
+      "required": true,
+      "min": 12,
+      "hint": "Password for the web management panel and management API. Avoid the $ character."
+    },
+    {
+      "type": "random",
+      "label": "Initial client API key material",
+      "env_variable": "CLIPROXYAPI_API_KEY_MATERIAL",
+      "required": false,
+      "min": 48,
+      "encoding": "hex",
+      "hint": "Generated automatically; the initial client key is sk-cpa- followed by this value. It is written to config.yaml on first start only — manage keys in the panel afterwards."
+    }
+  ]
+}
