@@ -3,7 +3,7 @@ x-runtipi:
 
 services:
   cliproxyapi:
-    image: eceasy/cli-proxy-api:v8.0.56
+    image: eceasy/cli-proxy-api:v8.0.57
     x-runtipi:
       is_main: true
       internal_port: 8317
