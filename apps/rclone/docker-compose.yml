@@ -71,7 +71,7 @@ services:
       internal_port: 5572
 
   rclone-ui:
-    image: rclone/rclone:1.75.2
+    image: rclone/rclone:1.76.0
     command:
       - gui
       - --addr
