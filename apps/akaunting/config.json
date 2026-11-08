@@ -10,8 +10,8 @@
     "utilities"
   ],
   "description": "Akaunting is free, open-source and online accounting software for small businesses and freelancers. It handles invoicing, expense tracking, bank accounts, customers, vendors, taxes and reporting, and can be extended with apps from the Akaunting marketplace. This app bundles a MariaDB database and runs the installer automatically on first start using the company and admin details from the settings below.",
-  "tipi_version": 2,
-  "version": "3.1.21",
+  "tipi_version": 4,
+  "version": "3.3.0",
   "source": "https://github.com/akaunting/docker",
   "website": "https://akaunting.com",
   "exposable": true,
@@ -20,7 +20,7 @@
     "amd64"
   ],
   "created_at": 1785690668644,
-  "updated_at": 1786895345260,
+  "updated_at": 1794125977142,
   "dynamic_config": true,
   "form_fields": [
     {
