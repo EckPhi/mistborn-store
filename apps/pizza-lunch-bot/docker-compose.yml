@@ -1,0 +1,37 @@
+x-runtipi:
+  schema_version: 2
+
+services:
+  pizza-lunch-bot:
+    image: ghcr.io/eckphi/pizza-lunch-bot:e5bd579437acbfd23a26685f8ec61563caa4c691
+    environment:
+      TELEGRAM_BOT_TOKEN: ${PIZZA_LUNCH_BOT_TOKEN}
+      LUNCH_TIME_ZONE: ${PIZZA_LUNCH_BOT_TIME_ZONE:-Europe/Vienna}
+      LUNCH_STATE_FILE: /data/lunch-state.json
+    volumes:
+      - ${APP_DATA_DIR}/data:/data
+    depends_on:
+      pizza-lunch-bot-permissions:
+        condition: service_healthy
+    x-runtipi:
+      is_main: true
+
+  pizza-lunch-bot-permissions:
+    image: ghcr.io/eckphi/pizza-lunch-bot:e5bd579437acbfd23a26685f8ec61563caa4c691
+    user: "0:0"
+    entrypoint:
+      - /bin/sh
+      - -ec
+      - |
+        chown 10001:10001 /data
+        chmod 0700 /data
+        touch /tmp/ready
+        exec sleep infinity
+    network_mode: none
+    volumes:
+      - ${APP_DATA_DIR}/data:/data
+    healthcheck:
+      test: ["CMD", "test", "-f", "/tmp/ready"]
+      interval: 5s
+      timeout: 3s
+      retries: 12

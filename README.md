@@ -73,6 +73,7 @@ pending; the experimental Coder provisioning bridge is separate from the core.
 | <img src="apps/nzbget/metadata/logo.jpg" width="32"> | [NZBGet](https://github.com/nzbgetcom/nzbget) | Efficient Usenet downloader with automatic repair and extraction |
 | <img src="apps/omnigent/metadata/logo.jpg" width="32"> | [Omnigent](https://github.com/omnigent-ai/omnigent) | Independent AI agent control plane with external workspace runners |
 | <img src="apps/openthread-border-router/metadata/logo.jpg" width="32"> | [OpenThread Border Router](https://github.com/bnutzer/docker-otbr-tcp) | Thread mesh network border router (network RCP) |
+| <img src="apps/pizza-lunch-bot/metadata/logo.jpg" width="32"> | [Pizza Lunch Bot](https://github.com/EckPhi/pizza-lunch-bot) | Weekly pizza polls and RSVPs in Telegram |
 | <img src="apps/power-price-collector/metadata/logo.jpg" width="32"> | [Power Price Collector](https://github.com/EckPhi/power-price-collector) | European power prices into QuestDB, MQTT, Grist and more |
 | <img src="apps/pyload-ng/metadata/logo.jpg" width="32"> | [pyLoad-ng](https://github.com/pyload/pyload) | Lightweight web download manager with hoster plugins |
 | <img src="apps/questdb/metadata/logo.jpg" width="32"> | [QuestDB](https://github.com/questdb/questdb) | High-performance time-series database with SQL |
