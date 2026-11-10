@@ -1,0 +1,41 @@
+{
+  "name": "Pangolin Connector",
+  "id": "pangolin-connector",
+  "available": true,
+  "short_desc": "Connect local resources to Pangolin with Newt",
+  "author": "Fossorial",
+  "port": 8795,
+  "categories": ["network"],
+  "description": "Newt is a lightweight connector that tunnels traffic from Pangolin to services on your local network.",
+  "tipi_version": 1,
+  "version": "1.20.0",
+  "source": "https://github.com/fosrl/newt",
+  "website": "https://pangolin.net",
+  "exposable": false,
+  "no_gui": true,
+  "dynamic_config": true,
+  "min_tipi_version": "4.10.1",
+  "supported_architectures": ["amd64", "arm64"],
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Pangolin endpoint",
+      "env_variable": "PANGOLIN_CONNECTOR_ENDPOINT",
+      "required": true,
+      "placeholder": "https://app.pangolin.net",
+      "hint": "Enter the endpoint URL shown in your site's Newt configuration."
+    },
+    {
+      "type": "text",
+      "label": "Newt ID",
+      "env_variable": "PANGOLIN_CONNECTOR_ID",
+      "required": true
+    },
+    {
+      "type": "password",
+      "label": "Newt secret",
+      "env_variable": "PANGOLIN_CONNECTOR_SECRET",
+      "required": true
+    }
+  ]
+}
