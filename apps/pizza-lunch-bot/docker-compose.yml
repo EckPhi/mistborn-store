@@ -8,6 +8,8 @@ services:
       TELEGRAM_BOT_TOKEN: ${PIZZA_LUNCH_BOT_TOKEN}
       LUNCH_TIME_ZONE: ${PIZZA_LUNCH_BOT_TIME_ZONE:-Europe/Vienna}
       LUNCH_STATE_FILE: /data/lunch-state.json
+      PIZZA_MINI_APP_SHORT_NAME: ${PIZZA_LUNCH_BOT_MINI_APP_SHORT_NAME:-}
+      PIZZA_MINI_APP_LISTEN: 0.0.0.0:8080
     volumes:
       - ${APP_DATA_DIR}/data:/data
     depends_on:
@@ -15,6 +17,7 @@ services:
         condition: service_healthy
     x-runtipi:
       is_main: true
+      internal_port: 8080
 
   pizza-lunch-bot-permissions:
     image: ghcr.io/eckphi/pizza-lunch-bot:3a42d0d05c2a39ea2281ea7fff13cdbb06cacb68

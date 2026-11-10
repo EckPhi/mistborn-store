@@ -6,13 +6,12 @@
   "author": "EckPhi",
   "port": 8794,
   "categories": ["social", "automation"],
-  "description": "A headless Telegram bot that polls your group for a pizza day, picks the winning slot, and collects RSVPs.",
-  "tipi_version": 2,
+  "description": "A Telegram bot that polls your group for a pizza day, picks the winning slot, and collects RSVPs, with an optional Telegram Mini App.",
+  "tipi_version": 3,
   "version": "3a42d0d05c2a39ea2281ea7fff13cdbb06cacb68",
   "source": "https://github.com/EckPhi/pizza-lunch-bot",
   "website": "https://github.com/EckPhi/pizza-lunch-bot",
-  "exposable": false,
-  "no_gui": true,
+  "exposable": true,
   "dynamic_config": true,
   "min_tipi_version": "4.10.1",
   "supported_architectures": ["amd64"],
@@ -31,7 +30,16 @@
       "required": false,
       "default": "Europe/Vienna",
       "hint": "IANA time zone used for the Monday cutoff and lunch time."
+    },
+    {
+      "type": "text",
+      "label": "Telegram Mini App short name",
+      "env_variable": "PIZZA_LUNCH_BOT_MINI_APP_SHORT_NAME",
+      "required": false,
+      "regex": "^[A-Za-z0-9_]{3,30}$",
+      "pattern_error": "Use 3 to 30 letters, digits, or underscores.",
+      "hint": "Enter the short name registered in BotFather. Leave blank to run in Telegram chat only."
     }
   ],
-  "updated_at": 1794346629141
+  "updated_at": 1794351802757
 }
