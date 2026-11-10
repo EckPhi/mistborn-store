@@ -7,8 +7,8 @@
   "port": 8794,
   "categories": ["social", "automation"],
   "description": "A headless Telegram bot that polls your group for a pizza day, picks the winning slot, and collects RSVPs.",
-  "tipi_version": 1,
-  "version": "e5bd579437acbfd23a26685f8ec61563caa4c691",
+  "tipi_version": 2,
+  "version": "3a42d0d05c2a39ea2281ea7fff13cdbb06cacb68",
   "source": "https://github.com/EckPhi/pizza-lunch-bot",
   "website": "https://github.com/EckPhi/pizza-lunch-bot",
   "exposable": false,
@@ -32,5 +32,6 @@
       "default": "Europe/Vienna",
       "hint": "IANA time zone used for the Monday cutoff and lunch time."
     }
-  ]
+  ],
+  "updated_at": 1794346629141
 }
