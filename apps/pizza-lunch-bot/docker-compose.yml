@@ -10,6 +10,8 @@ services:
       LUNCH_STATE_FILE: /data/lunch-state.json
       PIZZA_MINI_APP_SHORT_NAME: ${PIZZA_LUNCH_BOT_MINI_APP_SHORT_NAME:-}
       PIZZA_MINI_APP_LISTEN: 0.0.0.0:8080
+      PIZZA_ADMIN_TOKEN: ${PIZZA_LUNCH_BOT_ADMIN_TOKEN:?Runtipi must generate an admin token}
+      PIZZA_ADMIN_LISTEN: 0.0.0.0:8081
     volumes:
       - ${APP_DATA_DIR}/data:/data
     depends_on:
@@ -17,7 +19,7 @@ services:
         condition: service_healthy
     x-runtipi:
       is_main: true
-      internal_port: 8080
+      internal_port: 8081
 
   pizza-lunch-bot-permissions:
     image: ghcr.io/eckphi/pizza-lunch-bot:0.3.1
