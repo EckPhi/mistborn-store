@@ -7,8 +7,8 @@
   "port": 8794,
   "categories": ["social", "automation"],
   "description": "A Telegram bot that polls your group for a pizza day, picks the winning slot, and collects RSVPs, with an optional Telegram Mini App.",
-  "tipi_version": 3,
-  "version": "3a42d0d05c2a39ea2281ea7fff13cdbb06cacb68",
+  "tipi_version": 4,
+  "version": "0.3.1",
   "source": "https://github.com/EckPhi/pizza-lunch-bot",
   "website": "https://github.com/EckPhi/pizza-lunch-bot",
   "exposable": true,
@@ -41,5 +41,5 @@
       "hint": "Enter the short name registered in BotFather. Leave blank to run in Telegram chat only."
     }
   ],
-  "updated_at": 1794351802757
+  "updated_at": 1794386845362
 }

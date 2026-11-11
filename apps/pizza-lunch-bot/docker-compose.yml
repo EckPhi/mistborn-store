@@ -3,7 +3,7 @@ x-runtipi:
 
 services:
   pizza-lunch-bot:
-    image: ghcr.io/eckphi/pizza-lunch-bot:3a42d0d05c2a39ea2281ea7fff13cdbb06cacb68
+    image: ghcr.io/eckphi/pizza-lunch-bot:0.3.1
     environment:
       TELEGRAM_BOT_TOKEN: ${PIZZA_LUNCH_BOT_TOKEN}
       LUNCH_TIME_ZONE: ${PIZZA_LUNCH_BOT_TIME_ZONE:-Europe/Vienna}
@@ -20,7 +20,7 @@ services:
       internal_port: 8080
 
   pizza-lunch-bot-permissions:
-    image: ghcr.io/eckphi/pizza-lunch-bot:3a42d0d05c2a39ea2281ea7fff13cdbb06cacb68
+    image: ghcr.io/eckphi/pizza-lunch-bot:0.3.1
     user: "0:0"
     entrypoint:
       - /bin/sh
