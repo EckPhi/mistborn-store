@@ -10,8 +10,8 @@
     "development"
   ],
   "description": "CLIProxyAPI turns OAuth logins of Codex (ChatGPT), Claude Code, Gemini CLI, Antigravity, Kimi and other CLI subscriptions into OpenAI-, Claude- and Gemini-compatible API endpoints, with multi-account round-robin, a web management panel and usage statistics. Use it as an upstream provider in LiteLLM through its OpenAI-compatible /v1 endpoint.",
-  "tipi_version": 7,
-  "version": "v8.0.66",
+  "tipi_version": 8,
+  "version": "v8.0.67",
   "source": "https://github.com/router-for-me/CLIProxyAPI",
   "website": "https://help.router-for.me",
   "exposable": true,
@@ -22,7 +22,7 @@
     "arm64"
   ],
   "created_at": 1793885118690,
-  "updated_at": 1794386186279,
+  "updated_at": 1794474327581,
   "url_suffix": "/management.html",
   "form_fields": [
     {
