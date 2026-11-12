@@ -46,7 +46,7 @@
     },
     {
       "name": "akaunting-seed",
-      "image": "akaunting/akaunting:3.3.0",
+      "image": "akaunting/akaunting:3.3.1",
       "entrypoint": [
         "/bin/bash",
         "-c",
@@ -71,7 +71,7 @@
     },
     {
       "name": "akaunting",
-      "image": "akaunting/akaunting:3.3.0",
+      "image": "akaunting/akaunting:3.3.1",
       "isMain": true,
       "internalPort": 80,
       "entrypoint": [
