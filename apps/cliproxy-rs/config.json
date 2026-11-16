@@ -1,0 +1,24 @@
+{
+  "name": "CLIProxy-RS",
+  "id": "cliproxy-rs",
+  "available": true,
+  "short_desc": "Rust AI API proxy with a management dashboard and plugin support",
+  "author": "vayungodara",
+  "port": 8318,
+  "categories": [
+    "ai",
+    "development"
+  ],
+  "description": "CLIProxy-RS routes coding tools and other AI clients through a shared endpoint backed by your provider API keys or supported account logins. It includes a management dashboard and supports CLIProxyAPI plugins.",
+  "tipi_version": 1,
+  "version": "0.4.3",
+  "source": "https://github.com/vayungodara/cliproxy-rs",
+  "exposable": true,
+  "dynamic_config": true,
+  "min_tipi_version": "4.10.1",
+  "supported_architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "url_suffix": "/management.html"
+}
