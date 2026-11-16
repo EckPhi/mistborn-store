@@ -9,8 +9,8 @@
     "media"
   ],
   "description": "RundfunkArr searches public broadcaster media libraries and integrates with Sonarr, Radarr and Prowlarr through Newznab and SABnzbd-compatible APIs. Includes direct downloads, optional MKV conversion and scheduled searches.",
-  "tipi_version": 2,
-  "version": "1.4.0",
+  "tipi_version": 3,
+  "version": "1.5.0",
   "source": "https://github.com/rundfunkarr/rundfunkarr",
   "exposable": true,
   "supported_architectures": [
@@ -30,5 +30,5 @@
     }
   ],
   "created_at": 1792688507808,
-  "updated_at": 1793317529393
+  "updated_at": 1794819181644
 }
