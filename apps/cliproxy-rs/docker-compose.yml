@@ -3,7 +3,7 @@ x-runtipi:
 
 services:
   cliproxy-rs:
-    image: ghcr.io/vayungodara/cliproxy-rs:0.4.3
+    image: ghcr.io/vayungodara/cliproxy-rs:0.4.4
     x-runtipi:
       is_main: true
       internal_port: 8317
