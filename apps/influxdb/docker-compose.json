@@ -4,7 +4,7 @@
   "services": [
     {
       "name": "influxdb",
-      "image": "influxdb:2.9.1",
+      "image": "influxdb:2.10.1",
       "isMain": true,
       "internalPort": 8086,
       "environment": [
@@ -52,7 +52,7 @@
     },
     {
       "name": "influxdb-jobs",
-      "image": "influxdb:2.9.1",
+      "image": "influxdb:2.10.1",
       "entrypoint": [
         "bash",
         "/scripts/jobs.sh"

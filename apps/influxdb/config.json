@@ -9,8 +9,8 @@
     "data"
   ],
   "description": "InfluxDB is an open-source time-series database designed to handle high write and query loads. It is widely used for storing metrics, events, IoT sensor data and real-time analytics, and integrates with Telegraf, Grafana and many home automation platforms. This app bundles a maintenance sidecar that can provision a configurable multi-stage downsampling pipeline (buckets + Flux tasks) and takes automatic compressed backups.",
-  "tipi_version": 3,
-  "version": "2.9.1",
+  "tipi_version": 5,
+  "version": "2.10.1",
   "source": "https://github.com/influxdata/influxdb",
   "website": "https://www.influxdata.com",
   "exposable": true,
@@ -19,7 +19,7 @@
     "amd64"
   ],
   "created_at": 1781308800000,
-  "updated_at": 1784419200000,
+  "updated_at": 1795081476259,
   "dynamic_config": true,
   "form_fields": [
     {
