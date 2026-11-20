@@ -3,7 +3,7 @@ x-runtipi:
 
 services:
   litellm:
-    image: ghcr.io/berriai/litellm:1.110.1
+    image: ghcr.io/berriai/litellm:1.110.2
     x-runtipi:
       is_main: true
       internal_port: 4000
