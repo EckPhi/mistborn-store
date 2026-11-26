@@ -10,8 +10,8 @@
     "utilities"
   ],
   "description": "JDownloader 2 manages download queues, file-hosting accounts, link extraction and automatic archive extraction through a browser-accessible desktop.",
-  "tipi_version": 1,
-  "version": "v26.09.1",
+  "tipi_version": 2,
+  "version": "v26.11.1",
   "source": "https://github.com/jlesage/docker-jdownloader-2",
   "website": "https://jdownloader.org",
   "exposable": true,
@@ -21,7 +21,7 @@
   ],
   "dynamic_config": true,
   "created_at": 1790472900000,
-  "updated_at": 1790472900000,
+  "updated_at": 1795688272572,
   "form_fields": [
     {
       "type": "text",

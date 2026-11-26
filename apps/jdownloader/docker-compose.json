@@ -4,7 +4,7 @@
   "services": [
     {
       "name": "jdownloader",
-      "image": "jlesage/jdownloader-2:v26.09.1",
+      "image": "jlesage/jdownloader-2:v26.11.1",
       "isMain": true,
       "internalPort": 5800,
       "environment": [
