@@ -1,0 +1,25 @@
+{
+  "name": "Kometa Quickstart",
+  "id": "kometa",
+  "available": true,
+  "short_desc": "Guided web setup and run controls for Kometa",
+  "author": "Kometa Team",
+  "port": 8199,
+  "categories": [
+    "media",
+    "automation"
+  ],
+  "description": "Kometa Quickstart provides a guided web interface for configuring Plex collections, poster overlays, playlists, and metadata automation. It validates connections, manages configuration profiles, and installs and runs its own managed Kometa runtime.",
+  "tipi_version": 1,
+  "version": "v0.10.18",
+  "source": "https://github.com/Kometa-Team/Quickstart",
+  "website": "https://kometa.wiki/en/latest/kometa/scripts/quickstart/",
+  "exposable": false,
+  "no_gui": false,
+  "supported_architectures": [
+    "amd64",
+    "arm64"
+  ],
+  "dynamic_config": true,
+  "form_fields": []
+}
