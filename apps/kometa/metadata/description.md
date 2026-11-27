@@ -21,7 +21,7 @@ If you previously prepared a standalone Kometa configuration at `${APP_DATA_DIR}
 
 ## Access and prerequisites
 
-Keep the interface on a trusted LAN or behind an authenticated proxy/VPN: it provides access to service credentials and run controls. Domain exposure is disabled in this package. Keep the internal web port at **7171** so Runtipi's routing continues to work.
+Use Runtipi's domain exposure settings to access Quickstart through its reverse proxy. Protect remote access with authentication or a VPN: the interface provides access to service credentials and run controls. Keep the internal web port at **7171** so Runtipi's routing continues to work.
 
 Plex and a TMDb API key are required and are not installed by this app. Review your selected collection and overlay rules before running Kometa against your library.
 
