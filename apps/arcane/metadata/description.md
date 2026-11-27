@@ -12,7 +12,7 @@ Sign in with username `arcane` and password `arcane-admin`, then change the pass
 
 The database, settings and application data persist in `${APP_DATA_DIR}/data`, mounted at `/app/data`. Arcane prepares directory ownership at startup, then runs as UID/GID `1000:1000` and acquires access to the Docker socket's group.
 
-New Compose projects live in `${APP_DATA_DIR}/data/projects`. That directory is also mounted at its identical absolute host path inside Arcane, and `PROJECTS_DIRECTORY` points there so relative bind mounts resolve correctly on the Docker host. Other existing project directories require additional mounts at identical absolute host/container paths before Arcane can edit their Compose files. Existing host containers remain visible through Docker.
+New Compose projects live in `${APP_DATA_DIR}/data/projects`. That directory is also mounted at its identical absolute host path inside Arcane, and `ARCANE_PROJECTS_DIRECTORY` points there so relative bind mounts resolve correctly on the Docker host. Other existing project directories require additional mounts at identical absolute host/container paths before Arcane can edit their Compose files. Existing host containers remain visible through Docker.
 
 Back up app-data and the generated **Encryption key** together. Do not change or regenerate the key on an existing installation: stored encrypted credentials depend on it. Stop Arcane before copying its SQLite database for a consistent backup.
 

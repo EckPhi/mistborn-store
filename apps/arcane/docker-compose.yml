@@ -5,12 +5,12 @@ services:
     image: ghcr.io/getarcaneapp/manager:v3.2.0
     cgroup: host
     environment:
-      APP_URL: ${ARCANE_APP_URL}
-      ENCRYPTION_KEY: ${ARCANE_ENCRYPTION_KEY}
+      ARCANE_APP_URL: ${ARCANE_APP_URL}
+      ARCANE_ENCRYPTION_KEY: ${ARCANE_ENCRYPTION_KEY}
       PUID: "1000"
       PGID: "1000"
       TZ: ${TZ}
-      PROJECTS_DIRECTORY: ${APP_DATA_DIR}/data/projects
+      ARCANE_PROJECTS_DIRECTORY: ${APP_DATA_DIR}/data/projects
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ${APP_DATA_DIR}/data:/app/data
