@@ -1,5 +1,5 @@
 # renovate: datasource=docker depName=docker
-FROM docker:29.9.3-cli AS docker-cli
+FROM docker:29.10.1-cli AS docker-cli
 # renovate: datasource=docker depName=python
 FROM python:3.14.8-bookworm AS python-runtime
 # renovate: datasource=docker depName=rust
@@ -18,9 +18,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ln -s /usr/bin/fdfind /usr/local/bin/fd
 # Install the shell framework and theme in the image, outside persistent home.
 # renovate: datasource=git-refs depName=ohmyzsh/ohmyzsh ref=master
-ARG OH_MY_ZSH_COMMIT=6010fb6260f359e71d99ba25f05f9215809b3ed2
+ARG OH_MY_ZSH_COMMIT=44a5decbc48c4f1885c754eb2044d09a466e4187
 # renovate: datasource=git-refs depName=romkatv/powerlevel10k ref=master
-ARG POWERLEVEL10K_COMMIT=64df59615df306c7a8bb37d0a5a1ebc46337dfb1
+ARG POWERLEVEL10K_COMMIT=50a35cc8d9f1488d18fb8aea6cddcfc31189cc9f
 RUN git clone https://github.com/ohmyzsh/ohmyzsh.git /opt/oh-my-zsh && \
     git -C /opt/oh-my-zsh checkout "$OH_MY_ZSH_COMMIT" && \
     mkdir -p /opt/oh-my-zsh/custom/themes && \
@@ -32,28 +32,28 @@ COPY zshrc /etc/skel/.zshrc
 COPY --from=python-runtime /usr/local /usr/local
 # Pin Python developer utilities; install outside the persisted developer home.
 # renovate: datasource=pypi depName=uv
-ARG UV_VERSION=0.13.8
+ARG UV_VERSION=0.13.10
 # renovate: datasource=pypi depName=conan
 ARG CONAN_VERSION=2.34.0
 # renovate: datasource=npm depName=pnpm
-ARG PNPM_VERSION=12.21.0
+ARG PNPM_VERSION=12.23.0
 # renovate: datasource=npm depName=bun
-ARG BUN_VERSION=1.4.4
+ARG BUN_VERSION=1.4.5
 RUN python3 -m venv /opt/dev-tools && \
     /opt/dev-tools/bin/pip install --no-cache-dir "uv==$UV_VERSION" "conan==$CONAN_VERSION" && \
     npm install -g "pnpm@$PNPM_VERSION" "bun@$BUN_VERSION" && \
     mkdir -p /usr/local/lib/docker/cli-plugins
 # AI agent runtimes. Authentication and mutable settings stay under /home/coder.
 # renovate: datasource=npm depName=@openai/codex
-ARG CODEX_VERSION=0.169.0
+ARG CODEX_VERSION=0.172.0
 # renovate: datasource=npm depName=@anthropic-ai/claude-code
-ARG CLAUDE_CODE_VERSION=2.1.325
+ARG CLAUDE_CODE_VERSION=2.1.332
 # renovate: datasource=npm depName=opencode-ai
-ARG OPENCODE_VERSION=1.19.5
+ARG OPENCODE_VERSION=1.19.6
 # renovate: datasource=pypi depName=omnigent
-ARG OMNIGENT_VERSION=0.22.0
+ARG OMNIGENT_VERSION=0.23.0
 # renovate: datasource=npm depName=@oh-my-pi/pi-coding-agent
-ARG OMP_VERSION=18.20.3
+ARG OMP_VERSION=18.22.2
 # renovate: datasource=pypi depName=mistral-vibe
 ARG VIBE_VERSION=2.26.1
 ARG ENABLE_AI_AGENTS=true
